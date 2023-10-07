@@ -1,0 +1,18 @@
+redis:
+  node_address: "127.0.0.1"
+  port: 6379
+
+hosts:
+  efmagazin:
+    url: "https://ef-magazin.de/"
+    path: "?page="
+  freiheitsfunken: "https://freiheitsfunken.info/"
+  misesde: "https://www.misesde.org/"
+
+max_concurrency: 8
+
+httpserver:
+  address: "127.0.0.1"
+  port: 8989
+
+publish_interval: 86000
