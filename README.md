@@ -2,6 +2,8 @@
 
 ## What is it?
 
+*App is in progress...*
+
 Free Flow Feeds is an article scraper that gets a collection of articles in parallel from selected websites
 representing freedom, which you can access in an RSS feed.
 
