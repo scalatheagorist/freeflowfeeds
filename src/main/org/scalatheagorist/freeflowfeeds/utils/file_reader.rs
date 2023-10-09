@@ -3,8 +3,9 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
-use log::{error, warn};
+use log::error;
 use serde::de::{DeserializeOwned, Error};
+
 use crate::models::CustomSerdeErrors;
 
 pub struct FileReader;
@@ -40,26 +41,5 @@ impl FileReader {
         let mut reader: BufReader<File> = BufReader::new(file);
 
         serde_json::from_reader(&mut reader)
-    }
-
-    pub fn from_dir<U>(path: &PathBuf, read_from: impl Fn(Box<&PathBuf>) -> U) -> Vec<U> {
-        let results: Result<Vec<U>, _> = fs::read_dir(path).map(|entries| {
-            entries
-                .filter_map(|entry| entry.ok())
-                .filter(|entry| entry.path().is_file())
-                .map(|entry| {
-                    let file_path = entry.path();
-                    read_from(Box::new(&file_path))
-                })
-                .collect()
-        });
-
-        match results {
-            Ok(vector) => vector,
-            Err(err) => {
-                warn!("could open from path {:?} with error {}", path, err);
-                vec![]
-            }
-        }
     }
 }

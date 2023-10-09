@@ -55,7 +55,7 @@ impl HttpServer {
                                     .body(Body::from(HttpServer::ENDPOINT_PULL_ARTICLES))
                             }
                             HttpServer::ENDPOINT_PULL_ARTICLES => {
-                                let iterator: Iter<IntoIter<String>> = rss_service.subscribe().await;
+                                let iterator: Iter<IntoIter<String>> = rss_service.pull().await;
                                 let stream =
                                     iterator.map(|result| {
                                         Ok::<Bytes, std::io::Error>(

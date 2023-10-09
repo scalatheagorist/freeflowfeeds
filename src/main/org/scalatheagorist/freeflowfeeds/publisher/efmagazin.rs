@@ -18,7 +18,7 @@ pub struct EfMagazinHost {
 
 impl EfMagazinHost {
     pub fn with_pages(&self) -> Vec<(Publisher, String)> {
-        (1..=30) // todo
+        (1..=3) // todo
             .collect::<Vec<i32>>()
             .into_iter()
             .map(|page| {

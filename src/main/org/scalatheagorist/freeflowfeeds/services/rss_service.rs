@@ -3,7 +3,6 @@ use std::vec::IntoIter;
 
 use futures_util::StreamExt;
 use log::info;
-use rss::Error;
 use tokio::time::{interval, Interval};
 use tokio_stream::Iter;
 
@@ -29,30 +28,30 @@ impl RSSService {
         RSSService { app_config, scape_service, rss_builder }
     }
 
-    pub async fn subscribe(&self) -> Iter<IntoIter<String>> {
+    pub async fn pull(&self) -> Iter<IntoIter<String>> {
         let config: RedisConfig = self.app_config.redis.clone();
         let result: Iter<IntoIter<String>> =
             RedisClient::lrange(&config, "articles".to_string()).await;
         self.rss_builder.build(result).await
     }
 
-    pub async fn publish(&self) {
+    pub async fn push(&self) {
         let mut interval: Interval =
             interval(Duration::from_secs(self.app_config.publish_interval));
         loop {
             interval.tick().await;
             info!("publish new articles to redis");
-            self._publish().await;
+            self._push().await;
         }
     }
 
-    async fn _publish(&self) -> () {
+    async fn _push(&self) -> () {
         let rss_stream =
             self.scape_service.run().await.map(Publisher::get_rss);
 
         rss_stream.for_each_concurrent(None, |rss| {
             let config: RedisConfig = self.app_config.redis.clone();
-            async move { RedisClient::rpush(&config, "articles", rss).await }
+            async move { RedisClient::rpush_distinct(&config, "articles", rss).await }
         }).await;
     }
 }
