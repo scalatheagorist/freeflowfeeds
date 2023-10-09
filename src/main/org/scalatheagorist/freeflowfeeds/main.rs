@@ -26,7 +26,7 @@ async fn main() {
 
     let server: HttpServer = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
 
-    let _ = spawn(async move { rss_service.publish().await });
+    //let _ = spawn(async move { rss_service.publish().await });
 
     if let Err(e) = server.serve().await {
         error!("server error: {}", e);
