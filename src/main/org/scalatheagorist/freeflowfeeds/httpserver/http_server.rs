@@ -1,5 +1,6 @@
 use std::convert::Infallible;
 use std::net::SocketAddr;
+use std::vec::IntoIter;
 
 use hyper::{Body, Response};
 use hyper::body::Bytes;
@@ -7,9 +8,10 @@ use hyper::Server as HyperServer;
 use hyper::service::{make_service_fn, service_fn};
 use log::{error, info};
 use serde::{Deserialize, Serialize};
-use tokio_stream::StreamExt;
+use tokio_stream::{Iter, StreamExt};
 
 use crate::services::RSSService;
+use crate::utils::headers::{Headers, HeaderType};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HttpServerConfig {
@@ -53,19 +55,19 @@ impl HttpServer {
                                     .body(Body::from(HttpServer::ENDPOINT_PULL_ARTICLES))
                             }
                             HttpServer::ENDPOINT_PULL_ARTICLES => {
-                                match rss_service.subscribe().await.map_err(|err| error!("{}", err)).ok() {
-                                    Some(messages) => {
-                                        let stream =
-                                            messages.map(|result| {
-                                                let vec_result = vec![result];
-                                                Ok::<Bytes, std::io::Error>(
-                                                    hyper::body::Bytes::from(vec_result)
-                                                )
-                                            });
+                                let iterator: Iter<IntoIter<String>> = rss_service.subscribe().await;
+                                let stream =
+                                    iterator.map(|result| {
+                                        Ok::<Bytes, std::io::Error>(
+                                            hyper::body::Bytes::from(result)
+                                        )
+                                    });
+
+                                match Headers.to_content_header(HeaderType::ContentTypeHtml) {
+                                    Some(header) =>
                                         Response::builder()
-                                            .header("Content-Type", "application/rss+xml")
-                                            .body(Body::wrap_stream(stream))
-                                    }
+                                            .header(header.0, header.1)
+                                            .body(Body::wrap_stream(stream)),
                                     None =>
                                         Response::builder().status(500).body(Body::from("Internal Server Error"))
                                 }

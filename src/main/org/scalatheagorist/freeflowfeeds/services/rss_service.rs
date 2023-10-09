@@ -29,7 +29,7 @@ impl RSSService {
         RSSService { app_config, scape_service, rss_builder }
     }
 
-    pub async fn subscribe(&self) -> Result<Iter<IntoIter<u8>>, Error> {
+    pub async fn subscribe(&self) -> Iter<IntoIter<String>> {
         let config: RedisConfig = self.app_config.redis.clone();
         let result: Iter<IntoIter<String>> =
             RedisClient::lrange(&config, "articles".to_string()).await;
