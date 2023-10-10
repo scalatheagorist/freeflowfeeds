@@ -50,11 +50,13 @@ impl HttpServer {
                     async move {
                         match req.uri().path() {
                             HttpServer::ROOT => {
+                                info!("request to {}", HttpServer::ROOT);
                                 Response::builder()
                                     .status(200)
                                     .body(Body::from(HttpServer::ENDPOINT_PULL_ARTICLES))
                             }
                             HttpServer::ENDPOINT_PULL_ARTICLES => {
+                                info!("request to {}", HttpServer::ENDPOINT_PULL_ARTICLES);
                                 let iterator: Iter<IntoIter<String>> = rss_service.pull().await;
                                 let stream =
                                     iterator.map(|result| {
@@ -72,8 +74,10 @@ impl HttpServer {
                                         Response::builder().status(500).body(Body::from("Internal Server Error"))
                                 }
                             }
-                            _ =>
+                            _ => {
+                                info!("request to {}", "not defined");
                                 Response::builder().status(404).body(Body::from("Not Found"))
+                            }
                         }
                     }
                 }))

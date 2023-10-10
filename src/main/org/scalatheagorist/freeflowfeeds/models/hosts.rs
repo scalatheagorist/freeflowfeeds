@@ -17,8 +17,8 @@ impl Hosts {
                 (Publisher::FREIHEITSFUNKEN, self.freiheitsfunken.clone()),
                 (Publisher::MISESDE, self.misesde.url.clone()),
             ],
-            (self.efmagazin.with_pages(3)),
-            (self.misesde.with_pages(3))
+            (self.efmagazin.with_pages()),
+            (self.misesde.with_pages())
         ].concat()
     }
 }

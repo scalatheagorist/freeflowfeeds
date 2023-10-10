@@ -37,5 +37,5 @@ trait PublisherModel {
 }
 
 pub trait PublisherHost {
-    fn with_pages(&self, to: i32) -> Vec<(Publisher, String)>;
+    fn with_pages(&self) -> Vec<(Publisher, String)>;
 }
