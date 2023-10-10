@@ -1,14 +1,14 @@
 use std::str::FromStr;
-use std::vec::IntoIter;
 
+use futures_util::StreamExt;
 use hyper::{Body, Response, StatusCode, Uri};
 use hyper::http::uri::InvalidUri;
 use log::warn;
 use map_for::FlatMap;
 use tokio::spawn;
 use tokio::task::JoinHandle;
-use tokio_stream::Iter;
 
+use crate::core::{RedisClient, RedisConfig};
 use crate::HttpClient;
 use crate::models::HtmlResponse;
 use crate::publisher::Publisher;
@@ -43,20 +43,33 @@ impl HtmlScrapeService {
         HtmlScrapeService { http_client, hosts, max_concurrency, headers }
     }
 
-    pub async fn run(&self) -> Iter<IntoIter<HtmlResponse>> {
-        let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
-            self.hosts.chunks(self.max_concurrency as usize)
-                .map(|chunks| chunks.to_vec())
-                .flat_map(|uris| self.get(uris, self.clone().headers))
-                .collect::<Vec<_>>();
+    pub async fn run(&self, redis: RedisConfig) {
+        for chunk in self.hosts.chunks(self.max_concurrency as usize) {
+            let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
+                chunk
+                    .to_vec()
+                    .into_iter()
+                    .flat_map(|uri| self.get(vec![uri], self.clone().headers))
+                    .collect::<Vec<_>>();
 
-        tokio_stream::iter(
-            futures::future::join_all(scrape_futures)
-                .await
-                .into_iter()
-                .filter_map(|resp| resp.ok().unwrap_or(None))
-                .collect::<Vec<_>>()
-        )
+            let chunk_responses: Vec<HtmlResponse> =
+                futures::future::join_all(scrape_futures)
+                    .await
+                    .into_iter()
+                    .filter_map(|resp| resp.ok().unwrap_or(None))
+                    .collect::<Vec<_>>();
+
+            for rss in chunk_responses {
+                let config: RedisConfig = redis.clone();
+                spawn(async move {
+                    RedisClient::rpush_distinct(
+                        &config,
+                        "articles",
+                        Publisher::get_rss(rss),
+                    ).await
+                });
+            }
+        }
     }
 
     fn get(
@@ -64,16 +77,13 @@ impl HtmlScrapeService {
         uris: Vec<(Publisher, String)>,
         headers: Vec<(String, String)>,
     ) -> Vec<JoinHandle<Option<HtmlResponse>>> {
-        uris.clone()
-            .into_iter()
-            .map(|(publisher, uri)| {
-                self.get_concurrently(
-                    Uri::from_str(&*uri),
-                    publisher,
-                    headers.clone(),
-                )
-            })
-            .collect::<Vec<_>>()
+        uris.clone().into_iter().map(|(publisher, uri)| {
+            self.get_concurrently(
+                Uri::from_str(&*uri),
+                publisher,
+                headers.clone(),
+            )
+        }).collect::<Vec<_>>()
     }
 
     fn get_concurrently(
@@ -106,16 +116,15 @@ impl HtmlScrapeService {
     }
 
     async fn get_html_str(response: &mut Response<Body>) -> Option<String> {
-        if response.status() == StatusCode::OK {
-            let body: &mut Body = response.body_mut();
-
-            if let Some(bytes) = hyper::body::to_bytes(body).await.ok() {
-                String::from_utf8(bytes.to_vec()).ok()
-            } else {
-                None
-            }
-        } else {
-            None
+        if response.status() != StatusCode::OK {
+            return None;
         }
+
+        let body: &mut Body = response.body_mut();
+
+        hyper::body::to_bytes(body)
+            .await
+            .ok()
+            .flat_map(|bytes| String::from_utf8(bytes.to_vec()).ok())
     }
 }
