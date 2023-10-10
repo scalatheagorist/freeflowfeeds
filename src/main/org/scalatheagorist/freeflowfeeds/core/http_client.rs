@@ -30,7 +30,7 @@ impl HttpClient {
             .ok()
             .map(|mut request| {
                 HttpClient::extract_header_by_request(&mut request, headers.clone());
-                info!("try to send request to {} and headers {:?}", Uri::to_string(&(uri.clone())), headers.clone());
+                info!("send request to {}", Uri::to_string(&(uri.clone())));
                 self.client.fetch(request)
             })
     }

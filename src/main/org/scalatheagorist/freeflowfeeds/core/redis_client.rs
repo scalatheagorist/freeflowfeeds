@@ -40,7 +40,7 @@ impl RedisClient {
                         match redis::cmd("LPOS").arg(key).arg(&*value.clone().writes().unwrap()).query::<i32>(&mut conn) {
                             Ok(return_key) if return_key.is_positive() || return_key.is_zero() => None,
                             _ =>
-                                conn.lpush::<&str, &str, i32>(key, &*value.clone().writes().unwrap())
+                                conn.rpush::<&str, &str, i32>(key, &*value.clone().writes().unwrap())
                                     .map_err(|err| {
                                         warn!("redis RPUSH failed: {}", err)
                                     })
@@ -71,7 +71,6 @@ impl RedisClient {
                         .ok()
                 })
                 .flat_map(|mut conn| {
-                    info!("client subscription connected: {}", addr);
                     match conn.lrange::<&str, Vec<String>>(&*channels, 0, -1) {
                         Ok(vec) => Some(tokio_stream::iter(vec)),
                         Err(err) => {

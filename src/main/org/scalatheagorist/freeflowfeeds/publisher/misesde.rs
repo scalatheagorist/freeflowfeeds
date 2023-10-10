@@ -12,12 +12,13 @@ use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MisesDEHost {
     pub(crate) url: String,
-    path: String
+    path: String,
+    page_to: i32
 }
 
 impl PublisherHost for MisesDEHost {
-    fn with_pages(&self, to: i32) -> Vec<(Publisher, String)> {
-        (1..=to)
+    fn with_pages(&self) -> Vec<(Publisher, String)> {
+        (1..=self.page_to)
             .collect::<Vec<i32>>()
             .into_iter()
             .map(|page| {
