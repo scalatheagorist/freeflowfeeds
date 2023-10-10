@@ -6,15 +6,15 @@ hosts:
   efmagazin:
     url: "https://ef-magazin.de/"
     path: "?page="
-    page_to: 10
+    page_to: 3
   freiheitsfunken:
     url: "https://freiheitsfunken.info/"
     path: "?page="
-    page_to: 10
+    page_to: 3
   misesde:
     url: "https://www.misesde.org/"
     path: "?_page="
-    page_to: 10
+    page_to: 3
 
 max_concurrency: 4
 

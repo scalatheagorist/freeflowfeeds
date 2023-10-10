@@ -31,9 +31,11 @@ impl HttpServer {
     pub fn new(config: HttpServerConfig, rss_service: RSSService) -> Self {
         let address_str: String = format!("{}:{}", config.address, config.port);
         let address: SocketAddr =
-            address_str.parse::<SocketAddr>()
+            address_str
+                .parse::<SocketAddr>()
                 .map_err(|err| error!("{}", err))
                 .expect("socket address error");
+
         HttpServer { address, rss_service }
     }
 
@@ -65,13 +67,17 @@ impl HttpServer {
                                         )
                                     });
 
-                                match Headers.to_content_header(HeaderType::ContentTypeHtml) {
+                                match {
+                                    Headers.to_content_header(HeaderType::ContentTypeHtml)
+                                } {
                                     Some(header) =>
                                         Response::builder()
                                             .header(header.0, header.1)
                                             .body(Body::wrap_stream(stream)),
                                     None =>
-                                        Response::builder().status(500).body(Body::from("Internal Server Error"))
+                                        Response::builder()
+                                            .status(500)
+                                            .body(Body::from("Internal Server Error"))
                                 }
                             }
                             _ => Response::builder().status(404).body(Body::from("Not Found"))

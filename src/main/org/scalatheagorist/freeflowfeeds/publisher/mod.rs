@@ -27,9 +27,12 @@ pub enum Publisher {
 impl Publisher {
     pub fn get_rss(html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
         let publisher: Box<dyn PublisherModel> = match html_response.publisher {
-            Publisher::EFMAGAZIN => Box::new(EfMagazin),
-            Publisher::FREIHEITSFUNKEN => Box::new(Freiheitsfunken),
-            Publisher::MISESDE => Box::new(MisesDE),
+            Publisher::EFMAGAZIN =>
+                Box::new(EfMagazin::new(Some("https://ef-magazin.de"))),
+            Publisher::FREIHEITSFUNKEN =>
+                Box::new(Freiheitsfunken::new(Some("https://freiheitsfunken.info"))),
+            Publisher::MISESDE =>
+                Box::new(MisesDE::new(None))
         };
 
         publisher.get_rss(html_response)
