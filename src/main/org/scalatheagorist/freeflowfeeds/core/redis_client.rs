@@ -37,13 +37,18 @@ impl RedisClient {
                             .ok()
                     })
                     .flat_map(|mut conn| {
-                        match redis::cmd("LPOS").arg(key).arg(&*value.clone().writes().unwrap()).query::<i32>(&mut conn) {
-                            Ok(return_key) if return_key.is_positive() || return_key.is_zero() => None,
+                        match {
+                            redis::cmd("LPOS")
+                                .arg(key)
+                                .arg(&*value.clone().writes().unwrap())
+                                .query::<i32>(&mut conn)
+                        } {
+                            Ok(return_key) if return_key.is_positive() || return_key.is_zero() =>
+                                None,
                             _ =>
-                                conn.rpush::<&str, &str, i32>(key, &*value.clone().writes().unwrap())
-                                    .map_err(|err| {
-                                        warn!("redis RPUSH failed: {}", err)
-                                    })
+                                conn
+                                    .rpush::<&str, &str, i32>(key, &*value.clone().writes().unwrap())
+                                    .map_err(|err| warn!("redis RPUSH failed: {}", err))
                                     .ok()
                                     .map(|_| ())
                         }
@@ -52,7 +57,7 @@ impl RedisClient {
             }
         }).await;
 
-        info!("rpush was successfully")
+        info!("pushed to redis")
     }
 
     pub async fn lrange(

@@ -15,11 +15,11 @@ impl Hosts {
             vec![
                 (Publisher::EFMAGAZIN, self.efmagazin.url.clone()),
                 (Publisher::FREIHEITSFUNKEN, self.freiheitsfunken.url.clone()),
-                (Publisher::MISESDE, self.misesde.url.clone()),
-            ],
+                (Publisher::MISESDE, self.misesde.url.clone())],
             (self.efmagazin.with_pages()),
             (self.misesde.with_pages()),
             (self.freiheitsfunken.with_pages())
-        ].concat()
+        ]
+            .concat()
     }
 }

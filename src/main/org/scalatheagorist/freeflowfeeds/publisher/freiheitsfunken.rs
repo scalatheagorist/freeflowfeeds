@@ -24,12 +24,18 @@ impl PublisherHost for FreiheitsfunkenHost {
     fn page_to(&self) -> i32 { self.page_to }
 }
 
-pub struct Freiheitsfunken;
+pub struct Freiheitsfunken {
+    uri_prefix: Option<&'static str>
+}
+
+impl Freiheitsfunken {
+    pub fn new(uri_prefix: Option<&'static str>) -> Freiheitsfunken {
+        Freiheitsfunken { uri_prefix }
+    }
+}
 
 impl PublisherModel for Freiheitsfunken {
     fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
-        const URI_PREFIX: &'static str = "https://freiheitsfunken.info";
-
         tokio_stream::iter(match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("rss transformation error at freiheitsfunken {}", err);
@@ -72,14 +78,15 @@ impl PublisherModel for Freiheitsfunken {
                             .trim()
                             .to_owned();
 
-                    let href_with_uri_prefix = if !href.clone().contains("https://") {
-                        URI_PREFIX.to_owned() + &*href
-                    } else {
-                        href.to_string()
+                    let href_with_uri_prefix: String = match self.uri_prefix.to_owned() {
+                        Some(prefix) if !href.clone().contains("https://") =>
+                            prefix.to_owned() + &*href,
+                        _ =>
+                            href.to_string()
                     };
 
-                    let article = Article::new(title, href_with_uri_prefix);
-                    let rss = RSSFeed::new(author, article);
+                    let article: Article = Article::new(title, href_with_uri_prefix);
+                    let rss: RSSFeed = RSSFeed::new(author, article);
 
                     rss
                 }).collect::<Vec<_>>()
