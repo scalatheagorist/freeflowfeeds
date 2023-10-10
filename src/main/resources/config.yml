@@ -6,12 +6,12 @@ hosts:
   efmagazin:
     url: "https://ef-magazin.de/"
     path: "?page="
-    page_to: 5
+    page_to: 10
   freiheitsfunken: "https://freiheitsfunken.info/"
   misesde:
     url: "https://www.misesde.org/"
     path: "?_page="
-    page_to: 5
+    page_to: 10
 
 max_concurrency: 4
 
@@ -19,4 +19,4 @@ httpserver:
   address: "127.0.0.1"
   port: 8989
 
-publish_interval: 86000
+publish_interval: 86400 # 24h

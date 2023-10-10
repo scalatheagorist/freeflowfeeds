@@ -46,12 +46,6 @@ impl RSSService {
     }
 
     async fn _push(&self) -> () {
-        let rss_stream =
-            self.scape_service.run().await.map(Publisher::get_rss);
-
-        rss_stream.for_each_concurrent(None, |rss| {
-            let config: RedisConfig = self.app_config.redis.clone();
-            async move { RedisClient::rpush_distinct(&config, "articles", rss).await }
-        }).await;
+        self.scape_service.run(self.app_config.clone().redis).await
     }
 }
