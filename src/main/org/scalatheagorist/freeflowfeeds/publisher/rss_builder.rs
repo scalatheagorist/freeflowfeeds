@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::vec::IntoIter;
-use futures_util::{TryFutureExt, TryStreamExt};
 
 use serde_json::Value;
 use tokio_stream::{Iter, StreamExt};
@@ -56,7 +55,7 @@ impl RSSBuilder {
                     }
 
                     if let Some(link) = article.get("link").and_then(|v| v.as_str()) {
-                        item.push(format!("<p><strong>Link:</strong> <a href=\"{}\">{}</a></p>", link, link));
+                        item.push(format!("<p><strong>Link:</strong> <a href=\"{}\" target=\"_blank\">{}</a></p>", link, link));
                     }
                 }
 

@@ -21,11 +21,8 @@ async fn main() {
     let config_path: Box<&Path> = Box::new(Path::new("./src/main/resources/config.yml"));
     let app_config: AppConfig =
         FileReader::from_yaml::<AppConfig>(config_path).expect("there is no config file");
-
     let rss_service = RSSService::new(app_config.clone());
-
     let server: HttpServer = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
-
     let _ = spawn(async move { rss_service.push().await });
 
     if let Err(e) = server.serve().await {
@@ -36,7 +33,7 @@ async fn main() {
 fn set_logging() -> () {
     let stdout: ConsoleAppender =
         ConsoleAppender::builder()
-            .encoder(Box::new(PatternEncoder::new("{d} - {l} - [{t}] - {m}{n}")))
+            .encoder(Box::new(PatternEncoder::new("{d} - {l} - [org::scalatheagorist::{t}] - {m}{n}")))
             .build();
 
     if let Some(config) =

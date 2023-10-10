@@ -74,10 +74,7 @@ impl HttpServer {
                                         Response::builder().status(500).body(Body::from("Internal Server Error"))
                                 }
                             }
-                            _ => {
-                                info!("request to {}", "not defined");
-                                Response::builder().status(404).body(Body::from("Not Found"))
-                            }
+                            _ => Response::builder().status(404).body(Body::from("Not Found"))
                         }
                     }
                 }))

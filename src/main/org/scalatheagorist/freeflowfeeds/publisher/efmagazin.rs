@@ -18,16 +18,10 @@ pub struct EfMagazinHost {
 }
 
 impl PublisherHost for EfMagazinHost {
-    fn with_pages(&self) -> Vec<(Publisher, String)> {
-        (1..=self.page_to)
-            .collect::<Vec<i32>>()
-            .into_iter()
-            .map(|page| {
-                let uri: String = format!("{}{}{}", &self.url, &self.path, page);
-                (Publisher::EFMAGAZIN, uri)
-            })
-            .collect::<Vec<_>>()
-    }
+    fn publisher(&self) -> Publisher { Publisher::EFMAGAZIN }
+    fn url(&self) -> &str { &self.url }
+    fn path(&self) -> &str { &self.path }
+    fn page_to(&self) -> i32 { self.page_to }
 }
 
 pub struct EfMagazin;
