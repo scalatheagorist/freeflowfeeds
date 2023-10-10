@@ -7,7 +7,9 @@ hosts:
     url: "https://ef-magazin.de/"
     path: "?page="
   freiheitsfunken: "https://freiheitsfunken.info/"
-  misesde: "https://www.misesde.org/"
+  misesde:
+    url: "https://www.misesde.org/"
+    path: "?_page="
 
 max_concurrency: 8
 

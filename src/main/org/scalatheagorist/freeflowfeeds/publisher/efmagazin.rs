@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::{Publisher, PublisherModel};
+use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EfMagazinHost {
@@ -16,9 +16,9 @@ pub struct EfMagazinHost {
     path: String
 }
 
-impl EfMagazinHost {
-    pub fn with_pages(&self) -> Vec<(Publisher, String)> {
-        (1..=3) // todo
+impl PublisherHost for EfMagazinHost {
+    fn with_pages(&self, to: i32) -> Vec<(Publisher, String)> {
+        (1..=to)
             .collect::<Vec<i32>>()
             .into_iter()
             .map(|page| {
@@ -37,7 +37,7 @@ impl PublisherModel for EfMagazin {
 
         tokio_stream::iter(match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
-                error!("{}", err);
+                error!("rss transformation error at efmagazin {}", err);
                 vec![]
             },
             Ok(document) => {
