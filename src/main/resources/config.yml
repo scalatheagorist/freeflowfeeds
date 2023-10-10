@@ -7,7 +7,10 @@ hosts:
     url: "https://ef-magazin.de/"
     path: "?page="
     page_to: 10
-  freiheitsfunken: "https://freiheitsfunken.info/"
+  freiheitsfunken:
+    url: "https://freiheitsfunken.info/"
+    path: "?page="
+    page_to: 10
   misesde:
     url: "https://www.misesde.org/"
     path: "?_page="

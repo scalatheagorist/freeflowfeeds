@@ -1,14 +1,13 @@
 use std::time::Duration;
 use std::vec::IntoIter;
 
-use futures_util::StreamExt;
 use log::info;
 use tokio::time::{interval, Interval};
 use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
 use crate::core::{RedisClient, RedisConfig};
-use crate::publisher::{Publisher, RSSBuilder};
+use crate::publisher::RSSBuilder;
 use crate::services::HtmlScrapeService;
 
 #[derive(Clone)]

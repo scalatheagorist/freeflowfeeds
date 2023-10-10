@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use futures_util::StreamExt;
 use hyper::{Body, Response, StatusCode, Uri};
 use hyper::http::uri::InvalidUri;
 use log::warn;

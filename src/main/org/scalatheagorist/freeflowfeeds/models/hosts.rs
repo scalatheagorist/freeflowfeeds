@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::publisher::{EfMagazinHost, MisesDEHost, Publisher, PublisherHost};
+use crate::publisher::{EfMagazinHost, FreiheitsfunkenHost, MisesDEHost, Publisher, PublisherHost};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Hosts {
     efmagazin: EfMagazinHost,
-    freiheitsfunken: String,
+    freiheitsfunken: FreiheitsfunkenHost,
     misesde: MisesDEHost,
 }
 
@@ -14,11 +14,12 @@ impl Hosts {
         [
             vec![
                 (Publisher::EFMAGAZIN, self.efmagazin.url.clone()),
-                (Publisher::FREIHEITSFUNKEN, self.freiheitsfunken.clone()),
+                (Publisher::FREIHEITSFUNKEN, self.freiheitsfunken.url.clone()),
                 (Publisher::MISESDE, self.misesde.url.clone()),
             ],
             (self.efmagazin.with_pages()),
-            (self.misesde.with_pages())
+            (self.misesde.with_pages()),
+            (self.freiheitsfunken.with_pages())
         ].concat()
     }
 }

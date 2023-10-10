@@ -1,12 +1,16 @@
 use std::vec::IntoIter;
+
 use tokio_stream::Iter;
+
+pub use rss_builder::RSSBuilder;
+
 use crate::models::{HtmlResponse, RSSFeed};
 use crate::publisher::efmagazin::EfMagazin;
 pub use crate::publisher::efmagazin::EfMagazinHost;
-pub use crate::publisher::misesde::MisesDEHost;
 use crate::publisher::freiheitsfunken::Freiheitsfunken;
+pub use crate::publisher::freiheitsfunken::FreiheitsfunkenHost;
 use crate::publisher::misesde::MisesDE;
-pub use rss_builder::RSSBuilder;
+pub use crate::publisher::misesde::MisesDEHost;
 
 mod efmagazin;
 mod misesde;
@@ -37,5 +41,19 @@ trait PublisherModel {
 }
 
 pub trait PublisherHost {
-    fn with_pages(&self) -> Vec<(Publisher, String)>;
+    fn publisher(&self) -> Publisher;
+    fn url(&self) -> &str;
+    fn path(&self) -> &str;
+    fn page_to(&self) -> i32;
+
+    fn with_pages(&self) -> Vec<(Publisher, String)> {
+        (1..=self.page_to())
+            .collect::<Vec<i32>>()
+            .into_iter()
+            .map(|page| {
+                let uri: String = format!("{}{}{}", &self.url(), &self.path(), page);
+                (self.publisher(), uri)
+            })
+            .collect::<Vec<_>>()
+    }
 }
