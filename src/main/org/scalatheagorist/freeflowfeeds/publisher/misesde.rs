@@ -28,7 +28,6 @@ pub struct MisesDE {
 }
 
 impl MisesDE {
-    #[allow(dead_code)]
     pub fn new(uri_prefix: Option<&'static str>) -> MisesDE {
         MisesDE { uri_prefix }
     }
