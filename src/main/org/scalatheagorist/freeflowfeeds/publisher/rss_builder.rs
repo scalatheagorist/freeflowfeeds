@@ -73,46 +73,57 @@ impl RSSBuilder {
         <head>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             <style>
-                 .sticky-header {
-                     position: sticky;
-                     top: 0;
-                     z-index: 100;
-                     background-color: #ffb400 !important;
-                     margin-bottom: 20px;
-                 }
-                 .header {
-                     display: flex;
-                     align-items: center;
-                     justify-content: center;
-                     margin-bottom: -70px;
-                 }
-                 .logo {
-                     max-width: 160px;
-                     height: auto;
-                     margin-left: 20px;
-                 }
-                 h1.display-4 {
-                     font-size: 30px;
-                     margin-top: 10px;
-                 }
+                .sticky-header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 100;
+                    background-color: #ffb400 !important;
+                    margin-bottom: 20px;
+                }
+
+                .header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    margin-bottom: 0px;
+                }
+
+                .input-group {
+                    width: 100%;
+                    max-width: 400px;
+                }
+
+                .logo {
+                    max-width: 160px;
+                    height: auto;
+                    margin-right: 20%;
+                    margin-left: 9%;
+                }
+
                 #search-input {
                     width: 100%;
                     max-width: 400px;
-                    margin: 0 auto;
-                    margin-top: 30px;
-                    margin-bottom: 30px;
+                    margin: 0;
                 }
+
+                .input-group {
+                    width: 100%;
+                    max-width: 400px;
+                }
+
                 .card.mb-3 {
-                     background-color: #30311f !important;
-                     color: white !important;
-                     transform: translateY(0);
-                     transition: transform 0.3s ease, box-shadow 0.3s ease;
-                     box-shadow: none;
+                    background-color: #30311f !important;
+                    color: white !important;
+                    transform: translateY(0);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    box-shadow: none;
                 }
+
                 .card:hover {
-                  transform: translateY(-10px);
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    transform: translateY(-10px);
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 }
+
                 body {
                     background-color: #ffb400 !important;
                     color: black !important;
@@ -122,32 +133,57 @@ impl RSSBuilder {
                     background-size: cover;
                     opacity: 0.95;
                 }
+
                 a {
                     color: white;
                 }
+
+                a:hover {
+                    text-decoration: none;
+                    color: white;
+                    border: 2px solid transparent;
+                    transition: border-color 0.5s;
+                }
+
                 .btn {
                     background-color: #30311f !important;
+                }
+
+                .open-source-badge {
+                    position: fixed;
+                    bottom: 138px;
+                    right: -45px;
+                    background-color: #ffb400 !important;
+                    color: #000;
+                    padding: 20px 48px;
+                    border-radius: 5px;
+                    transform: rotate(-45deg);
+                    transform-origin: bottom right;
+                    font-size: 18px;
+                    line-height: 1;
+                    border: 2px solid #000;
                 }
             </style>
             <title>LibLit</title>
         </head>
         <body>
-            <div class="sticky-header">
-                <div class="header">
-                    <h1 class="display-4">Liberty Literature RSS</h1>
-                    <img src="https://image.nostr.build/5e5be4db1d0c17785d68d7f71e3df1998cd3ded47e45ccea06c24c70e908ee46.jpg" alt="Die Martkradikalen" class="logo">
-                </div>
-                 <div class="container text-center">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <form id="search-form" class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Ludwig von Mises" aria-label="Search" id="search-input">
-                            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">search</button>
-                        </form>
-                    </div>
+        <div class="sticky-header">
+            <div class="header">
+                <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
+                     alt="Die Martkradikalen" class="logo">
+                <div class="d-flex justify-content-center align-items-center">
+                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchFunction(); return false;">
+                        <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
+                               id="search-input">
+                    </form>
+                    <button class="btn btn-outline-light my-2 my-sm-0 ml-2" type="button" onclick="searchFunction()">Search
+                    </button>
                 </div>
             </div>
-            </div>
+        </div>
+        <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
+            100% Open Source
+        </a>
         "#.to_string() // <img src="https://image.nostr.build/5f7a0e8a7ea75e62774d90822d98c5a8168e2a6f75e33c710ebe48333c06680d.jpg" alt="Propaganda" class="logo">
     }
 
@@ -156,19 +192,18 @@ impl RSSBuilder {
         </body>
         </html>
         <script>
-        document.getElementById('search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            let searchTerm = document.getElementById('search-input').value.toLowerCase();
-            let cards = document.querySelectorAll('.card');
-            cards.forEach(function(card) {
-                let cardText = card.textContent.toLowerCase();
-                if (cardText.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
+            function searchFunction() {
+                let searchTerm = document.getElementById('search-input').value.toLowerCase();
+                let cards = document.querySelectorAll('.card');
+                cards.forEach(function(card) {
+                    let cardText = card.textContent.toLowerCase();
+                    if (cardText.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
         </script>
         "#.to_string()
     }
