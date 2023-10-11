@@ -13,9 +13,7 @@ you want to scrap the articles, the implementation must be done individually.
 
 ## TODOs 
 
-- scraping from all sites, once, initially
-- clean redis server
-- installation on self-hosted server
-- add docker compose script
+- another docker repo for rust
 - unit tests
 - AI driven HTML scraper
+- add conf tool

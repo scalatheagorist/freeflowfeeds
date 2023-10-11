@@ -18,7 +18,7 @@ use freeflowfeeds::utils::file_reader::FileReader;
 async fn main() {
     let _ = set_logging();
 
-    let config_path: Box<&Path> = Box::new(Path::new("./src/main/resources/config.yml"));
+    let config_path: Box<&Path> = Box::new(Path::new("./src/resources/config.yml"));
     let app_config: AppConfig =
         FileReader::from_yaml::<AppConfig>(config_path).expect("there is no config file");
     let rss_service = RSSService::new(app_config.clone());
