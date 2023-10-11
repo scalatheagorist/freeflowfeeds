@@ -1,0 +1,18 @@
+version: "3.0"
+services:
+  freeflowfeeds:
+    build:
+      context: .
+    ports:
+      - "0.0.0.0:8989:8989"
+    depends_on:
+      - SingleRedisNode
+
+  SingleRedisNode:
+    restart: always
+    image: redis:6.2.0
+    ports:
+      - "6379:6379"
+    environment:
+      - DEBUG=false
+    command: redis-server --notify-keyspace-events KEA

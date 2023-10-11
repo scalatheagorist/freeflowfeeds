@@ -129,12 +129,12 @@ impl RSSBuilder {
                     background-color: #30311f !important;
                 }
             </style>
-            <title>FreeFlowFeeds</title>
+            <title>LibLit</title>
         </head>
         <body>
             <div class="sticky-header">
                 <div class="header">
-                    <h1 class="display-4">Der FREIHEITliche RSS Feed </h1>
+                    <h1 class="display-4">Liberty Literature RSS</h1>
                     <img src="https://image.nostr.build/5e5be4db1d0c17785d68d7f71e3df1998cd3ded47e45ccea06c24c70e908ee46.jpg" alt="Die Martkradikalen" class="logo">
                 </div>
                  <div class="container text-center">

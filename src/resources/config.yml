@@ -1,25 +1,26 @@
 redis:
-  node_address: "127.0.0.1"
+  # node_address: "127.0.0.1"
+  node_address: "SingleRedisNode"
   port: 6379
 
 hosts:
   efmagazin:
     url: "https://ef-magazin.de/"
     path: "?page="
-    page_to: 3
+    page_to: 100
   freiheitsfunken:
     url: "https://freiheitsfunken.info/"
     path: "?page="
-    page_to: 3
+    page_to: 100
   misesde:
     url: "https://www.misesde.org/"
     path: "?_page="
-    page_to: 3
+    page_to: 100
 
 max_concurrency: 4
 
 httpserver:
-  address: "127.0.0.1"
+  address: "0.0.0.0"
   port: 8989
 
 publish_interval: 86400 # 24h
