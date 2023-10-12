@@ -15,24 +15,21 @@ impl RSSBuilder {
         let mut view: Vec<String> = vec![];
         let mut count = 0;
 
+        view.push("<div class=\"container\">".to_string());
+        view.push("<div class=\"custom-grid\">".to_string());
+
         while let Some(message) = messages.next().await {
-            if count % 2 == 0 {
-                view.push("<div class=\"container\">".to_string());
-                view.push("<div class=\"row\">".to_string());
-                view.push(self.generate_feeds(&message));
-            } else {
-                view.push(self.generate_feeds(&message));
-                view.push("</div>".to_string());
-                view.push("</div>".to_string());
-            }
-
+            view.push(self.generate_feeds(&message));
             count += 1;
+
+            if count % 2 == 0 {
+                view.push("</div>".to_string());
+                view.push("<div class=\"custom-grid\">".to_string());
+            }
         }
 
-        if count % 2 != 0 {
-            view.push("</div>".to_string());
-            view.push("</div>".to_string());
-        }
+        view.push("</div>".to_string());
+        view.push("</div>".to_string());
 
         stream.push(RSSBuilder::get_header_view());
         stream.extend(view);
@@ -46,6 +43,7 @@ impl RSSBuilder {
             .ok()
             .map(|json_obj| {
                 let mut item = vec![];
+                let mut link_global = "";
 
                 if let Some(author) = json_obj.get("author").and_then(|v| v.as_str()) {
                     item.push(format!("<p>{}</p>", author));
@@ -57,23 +55,25 @@ impl RSSBuilder {
                     }
 
                     if let Some(link) = article.get("link").and_then(|v| v.as_str()) {
+                        link_global = link;
                         item.push(format!("<p><strong>Link:</strong> <a href=\"{}\" target=\"_blank\">{}</a></p>", link, link));
                     }
                 }
 
-                item.join("")
+                let html = format!(r#"
+                   <div class="article-card">
+                       <div class="card mb-3 bg-primary text-white">
+                           <div class="card-body" onclick="window.open('{}', '_blank');" style="cursor: pointer;">
+                             {}
+                           </div>
+                       </div>
+                   </div>
+                   "#, link_global, item.join("")
+                );
+
+                html
             }) {
-            Some(content) => {
-                format!(r#"
-                <div class="col-md-6 article-card">
-                    <div class="card mb-3 bg-primary text-white">
-                        <div class="card-body">
-                            {}
-                        </div>
-                    </div>
-                </div>
-            "#, content)
-            },
+            Some(content) => content,
             None => "".to_string(),
         }
     }
@@ -91,6 +91,13 @@ impl RSSBuilder {
                     z-index: 100;
                     background-color: #ffb400 !important;
                     margin-bottom: 20px;
+                }
+
+                .custom-grid {
+                  display: grid;
+                  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+                  grid-gap: 20px;
+                  justify-content: start; /* Karten linksbündig anordnen */
                 }
 
                 .header {
@@ -202,7 +209,7 @@ impl RSSBuilder {
                 <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
                      alt="Die Martkradikalen" class="logo">
                 <div class="d-flex justify-content-center align-items-center">
-                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar(); return false;">
+                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
                         <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
                                id="search-input">
                     </form>
@@ -214,7 +221,7 @@ impl RSSBuilder {
         <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
             100% Open Source
         </a>
-        "#.to_string() // <img src="https://image.nostr.build/5f7a0e8a7ea75e62774d90822d98c5a8168e2a6f75e33c710ebe48333c06680d.jpg" alt="Propaganda" class="logo">
+        "#.to_string()
     }
 
     fn get_footer_view() -> String {
@@ -222,26 +229,34 @@ impl RSSBuilder {
         </body>
         </html>
         <script>
-            document.getElementById('search-input').addEventListener('keydown', function(event) {
-                if (event.key === 'Backspace' && this.value.trim() === '') {
-                    let cards = document.querySelectorAll('.card');
-                    cards.forEach(function(card) {
-                        card.style.display = 'block';
-                    });
-                }
+            document.getElementById('search-form').addEventListener('submit', function(event) {
+                event.preventDefault();
             });
-            function searchBar() {
-                let searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+            document.getElementById('search-input').addEventListener('input', function() {
+                let searchTerm = this.value.toLowerCase();
                 let cards = document.querySelectorAll('.card');
+                let anyVisible = false;
+
                 cards.forEach(function(card) {
                     let cardText = card.textContent.toLowerCase();
                     if (cardText.includes(searchTerm)) {
                         card.style.display = 'block';
+                        anyVisible = true;
                     } else {
                         card.style.display = 'none';
                     }
                 });
-            }
+
+                let customGrid = document.querySelector('.custom-grid');
+                customGrid.innerHTML = '';
+
+                cards.forEach(function(card) {
+                    if (anyVisible || card.style.display !== 'none') {
+                        customGrid.appendChild(card);
+                    }
+                });
+            });
         </script>
         "#.to_string()
     }

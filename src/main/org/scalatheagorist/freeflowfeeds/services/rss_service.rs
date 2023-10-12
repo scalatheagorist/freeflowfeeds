@@ -24,6 +24,7 @@ impl RSSService {
             app_config.clone().max_concurrency,
         );
         let rss_builder: RSSBuilder = RSSBuilder::new();
+
         RSSService { app_config, scape_service, rss_builder }
     }
 
@@ -31,6 +32,7 @@ impl RSSService {
         let config: RedisConfig = self.app_config.redis.clone();
         let result: Iter<IntoIter<String>> =
             RedisClient::lrange(&config, "articles".to_string()).await;
+
         self.rss_builder.build(result).await
     }
 
