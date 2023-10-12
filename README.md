@@ -7,7 +7,7 @@ At the moment, publishers (web pages with articles) are scraped according to the
 which means that each page has its own HTML structure and, accordingly, for the page from where
 you want to scrap the articles, the implementation must be done individually.
 
-![Landing page](./landing_new.png)
+![LibLit](./liblit.gif)
 
 ## Installation
 
