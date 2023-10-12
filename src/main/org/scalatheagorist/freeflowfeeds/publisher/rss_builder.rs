@@ -12,24 +12,26 @@ impl RSSBuilder {
 
     pub async fn build(&self, mut messages: Iter<IntoIter<String>>) -> Iter<IntoIter<String>> {
         let mut stream: Vec<String> = Vec::new();
-
         let mut view: Vec<String> = vec![];
+        let mut count = 0;
+
         while let Some(message) = messages.next().await {
-            view.push({
-                r#"
-                <div class="container">
-                <div class="card mb-3 bg-primary text-white">
-                <div class="card-body">
-                "#.to_string()
-            });
-            view.extend(self.generate_feeds(&message));
-            view.push({
-                r#"
-                </div>
-                </div>
-                </div>
-                "#.to_string()
-            });
+            if count % 2 == 0 {
+                view.push("<div class=\"container\">".to_string());
+                view.push("<div class=\"row\">".to_string());
+                view.push(self.generate_feeds(&message));
+            } else {
+                view.push(self.generate_feeds(&message));
+                view.push("</div>".to_string());
+                view.push("</div>".to_string());
+            }
+
+            count += 1;
+        }
+
+        if count % 2 != 0 {
+            view.push("</div>".to_string());
+            view.push("</div>".to_string());
         }
 
         stream.push(RSSBuilder::get_header_view());
@@ -39,19 +41,19 @@ impl RSSBuilder {
         tokio_stream::iter(stream)
     }
 
-    fn generate_feeds(&self, json_str: &str) -> Vec<String> {
+    fn generate_feeds(&self, json_str: &str) -> String {
         match serde_json::from_str::<HashMap<String, Value>>(json_str)
             .ok()
             .map(|json_obj| {
                 let mut item = vec![];
 
                 if let Some(author) = json_obj.get("author").and_then(|v| v.as_str()) {
-                    item.push(format!("<p><strong>Author:</strong> {}</p>", author));
+                    item.push(format!("<p>{}</p>", author));
                 }
 
                 if let Some(article) = json_obj.get("article") {
                     if let Some(title) = article.get("title").and_then(|v| v.as_str()) {
-                        item.push(format!("<p><strong>Title:</strong> {}</p>", title));
+                        item.push(format!("<p><span class=\"highlighttitle\">{}</span></p>", title));
                     }
 
                     if let Some(link) = article.get("link").and_then(|v| v.as_str()) {
@@ -59,10 +61,20 @@ impl RSSBuilder {
                     }
                 }
 
-                item
+                item.join("")
             }) {
-            Some(vec) => vec,
-            None => vec![]
+            Some(content) => {
+                format!(r#"
+                <div class="col-md-6 article-card">
+                    <div class="card mb-3 bg-primary text-white">
+                        <div class="card-body">
+                            {}
+                        </div>
+                    </div>
+                </div>
+            "#, content)
+            },
+            None => "".to_string(),
         }
     }
 
@@ -109,6 +121,24 @@ impl RSSBuilder {
                 .input-group {
                     width: 100%;
                     max-width: 400px;
+                }
+
+                .card {
+                    width: 100%;
+                    height: 200px;
+                }
+
+                .highlighttitle {
+                    font-weight: bold;
+                    font-style: italic;
+                }
+
+                .card a {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                    max-width: 100%;
                 }
 
                 .card.mb-3 {
@@ -172,7 +202,7 @@ impl RSSBuilder {
                 <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
                      alt="Die Martkradikalen" class="logo">
                 <div class="d-flex justify-content-center align-items-center">
-                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchFunction(); return false;">
+                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar(); return false;">
                         <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
                                id="search-input">
                     </form>
@@ -192,7 +222,15 @@ impl RSSBuilder {
         </body>
         </html>
         <script>
-            function searchFunction() {
+            document.getElementById('search-input').addEventListener('keydown', function(event) {
+                if (event.key === 'Backspace' && this.value.trim() === '') {
+                    let cards = document.querySelectorAll('.card');
+                    cards.forEach(function(card) {
+                        card.style.display = 'block';
+                    });
+                }
+            });
+            function searchBar() {
                 let searchTerm = document.getElementById('search-input').value.toLowerCase();
                 let cards = document.querySelectorAll('.card');
                 cards.forEach(function(card) {
