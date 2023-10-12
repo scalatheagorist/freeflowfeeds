@@ -79,12 +79,75 @@ impl RSSBuilder {
     }
 
     fn get_header_view() -> String {
-        r#"
+        format!(r#"
         <!DOCTYPE html>
         <html>
         <head>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-            <style>
+            {}
+            <title>LibLit</title>
+        </head>
+        <body>
+        <div class="sticky-header">
+            <div class="header">
+                <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
+                     alt="Die Martkradikalen" class="logo">
+                <div class="d-flex justify-content-center align-items-center">
+                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
+                        <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
+                               id="search-input">
+                    </form>
+                    <button class="btn btn-outline-light my-2 my-sm-0 ml-2" type="button" onclick="searchFunction()">Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
+            100% Open Source
+        </a>
+        "#, RSSBuilder::css()).to_string()
+    }
+
+    fn get_footer_view() -> String {
+        r#"
+        </body>
+        </html>
+        <script>
+            document.getElementById('search-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+            });
+
+            document.getElementById('search-input').addEventListener('input', function() {
+                let searchTerm = this.value.toLowerCase();
+                let cards = document.querySelectorAll('.card');
+                let anyVisible = false;
+
+                cards.forEach(function(card) {
+                    let cardText = card.textContent.toLowerCase();
+                    if (cardText.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        anyVisible = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                let customGrid = document.querySelector('.custom-grid');
+                customGrid.innerHTML = '';
+
+                cards.forEach(function(card) {
+                    if (anyVisible || card.style.display !== 'none') {
+                        customGrid.appendChild(card);
+                    }
+                });
+            });
+        </script>
+        "#.to_string()
+    }
+
+    fn css() -> String {
+        r#"
+         <style>
                 .sticky-header {
                     position: sticky;
                     top: 0;
@@ -201,63 +264,6 @@ impl RSSBuilder {
                     border: 2px solid #000;
                 }
             </style>
-            <title>LibLit</title>
-        </head>
-        <body>
-        <div class="sticky-header">
-            <div class="header">
-                <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
-                     alt="Die Martkradikalen" class="logo">
-                <div class="d-flex justify-content-center align-items-center">
-                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
-                        <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
-                               id="search-input">
-                    </form>
-                    <button class="btn btn-outline-light my-2 my-sm-0 ml-2" type="button" onclick="searchFunction()">Search
-                    </button>
-                </div>
-            </div>
-        </div>
-        <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
-            100% Open Source
-        </a>
-        "#.to_string()
-    }
-
-    fn get_footer_view() -> String {
-        r#"
-        </body>
-        </html>
-        <script>
-            document.getElementById('search-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-            });
-
-            document.getElementById('search-input').addEventListener('input', function() {
-                let searchTerm = this.value.toLowerCase();
-                let cards = document.querySelectorAll('.card');
-                let anyVisible = false;
-
-                cards.forEach(function(card) {
-                    let cardText = card.textContent.toLowerCase();
-                    if (cardText.includes(searchTerm)) {
-                        card.style.display = 'block';
-                        anyVisible = true;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                let customGrid = document.querySelector('.custom-grid');
-                customGrid.innerHTML = '';
-
-                cards.forEach(function(card) {
-                    if (anyVisible || card.style.display !== 'none') {
-                        customGrid.appendChild(card);
-                    }
-                });
-            });
-        </script>
         "#.to_string()
     }
 }
