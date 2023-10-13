@@ -85,6 +85,7 @@ impl RSSBuilder {
         <head>
             <link rel="icon" href="https://image.nostr.build/0dde81d203685372a5228eda585bc169c6aad83b5c7491b89988042774f98593.png" type="image/png">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
             {}
             <title>LibLit</title>
         </head>
@@ -269,6 +270,13 @@ impl RSSBuilder {
                     opacity: 0.95;
                     font-size: 16px;
                     line-height: 1.5;
+                }
+
+                @media (max-width: 768px) {
+                    body {
+                        background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
+                        font-size: 14px;
+                    }
                 }
 
                 a {
