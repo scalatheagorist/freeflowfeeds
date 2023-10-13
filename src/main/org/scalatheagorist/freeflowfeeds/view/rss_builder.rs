@@ -91,8 +91,10 @@ impl RSSBuilder {
         <body>
         <div class="sticky-header">
             <div class="header">
-                <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
-                     alt="Die Martkradikalen" class="logo">
+                <a href="https://www.die-marktradikalen.de/" target="_blank" class="logo-link">
+                    <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
+                         alt="Die Marktradikalen" class="logo">
+                </a>
                 <div class="d-flex justify-content-center align-items-center">
                     <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
                         <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
@@ -201,6 +203,10 @@ impl RSSBuilder {
 
                 .logo {
                     max-width: 160px;
+                }
+
+                .logo-link {
+                    max-width: 160px;
                     height: auto;
                     margin-right: 27%;
                     margin-left: 3%;
@@ -261,6 +267,8 @@ impl RSSBuilder {
                     background-attachment: fixed;
                     background-size: cover;
                     opacity: 0.95;
+                    font-size: 16px;
+                    line-height: 1.5;
                 }
 
                 a {
@@ -276,6 +284,8 @@ impl RSSBuilder {
 
                 .btn {
                     background-color: #30311f !important;
+                    padding: 10px 20px;
+                    font-size: 18px;
                 }
 
                 .open-source-badge {
