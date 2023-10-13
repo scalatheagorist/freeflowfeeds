@@ -12,7 +12,7 @@ use crate::models::RSSFeed;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RedisConfig {
-    node_address: String,
+    pub node_address: String,
     port: i32,
 }
 

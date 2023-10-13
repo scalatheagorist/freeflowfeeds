@@ -14,7 +14,7 @@ use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 pub struct FreiheitsfunkenHost {
     pub(crate) url: String,
     path: String,
-    page_to: i32
+    pub page_to: i32
 }
 
 impl PublisherHost for FreiheitsfunkenHost {

@@ -5,6 +5,14 @@ services:
       context: .
     ports:
       - "0.0.0.0:8989:8989"
+    environment:
+      - FFF_REDIS_HOST=SingleRedisNode
+      - FFF_SERVER_HOST=0.0.0.0
+      - FFF_MAX_CONCURRENCY=8
+      - FFF_PUBLISH_INTERVAL=86400 # = 24h
+      - FFF_EFMAGAZIN_PAGE_TO=5
+      - FFF_FREIHEITSFUNKEN_PAGE_TO=5
+      - FFF_MISESDE_PAGE_TO=5
     depends_on:
       - SingleRedisNode
 

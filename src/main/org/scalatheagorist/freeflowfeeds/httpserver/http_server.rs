@@ -15,7 +15,7 @@ use crate::utils::headers::{Headers, HeaderType};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HttpServerConfig {
-    address: String,
+    pub address: String,
     port: i32,
 }
 
