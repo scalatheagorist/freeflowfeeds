@@ -83,6 +83,7 @@ impl RSSBuilder {
         <!DOCTYPE html>
         <html>
         <head>
+            <link rel="icon" href="https://image.nostr.build/0dde81d203685372a5228eda585bc169c6aad83b5c7491b89988042774f98593.png" type="image/png">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             {}
             <title>LibLit</title>
