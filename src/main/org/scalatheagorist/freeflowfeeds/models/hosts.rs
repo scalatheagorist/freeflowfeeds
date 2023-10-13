@@ -18,7 +18,7 @@ impl Hosts {
                 (Publisher::MISESDE, self.misesde.url.clone())
             ];
 
-        let mut publishers_with_pages = vec![
+        let mut publishers_with_pages: Vec<(Publisher, String)> = vec![
             (self.efmagazin.with_pages()),
             (self.misesde.with_pages()),
             (self.freiheitsfunken.with_pages())
