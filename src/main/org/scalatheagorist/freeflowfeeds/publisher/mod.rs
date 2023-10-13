@@ -2,8 +2,6 @@ use std::vec::IntoIter;
 
 use tokio_stream::Iter;
 
-pub use rss_builder::RSSBuilder;
-
 use crate::models::{HtmlResponse, RSSFeed};
 use crate::publisher::efmagazin::EfMagazin;
 pub use crate::publisher::efmagazin::EfMagazinHost;
@@ -15,7 +13,6 @@ pub use crate::publisher::misesde::MisesDEHost;
 mod efmagazin;
 mod misesde;
 mod freiheitsfunken;
-pub mod rss_builder;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Publisher {

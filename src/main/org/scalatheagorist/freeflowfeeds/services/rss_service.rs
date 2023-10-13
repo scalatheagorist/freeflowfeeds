@@ -7,7 +7,7 @@ use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
 use crate::core::{RedisClient, RedisConfig};
-use crate::publisher::RSSBuilder;
+use crate::view::RSSBuilder;
 use crate::services::HtmlScrapeService;
 
 #[derive(Clone)]

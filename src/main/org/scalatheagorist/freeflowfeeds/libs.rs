@@ -12,3 +12,4 @@ pub mod services;
 pub mod models;
 pub mod publisher;
 pub mod httpserver;
+pub mod view;
