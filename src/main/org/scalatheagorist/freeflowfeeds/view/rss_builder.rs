@@ -277,6 +277,18 @@ impl RSSBuilder {
                         background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
                         font-size: 14px;
                     }
+                    .logo {
+                        max-width: 120px;
+                    }
+                    .logo-link {
+                        max-width: 120px;
+                        margin-right: 10%;
+                        margin-left: 2%;
+                    }
+                    .lightning-logo {
+                        max-width: 30px;
+                        margin-left: 10%;
+                    }
                 }
 
                 a {
