@@ -13,7 +13,7 @@ use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 pub struct MisesDEHost {
     pub(crate) url: String,
     path: String,
-    page_to: i32
+    pub page_to: i32
 }
 
 impl PublisherHost for MisesDEHost {

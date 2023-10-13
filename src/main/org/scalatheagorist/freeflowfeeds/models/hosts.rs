@@ -4,9 +4,9 @@ use crate::publisher::{EfMagazinHost, FreiheitsfunkenHost, MisesDEHost, Publishe
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Hosts {
-    efmagazin: EfMagazinHost,
-    freiheitsfunken: FreiheitsfunkenHost,
-    misesde: MisesDEHost,
+    pub efmagazin: EfMagazinHost,
+    pub freiheitsfunken: FreiheitsfunkenHost,
+    pub misesde: MisesDEHost,
 }
 
 impl Hosts {

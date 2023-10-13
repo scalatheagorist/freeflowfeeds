@@ -13,7 +13,6 @@ you want to scrap the articles, the implementation must be done individually.
 
 ## TODOs 
 
-- another docker repo for rust
+- another docker image instead of rust
 - unit tests
 - AI driven HTML scraper
-- add conf tool
