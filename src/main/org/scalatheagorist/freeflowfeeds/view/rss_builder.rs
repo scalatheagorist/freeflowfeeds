@@ -13,10 +13,10 @@ impl RSSBuilder {
     pub async fn build(&self, mut messages: Iter<IntoIter<String>>) -> Iter<IntoIter<String>> {
         let mut stream: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
-        let mut count = 0;
+        let mut count: i32 = 0;
 
-        view.push("<div class=\"container\">".to_string());
-        view.push("<div class=\"custom-grid\">".to_string());
+        view.push(r#"<div class="container grid-container">"#.to_string());
+        view.push(r#"<div class="custom-grid">"#.to_string());
 
         while let Some(message) = messages.next().await {
             view.push(self.generate_feeds(&message));
@@ -24,7 +24,7 @@ impl RSSBuilder {
 
             if count % 2 == 0 {
                 view.push("</div>".to_string());
-                view.push("<div class=\"custom-grid\">".to_string());
+                view.push(r#"<div class="custom-grid">"#.to_string());
             }
         }
 
@@ -42,8 +42,8 @@ impl RSSBuilder {
         match serde_json::from_str::<HashMap<String, Value>>(json_str)
             .ok()
             .map(|json_obj| {
-                let mut item = vec![];
-                let mut link_global = "";
+                let mut item: Vec<String> = vec![];
+                let mut link_global: &str = "";
 
                 if let Some(author) = json_obj.get("author").and_then(|v| v.as_str()) {
                     item.push(format!("<p>{}</p>", author));
@@ -51,16 +51,16 @@ impl RSSBuilder {
 
                 if let Some(article) = json_obj.get("article") {
                     if let Some(title) = article.get("title").and_then(|v| v.as_str()) {
-                        item.push(format!("<p><span class=\"highlight-title\">{}</span></p>", title));
+                        item.push(format!(r#"<p><span class="highlight-title">{}</span></p>"#, title));
                     }
 
                     if let Some(link) = article.get("link").and_then(|v| v.as_str()) {
                         link_global = link;
-                        item.push(format!("<p><strong>Link:</strong> <a href=\"{}\" target=\"_blank\">{}</a></p>", link, link));
+                        item.push(format!(r#"<p><strong>Link:</strong> <a href="{}" target="_blank">{}</a></p>"#, link, link));
                     }
                 }
 
-                let html = format!(r#"
+                let html: String = format!(r#"
                    <div class="article-card">
                        <div class="card mb-3 bg-primary text-white">
                            <div class="card-body" onclick="window.open('{}', '_blank');" style="cursor: pointer;">
@@ -90,35 +90,31 @@ impl RSSBuilder {
             <title>LibLit</title>
         </head>
         <body>
-        <div class="sticky-header">
-            <div class="header">
-                <a href="https://www.die-marktradikalen.de/" target="_blank" class="logo-link">
-                    <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
-                         alt="Die Marktradikalen" class="logo">
+            <nav class="navbar navbar-expand-lg navbar-light bg-primary fixed-top">
+                <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
+                    <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png" alt="Die Marktradikalen" class="logo">
                 </a>
-                <div class="d-flex justify-content-center align-items-center">
-                    <form id="search-form" class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
-                        <input class="form-control" type="search" placeholder="Ludwig von Mises" aria-label="Search"
-                               id="search-input">
-                    </form>
-                    <button class="btn btn-outline-light my-2 my-sm-0 ml-2" type="button" onclick="searchFunction()">Search
-                    </button>
-                </div>
-                <img src="https://image.nostr.build/49cbc4cf13bce1e994b2202ace5b18e733fadbe36601e4079cbaaa65678eae1d.png"
-                     alt="donate in blitz" class="lightning-logo" data-toggle="modal" data-target="#donation">
-                <div class="modal fade" id="donation" tabindex="-1" aria-labelledby="#donationmodallabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header"><strong>lightning donation</strong></div>
-                            <div class="modal-body text-center">
-                                {}
-                                <p>scalanakamoto@getalby.com</p>
-                            </div>
-                        </div>
+                <form class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
+                    <input class="form-control" type="search" placeholder="Suche..." aria-label="Search" id="search-input">
+                </form>
+                 <div class="ml-auto">
+                 <div class="donate-container">
+                         <img src="https://image.nostr.build/49cbc4cf13bce1e994b2202ace5b18e733fadbe36601e4079cbaaa65678eae1d.png"
+                              alt="Donate Image" class="lightning-logo" data-toggle="modal" data-target="#donation">
+                     </div>
+                 </div>
+            </nav>
+            <div class="modal fade" id="donation" tabindex="-1" aria-labelledby="#donationmodallabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header"><strong>lightning donation</strong></div>
+                    <div class="modal-body text-center">
+                        {}
+                        <p>scalanakamoto@getalby.com</p>
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
         <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
             100% Open Source
         </a>
@@ -141,60 +137,68 @@ impl RSSBuilder {
 
     fn js() -> String {
         r#"
-            document.getElementById('search-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-            });
+        function initializeNavbar() {
+            const searchForm = document.querySelector('.navbar .form-inline');
+            const searchInput = document.querySelector('.navbar #search-input');
 
-            document.getElementById('search-input').addEventListener('input', function() {
-                let searchTerm = this.value.toLowerCase();
-                let cards = document.querySelectorAll('.card');
-                let anyVisible = false;
-
-                cards.forEach(function(card) {
-                    let cardText = card.textContent.toLowerCase();
-                    if (cardText.includes(searchTerm)) {
-                        card.style.display = 'block';
-                        anyVisible = true;
-                    } else {
-                        card.style.display = 'none';
-                    }
+            if (searchForm && searchInput) {
+                searchForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    searchFunction(searchInput.value);
                 });
 
-                let customGrid = document.querySelector('.custom-grid');
-                customGrid.innerHTML = '';
+                searchInput.addEventListener('input', function () {
+                    let searchTerm = this.value.toLowerCase();
+                    let cards = document.querySelectorAll('.card');
+                    let anyVisible = false;
 
-                cards.forEach(function(card) {
-                    if (anyVisible || card.style.display !== 'none') {
-                        customGrid.appendChild(card);
-                    }
+                    cards.forEach(function (card) {
+                        let cardText = card.textContent.toLowerCase();
+                        if (cardText.includes(searchTerm)) {
+                            card.style.display = 'block';
+                            anyVisible = true;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    let customGrid = document.querySelector('.custom-grid');
+                    customGrid.innerHTML = '';
+
+                    cards.forEach(function (card) {
+                        if (anyVisible || card.style.display !== 'none') {
+                            customGrid.appendChild(card);
+                        }
+                    });
                 });
-            });
+            }
+        }
+
+        function searchFunction(searchTerm) {
+            alert('Suche nach: ' + searchTerm);
+        }
+
+        window.addEventListener('load', initializeNavbar);
         "#.to_string()
     }
 
     fn css() -> String {
         r#"
          <style>
-                .sticky-header {
-                    position: sticky;
-                    top: 0;
-                    z-index: 100;
+                .navbar {
                     background-color: #ffb400 !important;
-                    margin-bottom: 20px;
+                }
+
+                .grid-container {
+                    margin-top: 7%;
                 }
 
                 .custom-grid {
                   display: grid;
                   grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-                  grid-gap: 20px;
-                  justify-content: start; /* Karten linksbündig anordnen */
-                }
-
-                .header {
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    margin-bottom: 0px;
+                  grid-gap: 10px;
+                  justify-content: start;
+                  margin-top: 1%
                 }
 
                 .input-group {
@@ -216,7 +220,6 @@ impl RSSBuilder {
                 .lightning-logo {
                     max-width: 50px;
                     height: auto;
-                    margin-left: 30%;
                 }
 
                 #search-input {
@@ -273,6 +276,10 @@ impl RSSBuilder {
                 }
 
                 @media (max-width: 768px) {
+                    .grid-container {
+                        margin-top: 30%;
+                    }
+
                     body {
                         background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
                         font-size: 14px;
@@ -286,8 +293,25 @@ impl RSSBuilder {
                         margin-left: 2%;
                     }
                     .lightning-logo {
-                        max-width: 30px;
-                        margin-left: 10%;
+                        max-width: 50px;
+                        height: auto;
+                    }
+
+                    .custom-grid {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+                      grid-gap: 10px;
+                      justify-content: start;
+                      margin-top: 1%
+                    }
+
+                    .lightning {
+                        margin-left: 30%;
+                        background-color: #ffb400 !important;
+                    }
+                    .card {
+                        max-width: 97%;
+                        margin-bottom: 20px;
                     }
                 }
 
