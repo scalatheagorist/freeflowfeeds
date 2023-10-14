@@ -13,6 +13,5 @@ you want to scrap the articles, the implementation must be done individually.
 
 ## TODOs 
 
-- another docker image instead of rust
 - unit tests
 - AI driven HTML scraper
