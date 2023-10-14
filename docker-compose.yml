@@ -10,9 +10,9 @@ services:
       - FFF_SERVER_HOST=0.0.0.0
       - FFF_MAX_CONCURRENCY=8
       - FFF_PUBLISH_INTERVAL=86400 # = 24h
-      - FFF_EFMAGAZIN_PAGE_TO=5
-      - FFF_FREIHEITSFUNKEN_PAGE_TO=5
-      - FFF_MISESDE_PAGE_TO=5
+      - FFF_EFMAGAZIN_PAGE_TO=3
+      - FFF_FREIHEITSFUNKEN_PAGE_TO=3
+      - FFF_MISESDE_PAGE_TO=3
     depends_on:
       - SingleRedisNode
 
@@ -23,4 +23,15 @@ services:
       - "6379:6379"
     environment:
       - DEBUG=false
+    #volumes:
+    #  - /mnt/ssd/redisdump/data/:/data
     command: redis-server --notify-keyspace-events KEA
+
+  #nginx:
+  #  image: nginx:latest
+  #  ports:
+  #    - "80:80"
+  #    - "443:443"
+  #  volumes:
+  #    - /etc/nginx/conf.d:/etc/nginx/conf.d
+  #    - /ssl/liblit/:/ssl/liblit/

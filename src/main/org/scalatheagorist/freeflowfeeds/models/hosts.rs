@@ -11,7 +11,7 @@ pub struct Hosts {
 
 impl Hosts {
     pub fn as_publisher(&self) -> Vec<(Publisher, String)> {
-        let mut publishers: Vec<(Publisher, String)> =
+        let publishers: Vec<(Publisher, String)> =
             vec![
                 (Publisher::EFMAGAZIN, self.efmagazin.url.clone()),
                 (Publisher::FREIHEITSFUNKEN, self.freiheitsfunken.url.clone()),
