@@ -1,5 +1,7 @@
 # FreeFlowFeeds
 
+*This project was initiated mainly for learning purposes.*
+
 Free Flow Feeds is an article scraper that gets a collection of articles in parallel from selected websites
 representing freedom, which you can access in an RSS feed.
 
@@ -7,7 +9,10 @@ At the moment, publishers (web pages with articles) are scraped according to the
 which means that each page has its own HTML structure and, accordingly, for the page from where
 you want to scrap the articles, the implementation must be done individually.
 
-liblit.org: ![liblit.org](./liblit.gif)
+
+liblit.org:
+
+![liblit.org](./liblit.gif)
 
 ## TODOs 
 
