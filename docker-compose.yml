@@ -1,6 +1,7 @@
 version: "3.0"
 services:
   freeflowfeeds:
+    restart: always
     build:
       context: .
     ports:
@@ -23,11 +24,12 @@ services:
       - "6379:6379"
     environment:
       - DEBUG=false
-    #volumes:
-    #  - /<yourpath>/data/:/data
+    volumes:
+      - /<yourpath>/data/:/data
     command: redis-server --notify-keyspace-events KEA
 
   #nginx:
+  #  restart: always
   #  image: nginx:latest
   #  ports:
   #    - "80:80"
