@@ -18,13 +18,13 @@ services:
 
   SingleRedisNode:
     restart: always
-    image: redis:6.2.0
+    image: redis:7.2.1
     ports:
       - "6379:6379"
     environment:
       - DEBUG=false
     #volumes:
-    #  - /mnt/ssd/redisdump/data/:/data
+    #  - /<yourpath>/data/:/data
     command: redis-server --notify-keyspace-events KEA
 
   #nginx:

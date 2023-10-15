@@ -58,7 +58,7 @@ impl HttpServer {
                                     .body(Body::from(HttpServer::ENDPOINT_PULL_ARTICLES))
                             }
                             HttpServer::ENDPOINT_PULL_ARTICLES => {
-                                info!("request to {}", HttpServer::ENDPOINT_PULL_ARTICLES);
+                                info!("request to {:?}", req.headers());
                                 let iterator: Iter<IntoIter<String>> = rss_service.pull().await;
                                 let stream =
                                     iterator.map(|result| {
