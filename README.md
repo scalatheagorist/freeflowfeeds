@@ -7,12 +7,11 @@ At the moment, publishers (web pages with articles) are scraped according to the
 which means that each page has its own HTML structure and, accordingly, for the page from where
 you want to scrap the articles, the implementation must be done individually.
 
-![LibLit](./liblit.gif)
-
-## Installation
+liblit.org: ![liblit.org](./liblit.gif)
 
 ## TODOs 
 
+- rebuild with https://rocket.rs/
 - unit tests
 - AI driven HTML scraper
 - (changelog)
