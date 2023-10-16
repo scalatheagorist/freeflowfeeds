@@ -1,13 +1,15 @@
+use core::hash::Hash;
 use std::fmt;
+
 use hyper::body::Bytes;
 use serde::{Deserialize, Serialize};
 
 use crate::models::Article;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub struct RSSFeed {
-    author: String,
-    article: Article,
+    pub author: String,
+    pub article: Article,
 }
 
 impl RSSFeed {
@@ -16,10 +18,6 @@ impl RSSFeed {
         article: Article,
     ) -> Self {
         RSSFeed { author, article }
-    }
-
-    pub fn reads(json: Bytes) -> serde_json::Result<RSSFeed> {
-        serde_json::from_slice::<RSSFeed>(&*json)
     }
 
     pub fn writes(&self) -> serde_json::Result<String> {

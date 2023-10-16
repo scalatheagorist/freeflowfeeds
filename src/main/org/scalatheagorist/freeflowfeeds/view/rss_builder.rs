@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use std::vec::IntoIter;
 
-use serde_json::Value;
 use tokio_stream::{Iter, StreamExt};
+
+use crate::models::RSSFeed;
 
 #[derive(Clone)]
 pub struct RSSBuilder;
@@ -10,7 +10,7 @@ pub struct RSSBuilder;
 impl RSSBuilder {
     pub fn new() -> Self { RSSBuilder }
 
-    pub async fn build(&self, mut messages: Iter<IntoIter<String>>) -> Iter<IntoIter<String>> {
+    pub async fn build(&self, mut messages: Iter<IntoIter<RSSFeed>>) -> Iter<IntoIter<String>> {
         let mut stream: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
         let mut count: i32 = 0;
@@ -19,7 +19,7 @@ impl RSSBuilder {
         view.push(r#"<div class="custom-grid">"#.to_string());
 
         while let Some(message) = messages.next().await {
-            view.push(self.generate_feeds(&message));
+            view.push(self.generate_feeds(message));
             count += 1;
 
             if count % 2 == 0 {
@@ -38,29 +38,18 @@ impl RSSBuilder {
         tokio_stream::iter(stream)
     }
 
-    fn generate_feeds(&self, json_str: &str) -> String {
-        match serde_json::from_str::<HashMap<String, Value>>(json_str)
-            .ok()
-            .map(|json_obj| {
-                let mut item: Vec<String> = vec![];
-                let mut link_global: &str = "";
+    fn generate_feeds(&self, rss_feed: RSSFeed) -> String {
+        let mut item: Vec<String> = vec![];
 
-                if let Some(author) = json_obj.get("author").and_then(|v| v.as_str()) {
-                    item.push(format!("<p>{}</p>", author));
-                }
+        item.push(format!("<p>{}</p>", rss_feed.clone().author));
 
-                if let Some(article) = json_obj.get("article") {
-                    if let Some(title) = article.get("title").and_then(|v| v.as_str()) {
-                        item.push(format!(r#"<p><span class="highlight-title">{}</span></p>"#, title));
-                    }
+        item.push(format!(r#"<p><span class="highlight-title">{}</span></p>"#, rss_feed.clone().article.title));
 
-                    if let Some(link) = article.get("link").and_then(|v| v.as_str()) {
-                        link_global = link;
-                        item.push(format!(r#"<p><strong>Link:</strong> <a href="{}" target="_blank">{}</a></p>"#, link, link));
-                    }
-                }
+        let binding = rss_feed.clone();
+        let link_global = &(binding.article.link);
+        item.push(format!(r#"<p><strong>Link:</strong> <a href="{}" target="_blank">{}</a></p>"#, link_global, link_global));
 
-                let html: String = format!(r#"
+        let html: String = format!(r#"
                    <div class="article-card">
                        <div class="card mb-3 bg-primary text-white">
                            <div class="card-body" onclick="window.open('{}', '_blank');" style="cursor: pointer;">
@@ -69,13 +58,9 @@ impl RSSBuilder {
                        </div>
                    </div>
                    "#, link_global, item.join("")
-                );
+        );
 
-                html
-            }) {
-            Some(content) => content,
-            None => "".to_string(),
-        }
+        html
     }
 
     fn get_header_view() -> String {

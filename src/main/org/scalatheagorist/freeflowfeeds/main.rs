@@ -52,7 +52,7 @@ fn get_app_config() -> AppConfig {
         }
     }
 
-    app_config.redis.node_address = get_env_var_or_default("FFF_REDIS_HOST", app_config.redis.node_address.clone());
+    app_config.fs.path = get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
     app_config.httpserver.address = get_env_var_or_default("FFF_SERVER_HOST", app_config.httpserver.address.clone());
     app_config.max_concurrency = get_env_var_or_default("FFF_MAX_CONCURRENCY", app_config.max_concurrency.clone());
     app_config.publish_interval = get_env_var_or_default("FFF_PUBLISH_INTERVAL", app_config.publish_interval.clone());

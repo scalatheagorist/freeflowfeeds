@@ -7,7 +7,7 @@ use map_for::FlatMap;
 use tokio::spawn;
 use tokio::task::JoinHandle;
 
-use crate::core::{RedisClient, RedisConfig};
+use crate::core::{FileStoreClient, FileStoreConfig};
 use crate::HttpClient;
 use crate::models::HtmlResponse;
 use crate::publisher::Publisher;
@@ -19,12 +19,14 @@ pub struct HtmlScrapeService {
     hosts: Vec<(Publisher, String)>,
     max_concurrency: i32,
     headers: Vec<(String, String)>,
+    file_suffix: String
 }
 
 impl HtmlScrapeService {
     pub fn new(
         hosts: Vec<(Publisher, String)>,
         max_concurrency: i32,
+        file_suffix: String
     ) -> Self {
         let http_client: HttpClient = HttpClient::new();
         let header_content_type: Vec<(String, String)> =
@@ -39,10 +41,10 @@ impl HtmlScrapeService {
                 .collect::<Vec<_>>();
         let headers: Vec<(String, String)> = [header_content_type, header_accept_type].concat();
 
-        HtmlScrapeService { http_client, hosts, max_concurrency, headers }
+        HtmlScrapeService { http_client, hosts, max_concurrency, headers, file_suffix }
     }
 
-    pub async fn run(&self, redis: RedisConfig) {
+    pub async fn run(&self, redis: FileStoreConfig) {
         for chunk in self.hosts.chunks(self.max_concurrency as usize) {
             let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
                 chunk
@@ -59,12 +61,13 @@ impl HtmlScrapeService {
                     .collect::<Vec<_>>();
 
             for rss in chunk_responses {
-                let config: RedisConfig = redis.clone();
+                let config: FileStoreConfig = redis.clone();
+                let suffix: String = self.file_suffix.clone();
                 spawn(async move {
-                    RedisClient::rpush_distinct(
+                    FileStoreClient::save_in_dir(
                         &config,
-                        "articles",
                         Publisher::get_rss(rss),
+                        suffix
                     ).await
                 });
             }

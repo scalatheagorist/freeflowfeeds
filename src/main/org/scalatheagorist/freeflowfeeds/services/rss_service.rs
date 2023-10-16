@@ -6,9 +6,10 @@ use tokio::time::{interval, Interval};
 use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
-use crate::core::{RedisClient, RedisConfig};
-use crate::view::RSSBuilder;
+use crate::core::{FileStoreClient, FileStoreConfig};
+use crate::models::RSSFeed;
 use crate::services::HtmlScrapeService;
+use crate::view::RSSBuilder;
 
 #[derive(Clone)]
 pub struct RSSService {
@@ -22,6 +23,7 @@ impl RSSService {
         let scape_service: HtmlScrapeService = HtmlScrapeService::new(
             app_config.clone().hosts.as_publisher(),
             app_config.clone().max_concurrency,
+            app_config.clone().fs.suffix
         );
         let rss_builder: RSSBuilder = RSSBuilder::new();
 
@@ -29,9 +31,8 @@ impl RSSService {
     }
 
     pub async fn pull(&self) -> Iter<IntoIter<String>> {
-        let config: RedisConfig = self.app_config.redis.clone();
-        let result: Iter<IntoIter<String>> =
-            RedisClient::lrange(&config, "articles".to_string()).await;
+        let config: FileStoreConfig = self.app_config.fs.clone();
+        let result: Iter<IntoIter<RSSFeed>> = FileStoreClient::load_from_dir(&config).await;
 
         self.rss_builder.build(result).await
     }
@@ -47,6 +48,6 @@ impl RSSService {
     }
 
     async fn _push(&self) -> () {
-        self.scape_service.run(self.app_config.clone().redis).await
+        self.scape_service.run(self.app_config.clone().fs).await
     }
 }
