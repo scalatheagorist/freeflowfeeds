@@ -7,7 +7,7 @@ services:
     ports:
       - "0.0.0.0:8989:8989"
     environment:
-      - FFF_FS_PATH="./data"
+      - FFF_FS_PATH="/root/freeflowfeeds/data"
       - FFF_SERVER_HOST=0.0.0.0
       - FFF_MAX_CONCURRENCY=3
       - FFF_PUBLISH_INTERVAL=14400 # 4h

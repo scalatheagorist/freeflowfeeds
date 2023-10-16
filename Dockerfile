@@ -9,6 +9,7 @@ RUN apt install build-essential -y
 
 WORKDIR /app
 
+COPY ./data ./data
 COPY ./src/main ./src/main
 COPY ./src/resources/config.yml ./src/resources/config.yml
 COPY ./Cargo.toml .
