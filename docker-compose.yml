@@ -6,8 +6,10 @@ services:
       context: .
     ports:
       - "0.0.0.0:8989:8989"
+    volumes:
+      - /root/freeflowfeeds/data:/app/data
     environment:
-      - FFF_FS_PATH="/root/freeflowfeeds/data"
+      - FFF_FS_PATH=/app/data
       - FFF_SERVER_HOST=0.0.0.0
       - FFF_MAX_CONCURRENCY=3
       - FFF_PUBLISH_INTERVAL=14400 # 4h
