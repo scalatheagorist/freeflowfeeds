@@ -7,33 +7,20 @@ services:
     ports:
       - "0.0.0.0:8989:8989"
     environment:
-      - FFF_REDIS_HOST=SingleRedisNode
+      - FFF_FS_PATH="./data"
       - FFF_SERVER_HOST=0.0.0.0
-      - FFF_MAX_CONCURRENCY=8
-      - FFF_PUBLISH_INTERVAL=86400 # = 24h
-      - FFF_EFMAGAZIN_PAGE_TO=3
-      - FFF_FREIHEITSFUNKEN_PAGE_TO=3
-      - FFF_MISESDE_PAGE_TO=3
-    depends_on:
-      - SingleRedisNode
+      - FFF_MAX_CONCURRENCY=3
+      - FFF_PUBLISH_INTERVAL=14400 # 4h
+      - FFF_EFMAGAZIN_PAGE_TO=2
+      - FFF_FREIHEITSFUNKEN_PAGE_TO=2
+      - FFF_MISESDE_PAGE_TO=2
 
-  SingleRedisNode:
-    restart: always
-    image: redis:7.2.1
+  nginx:
+    image: nginx:latest
     ports:
-      - "6379:6379"
-    environment:
-      - DEBUG=false
+      - "80:80"
+      - "443:443"
+    restart: always
     volumes:
-      - /<yourpath>/data/:/data
-    command: redis-server --notify-keyspace-events KEA
-
-  #nginx:
-  #  restart: always
-  #  image: nginx:latest
-  #  ports:
-  #    - "80:80"
-  #    - "443:443"
-  #  volumes:
-  #    - /etc/nginx/conf.d:/etc/nginx/conf.d
-  #    - /ssl/liblit/:/ssl/liblit/
+      - /root/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /ssl/liblit/:/ssl/liblit/

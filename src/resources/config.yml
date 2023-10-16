@@ -1,6 +1,6 @@
-redis:
-  node_address: "0.0.0.0"
-  port: 6379
+fs:
+  path: "/<yourpath>/freeflowfeeds/data"
+  suffix: ".json"
 
 hosts:
   efmagazin:
@@ -22,4 +22,4 @@ httpserver:
   address: "0.0.0.0"
   port: 8989
 
-publish_interval: 86400 # 24h
+publish_interval: 14400 # 4h
