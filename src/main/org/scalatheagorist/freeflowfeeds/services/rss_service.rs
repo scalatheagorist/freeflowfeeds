@@ -1,8 +1,9 @@
 use std::time::Duration;
 use std::vec::IntoIter;
 
-use log::info;
-use tokio::time::{interval, Interval};
+use chrono::NaiveTime;
+use log::{error, info};
+use tokio::time::{Instant, sleep_until};
 use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
@@ -38,12 +39,29 @@ impl RSSService {
     }
 
     pub async fn push(&self) {
-        let mut interval: Interval =
-            interval(Duration::from_secs(self.app_config.publish_interval));
-        loop {
-            interval.tick().await;
-            info!("publish new articles to redis");
-            self._push().await;
+        let time: String = self.app_config.clone().update;
+        match NaiveTime::parse_from_str(&time, "%H:%M") {
+            Ok(target_time) => {
+                loop {
+                    let current_time: NaiveTime = chrono::Local::now().time();
+                    let mut delay: chrono::Duration = target_time - current_time;
+
+                    if delay < chrono::Duration::zero() {
+                        delay = delay + chrono::Duration::hours(24);
+                    }
+
+                    sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
+                    info!("publish new articles to redis");
+
+                    // wait a whole second, just to be sure
+                    sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
+                    self._push().await;
+                }
+            }
+            Err(err) => {
+                error!("{}", err);
+                return;
+            }
         }
     }
 
