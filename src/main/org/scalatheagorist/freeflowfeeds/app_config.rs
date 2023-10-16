@@ -10,5 +10,5 @@ pub struct AppConfig {
     pub fs: FileStoreConfig,
     pub httpserver: HttpServerConfig,
     pub max_concurrency: i32,
-    pub publish_interval: u64
+    pub update: String
 }

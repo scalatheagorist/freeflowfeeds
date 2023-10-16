@@ -1,7 +1,8 @@
 extern crate num_traits;
 
-use std::path::Path;
 use std::env;
+use std::path::Path;
+
 use config::{Config, File};
 use log::{error, info, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
@@ -55,7 +56,7 @@ fn get_app_config() -> AppConfig {
     app_config.fs.path = get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
     app_config.httpserver.address = get_env_var_or_default("FFF_SERVER_HOST", app_config.httpserver.address.clone());
     app_config.max_concurrency = get_env_var_or_default("FFF_MAX_CONCURRENCY", app_config.max_concurrency.clone());
-    app_config.publish_interval = get_env_var_or_default("FFF_PUBLISH_INTERVAL", app_config.publish_interval.clone());
+    app_config.update = get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
     app_config.hosts.efmagazin.page_to = get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", app_config.hosts.efmagazin.page_to.clone());
     app_config.hosts.freiheitsfunken.page_to = get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", app_config.hosts.freiheitsfunken.page_to.clone());
     app_config.hosts.misesde.page_to = get_env_var_or_default("FFF_MISESDE_PAGE_TO", app_config.hosts.misesde.page_to.clone());
