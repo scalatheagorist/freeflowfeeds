@@ -29,7 +29,7 @@ pub struct EfMagazin {
 }
 
 impl EfMagazin {
-    pub fn new(uri_prefix: Option<&'static str>) -> EfMagazin {
+    pub fn new(uri_prefix: Option<&'static str>) -> Self {
         EfMagazin { uri_prefix }
     }
 }
@@ -38,7 +38,7 @@ impl PublisherModel for EfMagazin {
     fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
         tokio_stream::iter(match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
-                error!("rss transformation error at efmagazin {}", err);
+                error!("html transformation error at efmagazin {}", err);
                 vec![]
             },
             Ok(document) => {
@@ -49,7 +49,7 @@ impl PublisherModel for EfMagazin {
                             .find(Attr("class", "author").descendant(Name("a")))
                             .next()
                             .map(|node| node.text())
-                            .unwrap_or("".to_string())
+                            .unwrap_or("EigentümlichFrei".to_string())
                             .trim()
                             .to_owned();
 

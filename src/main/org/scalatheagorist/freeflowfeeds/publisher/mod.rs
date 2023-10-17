@@ -9,16 +9,21 @@ use crate::publisher::freiheitsfunken::Freiheitsfunken;
 pub use crate::publisher::freiheitsfunken::FreiheitsfunkenHost;
 use crate::publisher::misesde::MisesDE;
 pub use crate::publisher::misesde::MisesDEHost;
+use crate::publisher::schweizermonat::SchweizerMonat;
+pub use hosts::Hosts;
 
 mod efmagazin;
 mod misesde;
 mod freiheitsfunken;
+mod schweizermonat;
+mod hosts;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Publisher {
     EFMAGAZIN,
     FREIHEITSFUNKEN,
     MISESDE,
+    SCHWEIZER_MONAT,
 }
 
 impl Publisher {
@@ -29,7 +34,9 @@ impl Publisher {
             Publisher::FREIHEITSFUNKEN =>
                 Box::new(Freiheitsfunken::new(Some("https://freiheitsfunken.info"))),
             Publisher::MISESDE =>
-                Box::new(MisesDE::new(None))
+                Box::new(MisesDE::new(None)),
+            Publisher::SCHWEIZER_MONAT =>
+                Box::new(SchweizerMonat::new(None)),
         };
 
         publisher.get_rss(html_response)
