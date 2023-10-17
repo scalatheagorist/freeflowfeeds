@@ -1,6 +1,6 @@
 # FreeFlowFeeds
 
-*This project was initiated mainly for learning purposes.*
+*This project was initiated mainly for learning purposes with Rust async/await and concurrency.*
 
 Free Flow Feeds is an article scraper that gets a collection of articles in parallel from selected websites
 representing freedom, which you can access in an RSS feed.
