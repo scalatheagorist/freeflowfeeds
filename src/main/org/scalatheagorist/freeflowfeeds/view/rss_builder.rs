@@ -89,6 +89,7 @@ impl RSSBuilder {
         <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
             100% Open Source
         </a>
+        <a href="#" id="scrollToTopButton"><i class="fas fa-arrow-up"></i></a>
         "##, RSSBuilder::css()).to_string()
     }
 
@@ -119,6 +120,7 @@ impl RSSBuilder {
                 });
 
                 searchInput.addEventListener('input', function () {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                     let searchTerm = this.value.toLowerCase();
                     let cards = document.querySelectorAll('.card');
                     let anyVisible = false;
@@ -150,6 +152,21 @@ impl RSSBuilder {
         }
 
         window.addEventListener('load', initializeNavbar);
+
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+                    $('#scrollToTopButton').fadeIn();
+                } else {
+                    $('#scrollToTopButton').fadeOut();
+                }
+            });
+
+            $('#scrollToTopButton').click(function () {
+                $('html, body').animate({ scrollTop: 0 }, 800);
+                return false;
+            });
+        });
         "#.to_string()
     }
 
@@ -246,6 +263,24 @@ impl RSSBuilder {
                     font-family: 'Gilmer', sans-serif;
                     line-height: 1.5;
                 }
+
+              #scrollToTopButton {
+                  display: none;
+                  position: fixed;
+                  bottom: 20px;
+                  left: 20px;
+                  background: #cb4643;
+                  color: #fff;
+                  border-radius: 50%;
+                  padding: 20px;
+                  text-align: center;
+                  font-size: 24px;
+                  cursor: pointer;
+              }
+
+              #scrollToTopButton:hover {
+                  background: darkred; /* Hintergrundfarbe bei Hover */
+              }
 
                 @media (max-width: 768px) {
                     .grid-container {
