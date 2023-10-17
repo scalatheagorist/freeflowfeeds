@@ -28,7 +28,7 @@ pub struct MisesDE {
 }
 
 impl MisesDE {
-    pub fn new(uri_prefix: Option<&'static str>) -> MisesDE {
+    pub fn new(uri_prefix: Option<&'static str>) -> Self {
         MisesDE { uri_prefix }
     }
 }
@@ -37,7 +37,7 @@ impl PublisherModel for MisesDE {
     fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
         tokio_stream::iter( match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
-                error!("rss transformation error at misesde {}", err);
+                error!("html transformation error at misesde {}", err);
                 vec![]
             },
             Ok(document) => {
@@ -49,7 +49,7 @@ impl PublisherModel for MisesDE {
                                 .next()
                                 .and_then(|node| node.find(Name("span")).next())
                                 .map(|node| node.text())
-                                .unwrap_or("".to_string())
+                                .unwrap_or("Mises DE".to_string())
                                 .trim()
                                 .to_owned();
 

@@ -15,11 +15,15 @@ hosts:
     url: "https://www.misesde.org/"
     path: "?_page="
     page_to: 2
+  schweizer_monat:
+    url: "https://schweizermonat.ch/"
+    path: "archivperlen/, dossiers/, kolumnen/, schwerpunkte/"
+    page_to: 0
 
-max_concurrency: 3
+max_concurrency: 4
 
 httpserver:
   address: "0.0.0.0"
   port: 8989
 
-update: "17:10"
+update: "11:00"

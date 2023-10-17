@@ -29,7 +29,7 @@ pub struct Freiheitsfunken {
 }
 
 impl Freiheitsfunken {
-    pub fn new(uri_prefix: Option<&'static str>) -> Freiheitsfunken {
+    pub fn new(uri_prefix: Option<&'static str>) -> Self {
         Freiheitsfunken { uri_prefix }
     }
 }
@@ -38,7 +38,7 @@ impl PublisherModel for Freiheitsfunken {
     fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
         tokio_stream::iter(match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
-                error!("rss transformation error at freiheitsfunken {}", err);
+                error!("html transformation error at freiheitsfunken {}", err);
                 vec![]
             },
             Ok(document) => {
@@ -57,7 +57,7 @@ impl PublisherModel for Freiheitsfunken {
                             .map(|text| text.text().replace("von", "").trim().to_string());
 
                     let author: String =
-                        author0.or(author1).unwrap_or("".to_string()).trim().to_owned();
+                        author0.or(author1).unwrap_or("Freiheitsfunken".to_string()).trim().to_owned();
 
                     let title_element =
                         article

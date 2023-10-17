@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::core::FileStoreConfig;
 use crate::httpserver::HttpServerConfig;
-use crate::models::Hosts;
+use crate::publisher::Hosts;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AppConfig {
