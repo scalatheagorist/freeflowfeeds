@@ -51,7 +51,7 @@ impl RSSService {
                     }
 
                     sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
-                    info!("publish new articles to redis");
+                    info!("publish new articles to fs");
 
                     // wait a whole second, just to be sure
                     sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
