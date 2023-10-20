@@ -16,6 +16,7 @@ services:
       - FFF_EFMAGAZIN_PAGE_TO=2
       - FFF_FREIHEITSFUNKEN_PAGE_TO=2
       - FFF_MISESDE_PAGE_TO=2
+      - FFF_HAYEKINSTITUT_PAGE_TO=2
 
   nginx:
     image: nginx:latest

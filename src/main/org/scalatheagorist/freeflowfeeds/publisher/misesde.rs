@@ -24,6 +24,7 @@ impl PublisherHost for MisesDEHost {
 }
 
 pub struct MisesDE {
+    #[allow(dead_code)]
     uri_prefix: Option<&'static str>
 }
 

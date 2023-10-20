@@ -33,6 +33,7 @@ impl PublisherHost for SchweizerMonatHost {
 }
 
 pub struct SchweizerMonat {
+    #[allow(dead_code)]
     uri_prefix: Option<&'static str>
 }
 
@@ -56,7 +57,6 @@ impl PublisherModel for SchweizerMonat {
             },
             Ok(document) => {
                 let mut articles: Vec<(String, String, String)> = vec![];
-                let mut valid_articles: Vec<(String, String, String)> = vec![];
 
                 for article in document.find(Class("teaser__link")) {
                     let title = article.text();
@@ -70,11 +70,11 @@ impl PublisherModel for SchweizerMonat {
                     ))
                 }
 
-                valid_articles =
+                let mut valid_articles: Vec<(String, String, String)> =
                     articles
                         .into_iter()
                         .filter(|(title, _, _)| !title.is_empty())
-                        .collect();
+                        .collect::<Vec<_>>();
 
                 valid_articles.dedup_by(|(_, href1, _), (_, href2, _)| href1 == href2);
 

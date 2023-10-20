@@ -19,8 +19,12 @@ hosts:
     url: "https://schweizermonat.ch/"
     path: "archivperlen/, dossiers/, kolumnen/, schwerpunkte/"
     page_to: 0
+  hayek_institut:
+    url: "https://hayek-institut.at/blog/"
+    path: "page/"
+    page_to: 2
 
-max_concurrency: 4
+max_concurrency: 5
 
 httpserver:
   address: "0.0.0.0"
