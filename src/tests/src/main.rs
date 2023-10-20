@@ -6,4 +6,5 @@ async fn main() {
     //misesde_html_select_test()
     //freiheitsfunken_html_select_test()
     //schweizermonat_html_select_test()
+    //hayek_institut_html_select_test()
 }

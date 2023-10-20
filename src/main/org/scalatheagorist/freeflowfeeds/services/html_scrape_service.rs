@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use hyper::{Body, Response, StatusCode, Uri};
 use hyper::http::uri::InvalidUri;
-use log::warn;
+use log::{error, warn};
 use map_for::FlatMap;
 use tokio::spawn;
 use tokio::task::JoinHandle;
@@ -44,7 +44,7 @@ impl HtmlScrapeService {
         HtmlScrapeService { http_client, hosts, max_concurrency, headers, file_suffix }
     }
 
-    pub async fn run(&self, redis: FileStoreConfig) {
+    pub async fn run(&self, fs_config: FileStoreConfig) {
         for chunk in self.hosts.chunks(self.max_concurrency as usize) {
             let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
                 chunk
@@ -61,7 +61,7 @@ impl HtmlScrapeService {
                     .collect::<Vec<_>>();
 
             for rss in chunk_responses {
-                let config: FileStoreConfig = redis.clone();
+                let config: FileStoreConfig = fs_config.clone();
                 let suffix: String = self.file_suffix.clone();
                 spawn(async move {
                     FileStoreClient::save_in_dir(
@@ -96,9 +96,9 @@ impl HtmlScrapeService {
     ) -> JoinHandle<Option<HtmlResponse>> {
         let client: HttpClient = self.http_client.clone();
         spawn(async move {
-            let _host = host.map_err(|_| warn!("host is missing")).expect("host is missing");
+            let _host: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
             let mut result: Response<Body> =
-                match client.get(_host, headers) {
+                match client.get(_host.clone(), headers) {
                     Some(resp) => {
                         resp
                             .await
@@ -111,14 +111,15 @@ impl HtmlScrapeService {
                     }
                 };
 
-            HtmlScrapeService::get_html_str(&mut result)
+            HtmlScrapeService::get_html_str(&mut result, _host)
                 .await
                 .map(|response| HtmlResponse { publisher, response })
         })
     }
 
-    async fn get_html_str(response: &mut Response<Body>) -> Option<String> {
+    async fn get_html_str(response: &mut Response<Body>, uri: Uri) -> Option<String> {
         if response.status() != StatusCode::OK {
+            error!("response code {} from {}", response.status(), uri.path());
             return None;
         }
 

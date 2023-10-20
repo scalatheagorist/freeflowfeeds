@@ -2,28 +2,34 @@ use std::vec::IntoIter;
 
 use tokio_stream::Iter;
 
+pub use hosts::Hosts;
+
 use crate::models::{HtmlResponse, RSSFeed};
 use crate::publisher::efmagazin::EfMagazin;
-pub use crate::publisher::efmagazin::EfMagazinHost;
 use crate::publisher::freiheitsfunken::Freiheitsfunken;
-pub use crate::publisher::freiheitsfunken::FreiheitsfunkenHost;
+use crate::publisher::hayekinstitut::HayekInstitut;
 use crate::publisher::misesde::MisesDE;
-pub use crate::publisher::misesde::MisesDEHost;
 use crate::publisher::schweizermonat::SchweizerMonat;
-pub use hosts::Hosts;
 
 mod efmagazin;
 mod misesde;
 mod freiheitsfunken;
 mod schweizermonat;
 mod hosts;
+mod hayekinstitut;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Publisher {
+    #[allow(non_camel_case_types)]
     EFMAGAZIN,
+    #[allow(non_camel_case_types)]
     FREIHEITSFUNKEN,
+    #[allow(non_camel_case_types)]
     MISESDE,
+    #[allow(non_camel_case_types)]
     SCHWEIZER_MONAT,
+    #[allow(non_camel_case_types)]
+    HAYEK_INSTITUT
 }
 
 impl Publisher {
@@ -37,6 +43,8 @@ impl Publisher {
                 Box::new(MisesDE::new(None)),
             Publisher::SCHWEIZER_MONAT =>
                 Box::new(SchweizerMonat::new(None)),
+            Publisher::HAYEK_INSTITUT =>
+                Box::new(HayekInstitut::new(None)),
         };
 
         publisher.get_rss(html_response)
