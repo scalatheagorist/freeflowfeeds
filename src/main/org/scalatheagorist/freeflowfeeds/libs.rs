@@ -11,5 +11,5 @@ pub mod core;
 pub mod services;
 pub mod models;
 pub mod publisher;
-pub mod httpserver;
+pub mod http;
 pub mod view;

@@ -1,5 +1,5 @@
 fs:
-  path: "/<yourpath>/freeflowfeeds/data"
+  path: "/<yourpath>/data"
   suffix: ".json"
 
 hosts:
@@ -30,4 +30,4 @@ httpserver:
   address: "0.0.0.0"
   port: 8989
 
-update: "11:00"
+update: "10:00"

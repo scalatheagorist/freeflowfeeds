@@ -9,6 +9,7 @@ use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::{Publisher, PublisherHost, PublisherModel};
+use crate::publisher::Publisher::FREIHEITSFUNKEN;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FreiheitsfunkenHost {
@@ -18,7 +19,7 @@ pub struct FreiheitsfunkenHost {
 }
 
 impl PublisherHost for FreiheitsfunkenHost {
-    fn publisher(&self) -> Publisher { Publisher::FREIHEITSFUNKEN }
+    fn publisher(&self) -> Publisher { FREIHEITSFUNKEN }
     fn url(&self) -> &str { &self.url }
     fn path(&self) -> &str { &self.path }
     fn page_to(&self) -> i32 { self.page_to }
@@ -86,7 +87,7 @@ impl PublisherModel for Freiheitsfunken {
                     };
 
                     let article: Article = Article::new(title, href_with_uri_prefix);
-                    let rss: RSSFeed = RSSFeed::new(author, article);
+                    let rss: RSSFeed = RSSFeed::new(author, article, FREIHEITSFUNKEN);
 
                     rss
                 }).collect::<Vec<_>>()

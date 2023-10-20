@@ -9,6 +9,7 @@ use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::{Publisher, PublisherHost, PublisherModel};
+use crate::publisher::Publisher::SCHWEIZER_MONAT;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SchweizerMonatHost {
@@ -18,7 +19,7 @@ pub struct SchweizerMonatHost {
 }
 
 impl PublisherHost for SchweizerMonatHost {
-    fn publisher(&self) -> Publisher { Publisher::MISESDE }
+    fn publisher(&self) -> Publisher { SCHWEIZER_MONAT }
     fn url(&self) -> &str { &self.url }
     fn path(&self) -> &str { &self.path }
     fn page_to(&self) -> i32 { self.page_to }
@@ -27,7 +28,7 @@ impl PublisherHost for SchweizerMonatHost {
         let v: Vec<&str> = self.path.split(", ").collect();
         v.into_iter().map(|p| {
             let uri: String = format!("{}{}", self.url, p);
-            (Publisher::SCHWEIZER_MONAT, uri)
+            (SCHWEIZER_MONAT, uri)
         }).collect()
     }
 }
@@ -80,7 +81,7 @@ impl PublisherModel for SchweizerMonat {
 
                 valid_articles.into_iter().map(|(title, link, author)| {
                     let article: Article = Article::new(title, link);
-                    let rss: RSSFeed = RSSFeed::new(author, article);
+                    let rss: RSSFeed = RSSFeed::new(author, article, SCHWEIZER_MONAT);
                     rss
                 }).collect::<Vec<_>>()
             }

@@ -9,6 +9,7 @@ use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::{Publisher, PublisherHost, PublisherModel};
+use crate::publisher::Publisher::HAYEK_INSTITUT;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HayekInstitutHost {
@@ -18,7 +19,7 @@ pub struct HayekInstitutHost {
 }
 
 impl PublisherHost for HayekInstitutHost {
-    fn publisher(&self) -> Publisher { Publisher::HAYEK_INSTITUT }
+    fn publisher(&self) -> Publisher { HAYEK_INSTITUT }
     fn url(&self) -> &str { &self.url }
     fn path(&self) -> &str { &self.path }
     fn page_to(&self) -> i32 { self.page_to }
@@ -59,7 +60,7 @@ impl PublisherModel for HayekInstitut {
                     get_href(&node).iter().for_each(|link| {
                         let title: String = get_title(&node);
                         let article: Article = Article::new(title, link.to_string());
-                        let rss: RSSFeed = RSSFeed::new("Hayek Institut Wien".to_string(), article);
+                        let rss: RSSFeed = RSSFeed::new("Hayek Institut Wien".to_string(), article, HAYEK_INSTITUT);
                         rss_feeds.push(rss)
                     })
                 }
