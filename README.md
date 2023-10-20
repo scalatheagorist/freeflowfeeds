@@ -14,14 +14,10 @@ Current magazines:
 - Freiheitsfunken
 - EigentümlichFrei
 - Schweizer Monat
+- Hayek Institut AT
 
-liblit.org:
-
-![liblit.org](./liblit.gif)
+www.liblit.org
 
 ## TODOs 
 
-- rebuild with https://rocket.rs/
 - unit tests
-- AI driven HTML scraper
-- (changelog)
