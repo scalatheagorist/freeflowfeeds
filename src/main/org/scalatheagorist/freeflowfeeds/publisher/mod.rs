@@ -1,4 +1,5 @@
 use std::vec::IntoIter;
+use serde::{Deserialize, Serialize};
 
 use tokio_stream::Iter;
 
@@ -18,7 +19,7 @@ mod schweizermonat;
 mod hosts;
 mod hayekinstitut;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub enum Publisher {
     #[allow(non_camel_case_types)]
     EFMAGAZIN,

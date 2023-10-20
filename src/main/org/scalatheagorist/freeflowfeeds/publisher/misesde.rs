@@ -8,6 +8,7 @@ use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::{Publisher, PublisherHost, PublisherModel};
+use crate::publisher::Publisher::MISESDE;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MisesDEHost {
@@ -17,7 +18,7 @@ pub struct MisesDEHost {
 }
 
 impl PublisherHost for MisesDEHost {
-    fn publisher(&self) -> Publisher { Publisher::MISESDE }
+    fn publisher(&self) -> Publisher { MISESDE }
     fn url(&self) -> &str { &self.url }
     fn path(&self) -> &str { &self.path }
     fn page_to(&self) -> i32 { self.page_to }
@@ -73,7 +74,7 @@ impl PublisherModel for MisesDE {
                                 .to_owned();
 
                             let article: Article = Article::new(title, href);
-                            let rss: RSSFeed = RSSFeed::new(author, article);
+                            let rss: RSSFeed = RSSFeed::new(author, article, MISESDE);
 
                             Some(rss)
                         },

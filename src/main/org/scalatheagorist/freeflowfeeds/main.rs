@@ -12,7 +12,7 @@ use log4rs::encode::pattern::PatternEncoder;
 use tokio::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
-use freeflowfeeds::httpserver::HttpServer;
+use freeflowfeeds::http::HttpServer;
 use freeflowfeeds::services::RSSService;
 
 #[tokio::main]

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::core::FileStoreConfig;
-use crate::httpserver::HttpServerConfig;
+use crate::http::HttpServerConfig;
 use crate::publisher::Hosts;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

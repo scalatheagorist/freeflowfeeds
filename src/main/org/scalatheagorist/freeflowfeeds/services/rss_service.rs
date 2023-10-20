@@ -9,6 +9,7 @@ use tokio_stream::Iter;
 use crate::app_config::AppConfig;
 use crate::core::{FileStoreClient, FileStoreConfig};
 use crate::models::RSSFeed;
+use crate::publisher::Publisher;
 use crate::services::HtmlScrapeService;
 use crate::view::RSSBuilder;
 
@@ -31,11 +32,12 @@ impl RSSService {
         RSSService { app_config, scape_service, rss_builder }
     }
 
-    pub async fn pull(&self) -> Iter<IntoIter<String>> {
+    pub async fn pull(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
         let config: FileStoreConfig = self.app_config.fs.clone();
-        let result: Iter<IntoIter<RSSFeed>> = FileStoreClient::load_from_dir(&config).await;
+        let stream: Iter<IntoIter<RSSFeed>> = FileStoreClient::load_from_dir(&config).await;
+        let builder: RSSBuilder = self.rss_builder.clone();
 
-        self.rss_builder.build(result).await
+        builder.build(stream, publisher).await
     }
 
     pub async fn push(&self) {

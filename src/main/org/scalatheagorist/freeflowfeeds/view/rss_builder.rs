@@ -3,29 +3,44 @@ use std::vec::IntoIter;
 use tokio_stream::{Iter, StreamExt};
 
 use crate::models::RSSFeed;
+use crate::publisher::Publisher;
 
 #[derive(Clone)]
 pub struct RSSBuilder;
 
 impl RSSBuilder {
-    pub fn new() -> Self { RSSBuilder }
+    pub fn new() -> Self {
+        RSSBuilder { }
+    }
 
-    pub async fn build(&self, mut messages: Iter<IntoIter<RSSFeed>>) -> Iter<IntoIter<String>> {
+    pub async fn build(
+        &self,
+        mut messages: Iter<IntoIter<RSSFeed>>,
+        publisher: Option<Publisher>
+    ) -> Iter<IntoIter<String>> {
         let mut stream: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
         let mut count: i32 = 0;
+        let this: RSSBuilder = self.clone();
 
         view.push(r#"<div class="container grid-container">"#.to_string());
         view.push(r#"<div class="custom-grid">"#.to_string());
 
-        while let Some(message) = messages.next().await {
-            view.push(self.generate_feeds(message));
-            count += 1;
+        fn _generate_feeds(this: RSSBuilder, message: RSSFeed, count: &mut i32, view: &mut Vec<String>) {
+            view.push(this.generate_feeds(message));
+            *count += 1;
 
-            if count % 2 == 0 {
+            if *count % 2 == 0 {
                 view.push("</div>".to_string());
                 view.push(r#"<div class="custom-grid">"#.to_string());
             }
+        }
+
+        if let Some(publisher) = publisher {
+            let mut stream = messages.filter(|rss| rss.publisher == publisher);
+            while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut count, &mut view) }
+        } else {
+            while let Some(message) = messages.next().await { _generate_feeds(this.clone(), message, &mut count, &mut view) }
         }
 
         view.push("</div>".to_string());
@@ -84,7 +99,21 @@ impl RSSBuilder {
                 <form class="form-inline my-2 my-lg-0" onsubmit="searchBar();">
                     <input class="form-control" type="search" placeholder="Suche: '2023/10'" aria-label="Search" id="search-input">
                 </form>
-                 <div class="ml-auto">
+                <div class="ml-auto">
+                  <div class="dropdown ml-auto">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Magazin
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="/articles">Alle</a>
+                          <a class="dropdown-item" href="/articles/misesde">MisesDE</a>
+                          <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut</a>
+                          <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat</a>
+                          <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei</a>
+                          <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken</a>
+                      </div>
+                  </div>
+                </div>
             </nav>
         <a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
             100% Open Source

@@ -9,6 +9,7 @@ use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::{Publisher, PublisherHost, PublisherModel};
+use crate::publisher::Publisher::EFMAGAZIN;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EfMagazinHost {
@@ -18,7 +19,7 @@ pub struct EfMagazinHost {
 }
 
 impl PublisherHost for EfMagazinHost {
-    fn publisher(&self) -> Publisher { Publisher::EFMAGAZIN }
+    fn publisher(&self) -> Publisher { EFMAGAZIN }
     fn url(&self) -> &str { &self.url }
     fn path(&self) -> &str { &self.path }
     fn page_to(&self) -> i32 { self.page_to }
@@ -80,7 +81,7 @@ impl PublisherModel for EfMagazin {
                     };
 
                     let article: Article = Article::new(title, href_with_uri_prefix);
-                    let rss: RSSFeed = RSSFeed::new(author, article);
+                    let rss: RSSFeed = RSSFeed::new(author, article, EFMAGAZIN);
 
                     rss
                 }).collect::<Vec<_>>()
