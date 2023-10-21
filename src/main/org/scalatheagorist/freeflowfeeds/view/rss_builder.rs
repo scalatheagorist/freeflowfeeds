@@ -85,7 +85,7 @@ impl RSSBuilder {
         <head>
             <link rel="icon" href="https://image.nostr.build/0dde81d203685372a5228eda585bc169c6aad83b5c7491b89988042774f98593.png" type="image/png">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.75, user-scalable=0">
             <link rel="stylesheet" type="font/otf" href="https://github.com/scalatheagorist/freeflowfeeds/blob/main/Gilmer%Bold.otf">
             <link rel="stylesheet" type="font/otf" href="https://github.com/scalatheagorist/freeflowfeeds/blob/main/Gilmer%20Regular.otf">
             {}
@@ -201,37 +201,134 @@ impl RSSBuilder {
 
     fn css() -> String {
         r#"
-         <style>
-                .navbar {
-                    background-color: #ffb400 !important;
-                }
+        <style>
+            .navbar {
+                background-color: #ffb400 !important;
+            }
 
+            .grid-container {
+                margin-top: 7%;
+            }
+
+            .custom-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+                grid-gap: 10px;
+                justify-content: start;
+                margin-top: 1%
+            }
+
+            .input-group {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .logo {
+                max-width: 160px;
+            }
+
+            .logo-link {
+                max-width: 160px;
+                height: auto;
+                margin-right: 27%;
+                margin-left: 3%;
+            }
+
+            .lightning-logo {
+                max-width: 50px;
+                height: auto;
+            }
+
+            #search-input {
+                min-width: 100px;
+                margin: 0;
+            }
+
+            .input-group {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .card {
+                width: 100%;
+                height: 200px;
+            }
+
+            .highlight-title {
+                font-weight: bold;
+                font-style: italic;
+            }
+
+            .card a {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+                max-width: 100%;
+            }
+
+            .card.mb-3 {
+                background-color: #30311f !important;
+                color: white !important;
+                transform: translateY(0);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: none;
+            }
+
+            .card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            body {
+                background-color: #ffb400 !important;
+                color: black !important;
+                background-image: url('https://image.nostr.build/5f7a0e8a7ea75e62774d90822d98c5a8168e2a6f75e33c710ebe48333c06680d.jpg');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+                opacity: 0.95;
+                font-size: 16px;
+                font-family: 'Gilmer', sans-serif;
+                line-height: 1.5;
+            }
+
+            #scrollToTopButton {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: #cb4643;
+                color: #fff;
+                border-radius: 50%;
+                padding: 20px;
+                text-align: center;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            #scrollToTopButton:hover {
+                background: darkred; /* Hintergrundfarbe bei Hover */
+            }
+
+            @media (max-width: 768px) {
                 .grid-container {
-                    margin-top: 7%;
+                    margin-top: 30%;
                 }
 
-                .custom-grid {
-                  display: grid;
-                  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-                  grid-gap: 10px;
-                  justify-content: start;
-                  margin-top: 1%
-                }
-
-                .input-group {
-                    width: 100%;
-                    max-width: 400px;
+                body {
+                    background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
+                    font-size: 14px;
                 }
 
                 .logo {
-                    max-width: 160px;
+                    max-width: 120px;
                 }
 
                 .logo-link {
-                    max-width: 160px;
-                    height: auto;
-                    margin-right: 27%;
-                    margin-left: 3%;
+                    max-width: 120px;
+                    margin-right: 10%;
+                    margin-left: 2%;
                 }
 
                 .lightning-logo {
@@ -239,160 +336,67 @@ impl RSSBuilder {
                     height: auto;
                 }
 
-                #search-input {
-                    min-width: 100px;
-                    margin: 0;
+                .custom-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+                    grid-gap: 10px;
+                    justify-content: start;
+                    margin-top: 1%
                 }
 
-                .input-group {
-                    width: 100%;
-                    max-width: 400px;
+                .lightning {
+                    margin-left: 30%;
+                    background-color: #ffb400 !important;
                 }
 
                 .card {
-                    width: 100%;
-                    height: 200px;
+                    max-width: 97%;
+                    margin-bottom: 20px;
                 }
+            }
 
-                .highlight-title {
-                    font-weight: bold;
-                    font-style: italic;
-                }
+            a {
+                color: white;
+            }
 
-                .card a {
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: inline-block;
-                    max-width: 100%;
-                }
+            a:hover {
+                text-decoration: none;
+                color: white;
+                border: 2px solid transparent;
+                transition: border-color 0.5s;
+            }
 
-                .card.mb-3 {
-                    background-color: #30311f !important;
-                    color: white !important;
-                    transform: translateY(0);
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    box-shadow: none;
-                }
+            .btn {
+                background-color: #30311f !important;
+                padding: 10px 20px;
+                font-size: 18px;
+            }
 
-                .card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                }
+            .open-source-badge {
+                position: fixed;
+                bottom: 138px;
+                right: -45px;
+                background-color: #ffb400 !important;
+                color: #000;
+                padding: 20px 48px;
+                border-radius: 5px;
+                transform: rotate(-45deg);
+                transform-origin: bottom right;
+                font-size: 18px;
+                line-height: 1;
+                border: 2px solid #000;
+            }
 
-                body {
-                    background-color: #ffb400 !important;
-                    color: black !important;
-                    background-image: url('https://image.nostr.build/5f7a0e8a7ea75e62774d90822d98c5a8168e2a6f75e33c710ebe48333c06680d.jpg');
-                    background-repeat: no-repeat;
-                    background-attachment: fixed;
-                    background-size: cover;
-                    opacity: 0.95;
-                    font-size: 16px;
-                    font-family: 'Gilmer', sans-serif;
-                    line-height: 1.5;
-                }
-
-              #scrollToTopButton {
-                  display: none;
-                  position: fixed;
-                  bottom: 20px;
-                  left: 20px;
-                  background: #cb4643;
-                  color: #fff;
-                  border-radius: 50%;
-                  padding: 20px;
-                  text-align: center;
-                  font-size: 24px;
-                  cursor: pointer;
-              }
-
-              #scrollToTopButton:hover {
-                  background: darkred; /* Hintergrundfarbe bei Hover */
-              }
-
-                @media (max-width: 768px) {
-                    .grid-container {
-                        margin-top: 30%;
-                    }
-
-                    body {
-                        background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
-                        font-size: 14px;
-                    }
-                    .logo {
-                        max-width: 120px;
-                    }
-                    .logo-link {
-                        max-width: 120px;
-                        margin-right: 10%;
-                        margin-left: 2%;
-                    }
-                    .lightning-logo {
-                        max-width: 50px;
-                        height: auto;
-                    }
-
-                    .custom-grid {
-                      display: grid;
-                      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-                      grid-gap: 10px;
-                      justify-content: start;
-                      margin-top: 1%
-                    }
-
-                    .lightning {
-                        margin-left: 30%;
-                        background-color: #ffb400 !important;
-                    }
-                    .card {
-                        max-width: 97%;
-                        margin-bottom: 20px;
-                    }
-                }
-
-                a {
-                    color: white;
-                }
-
-                a:hover {
-                    text-decoration: none;
-                    color: white;
-                    border: 2px solid transparent;
-                    transition: border-color 0.5s;
-                }
-
-                .btn {
-                    background-color: #30311f !important;
-                    padding: 10px 20px;
-                    font-size: 18px;
-                }
-
-                .open-source-badge {
-                    position: fixed;
-                    bottom: 138px;
-                    right: -45px;
-                    background-color: #ffb400 !important;
-                    color: #000;
-                    padding: 20px 48px;
-                    border-radius: 5px;
-                    transform: rotate(-45deg);
-                    transform-origin: bottom right;
-                    font-size: 18px;
-                    line-height: 1;
-                    border: 2px solid #000;
-                }
-
-                .modal-backdrop {
-                    position: inherit !important;
-                    top: 0;
-                    left: 0;
-                    z-index: 1040;
-                    width: 100vw;
-                    height: 100vh;
-                    background-color: #000;
-                }
-            </style>
+            .modal-backdrop {
+                position: inherit !important;
+                top: 0;
+                left: 0;
+                z-index: 1040;
+                width: 100vw;
+                height: 100vh;
+                background-color: #000;
+            }
+        </style>
         "#.to_string()
     }
 }
