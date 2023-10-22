@@ -9,15 +9,10 @@ At the moment, publishers (web pages with articles) are scraped according to the
 which means that each page has its own HTML structure and, accordingly, for the page from where
 you want to scrap the articles, the implementation must be done individually.
 
-Current magazines:
+Current magazines www.liblit.org:
 - MisesDE
 - Freiheitsfunken
 - EigentümlichFrei
 - Schweizer Monat
 - Hayek Institut AT
-
-www.liblit.org
-
-## TODOs 
-
-- unit tests
+- Die Marktradikalen
