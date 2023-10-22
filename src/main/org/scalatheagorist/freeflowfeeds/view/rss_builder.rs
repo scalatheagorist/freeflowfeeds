@@ -305,6 +305,7 @@ impl RSSBuilder {
                 text-align: center;
                 font-size: 24px;
                 cursor: pointer;
+                z-index: 999;
             }
 
             #scrollToTopButton:hover {
