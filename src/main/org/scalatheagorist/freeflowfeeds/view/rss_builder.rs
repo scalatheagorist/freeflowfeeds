@@ -111,6 +111,7 @@ impl RSSBuilder {
                           <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat</a>
                           <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei</a>
                           <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken</a>
+                          <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen</a>
                       </div>
                   </div>
                 </div>
