@@ -12,6 +12,7 @@ pub(crate) const ENDPOINT_FREIHEITSFUNKEN: &str = "/articles/freiheitsfunken";
 pub(crate) const ENDPOINT_SCHWEIZERMONAT: &str = "/articles/schweizermonat";
 pub(crate) const ENDPOINT_EFMAGAZIN: &str = "/articles/efmagazin";
 pub(crate) const ENDPOINT_HAYEKINSTITUT: &str = "/articles/hayekinstitut";
+pub(crate) const ENDPOINT_DIEMARKTRADIKALEN: &str = "/articles/diemarktradikalen";
 
 pub(crate) fn to_publisher(s: &str) -> Publisher {
     match s {
@@ -20,6 +21,7 @@ pub(crate) fn to_publisher(s: &str) -> Publisher {
         ENDPOINT_SCHWEIZERMONAT => Publisher::SCHWEIZER_MONAT,
         ENDPOINT_EFMAGAZIN => Publisher::EFMAGAZIN,
         ENDPOINT_HAYEKINSTITUT => Publisher::HAYEK_INSTITUT,
+        ENDPOINT_DIEMARKTRADIKALEN => Publisher::DIE_MARKTRADIKALEN,
         _ => panic!("not implemented publisher path")
     }
 }

@@ -6,6 +6,7 @@ use tokio_stream::Iter;
 pub use hosts::Hosts;
 
 use crate::models::{HtmlResponse, RSSFeed};
+use crate::publisher::diemarktradikalen::DieMarktradikalen;
 use crate::publisher::efmagazin::EfMagazin;
 use crate::publisher::freiheitsfunken::Freiheitsfunken;
 use crate::publisher::hayekinstitut::HayekInstitut;
@@ -18,6 +19,7 @@ mod freiheitsfunken;
 mod schweizermonat;
 mod hosts;
 mod hayekinstitut;
+mod diemarktradikalen;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub enum Publisher {
@@ -30,7 +32,9 @@ pub enum Publisher {
     #[allow(non_camel_case_types)]
     SCHWEIZER_MONAT,
     #[allow(non_camel_case_types)]
-    HAYEK_INSTITUT
+    HAYEK_INSTITUT,
+    #[allow(non_camel_case_types)]
+    DIE_MARKTRADIKALEN
 }
 
 impl Publisher {
@@ -46,6 +50,8 @@ impl Publisher {
                 Box::new(SchweizerMonat::new(None)),
             Publisher::HAYEK_INSTITUT =>
                 Box::new(HayekInstitut::new(None)),
+            Publisher::DIE_MARKTRADIKALEN =>
+                Box::new(DieMarktradikalen::new(Some("https://www.die-marktradikalen.de")))
         };
 
         publisher.get_rss(html_response)

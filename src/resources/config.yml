@@ -23,8 +23,12 @@ hosts:
     url: "https://hayek-institut.at/blog/"
     path: "page/"
     page_to: 2
+  die_marktradikalen:
+    url: "https://www.die-marktradikalen.de/blog/"
+    path: "artikel/, uebersetzung/, hoerbuch/, buchvorstellung/"
+    page_to: 0
 
-max_concurrency: 5
+max_concurrency: 4
 
 httpserver:
   address: "0.0.0.0"
