@@ -86,6 +86,7 @@ impl RSSBuilder {
             <link rel="icon" href="https://image.nostr.build/0dde81d203685372a5228eda585bc169c6aad83b5c7491b89988042774f98593.png" type="image/png">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.75, user-scalable=0">
+            <meta charset="UTF-8">
             <link rel="stylesheet" type="font/otf" href="https://github.com/scalatheagorist/freeflowfeeds/blob/main/Gilmer%Bold.otf">
             <link rel="stylesheet" type="font/otf" href="https://github.com/scalatheagorist/freeflowfeeds/blob/main/Gilmer%20Regular.otf">
             {}
