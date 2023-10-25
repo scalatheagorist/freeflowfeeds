@@ -3,26 +3,11 @@ use std::vec::IntoIter;
 use log::error;
 use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
-use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 use crate::publisher::Publisher::MISESDE;
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct MisesDEHost {
-    pub(crate) url: String,
-    path: String,
-    pub page_to: i32
-}
-
-impl PublisherHost for MisesDEHost {
-    fn publisher(&self) -> Publisher { MISESDE }
-    fn url(&self) -> &str { &self.url }
-    fn path(&self) -> &str { &self.path }
-    fn page_to(&self) -> i32 { self.page_to }
-}
+use crate::publisher::publishers::PublisherModel;
 
 pub struct MisesDE {
     #[allow(dead_code)]

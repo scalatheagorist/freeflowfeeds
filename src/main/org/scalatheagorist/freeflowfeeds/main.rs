@@ -13,25 +13,24 @@ use tokio::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
 use freeflowfeeds::http::HttpServer;
+use freeflowfeeds::publisher::Publisher;
 use freeflowfeeds::services::RSSService;
 
 #[tokio::main]
 async fn main() {
     let _ = set_logging();
-    let app_config: AppConfig = get_app_config();
-    let rss_service = RSSService::new(app_config.clone());
-    let server: HttpServer = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
-    let _ = spawn(async move { rss_service.push().await });
+    let app_config: AppConfig   = get_app_config();
+    let rss_service: RSSService = RSSService::new(app_config.clone());
+    let server: HttpServer      = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
+    let _                       = spawn(async move { rss_service.push().await });
 
     info!("{:?}", app_config);
 
-    if let Err(e) = server.serve().await {
-        error!("server error: {}", e);
-    }
+    if let Err(e) = server.serve().await { error!("server error: {}", e); }
 }
 
 fn get_app_config() -> AppConfig {
-    let config_path = Path::new("./src/resources/config.yml");
+    let config_path: &Path = Path::new("./src/resources/config.yml");
     let config: Config =
         Config::builder()
             .add_source(File::from(config_path))
@@ -53,15 +52,26 @@ fn get_app_config() -> AppConfig {
         }
     }
 
-    app_config.fs.path = get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
-    app_config.httpserver.address = get_env_var_or_default("FFF_SERVER_HOST", app_config.httpserver.address.clone());
-    app_config.max_concurrency = get_env_var_or_default("FFF_MAX_CONCURRENCY", app_config.max_concurrency.clone());
-    app_config.update = get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
+    app_config.fs.path =
+        get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
+    app_config.httpserver.address =
+        get_env_var_or_default("FFF_SERVER_HOST", app_config.httpserver.address.clone());
+    app_config.concurrency =
+        get_env_var_or_default("FFF_CONCURRENCY", app_config.concurrency.clone());
+    app_config.update =
+        get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
 
-    app_config.hosts.efmagazin.page_to = get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", app_config.hosts.efmagazin.page_to.clone());
-    app_config.hosts.freiheitsfunken.page_to = get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", app_config.hosts.freiheitsfunken.page_to.clone());
-    app_config.hosts.misesde.page_to = get_env_var_or_default("FFF_MISESDE_PAGE_TO", app_config.hosts.misesde.page_to.clone());
-    app_config.hosts.hayek_institut.page_to = get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", app_config.hosts.hayek_institut.page_to.clone());
+    for host in app_config.hosts.iter_mut() {
+        let new_page_to = match host.publisher {
+            Publisher::EFMAGAZIN       => get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", 2),
+            Publisher::FREIHEITSFUNKEN => get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", 2),
+            Publisher::MISESDE         => get_env_var_or_default("FFF_MISESDE_PAGE_TO", 2),
+            Publisher::HAYEK_INSTITUT  => get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", 2),
+            _ => 2,
+        };
+
+        host.page_to = new_page_to;
+    }
 
     app_config
 }

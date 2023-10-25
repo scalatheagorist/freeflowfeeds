@@ -4,26 +4,11 @@ use log::error;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name};
-use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 use crate::publisher::Publisher::HAYEK_INSTITUT;
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct HayekInstitutHost {
-    pub(crate) url: String,
-    path: String,
-    pub page_to: i32
-}
-
-impl PublisherHost for HayekInstitutHost {
-    fn publisher(&self) -> Publisher { HAYEK_INSTITUT }
-    fn url(&self) -> &str { &self.url }
-    fn path(&self) -> &str { &self.path }
-    fn page_to(&self) -> i32 { self.page_to }
-}
+use crate::publisher::publishers::PublisherModel;
 
 pub struct HayekInstitut {
     #[allow(dead_code)]

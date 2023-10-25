@@ -125,32 +125,4 @@ impl HttpServer {
 
         Ok(())
     }
-
-    //fn create_response_from_iterator<B, F>(
-    //    iterator: B,
-    //    content_type: F,
-    //) -> Response<Body>
-    //    where
-    //        B: Iterator<Item = Vec<u8>>,
-    //        F: Fn() -> Option<(HeaderName, HeaderValue)>,
-    //{
-    //    let stream = iterator.map(|result| {
-    //        Ok::<Bytes, std::io::Error>(
-    //            hyper::body::Bytes::from(result),
-    //        )
-    //    });
-//
-    //    match content_type() {
-    //        Some(header) => {
-    //            Response::builder()
-    //                .header(header.0, header.1)
-    //                .body(Body::wrap_stream(stream))
-    //        },
-    //        None => {
-    //            Response::builder()
-    //                .status(500)
-    //                .body(Body::from("Internal Server Error"))
-    //        },
-    //    }
-    //}
 }

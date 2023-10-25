@@ -4,26 +4,11 @@ use log::error;
 use map_for::FlatMap;
 use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
-use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 use crate::publisher::Publisher::EFMAGAZIN;
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct EfMagazinHost {
-    pub(crate) url: String,
-    path: String,
-    pub page_to: i32
-}
-
-impl PublisherHost for EfMagazinHost {
-    fn publisher(&self) -> Publisher { EFMAGAZIN }
-    fn url(&self) -> &str { &self.url }
-    fn path(&self) -> &str { &self.path }
-    fn page_to(&self) -> i32 { self.page_to }
-}
+use crate::publisher::publishers::PublisherModel;
 
 pub struct EfMagazin {
     uri_prefix: Option<&'static str>
