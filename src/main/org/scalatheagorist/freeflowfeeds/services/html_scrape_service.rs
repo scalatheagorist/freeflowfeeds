@@ -17,7 +17,7 @@ use crate::utils::headers::{Headers, HeaderType};
 pub struct HtmlScrapeService {
     http_client: HttpClient,
     hosts: Vec<(Publisher, String)>,
-    max_concurrency: i32,
+    concurrency: i32,
     headers: Vec<(String, String)>,
     file_suffix: String
 }
@@ -25,27 +25,26 @@ pub struct HtmlScrapeService {
 impl HtmlScrapeService {
     pub fn new(
         hosts: Vec<(Publisher, String)>,
-        max_concurrency: i32,
+        concurrency: i32,
         file_suffix: String
     ) -> Self {
         let http_client: HttpClient = HttpClient::new();
-        let header_content_type: Vec<(String, String)> =
+        let headers: Vec<(String, String)> = [
             Headers
                 .to_content_header(HeaderType::ContentTypeHtml)
                 .into_iter()
-                .collect::<Vec<_>>();
-        let header_accept_type: Vec<(String, String)> =
+                .collect::<Vec<_>>(),
             Headers
                 .to_content_header(HeaderType::AcceptHtml)
                 .into_iter()
-                .collect::<Vec<_>>();
-        let headers: Vec<(String, String)> = [header_content_type, header_accept_type].concat();
+                .collect::<Vec<_>>()
+        ].concat();
 
-        HtmlScrapeService { http_client, hosts, max_concurrency, headers, file_suffix }
+        HtmlScrapeService { http_client, hosts, concurrency, headers, file_suffix }
     }
 
     pub async fn run(&self, fs_config: FileStoreConfig) {
-        for chunk in self.hosts.chunks(self.max_concurrency as usize) {
+        for chunk in self.hosts.chunks(self.concurrency as usize) {
             let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
                 chunk
                     .to_vec()

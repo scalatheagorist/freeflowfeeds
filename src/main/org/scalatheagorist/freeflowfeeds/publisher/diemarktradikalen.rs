@@ -3,34 +3,11 @@ use std::vec::IntoIter;
 use log::{error, warn};
 use select::document::Document;
 use select::predicate::Name;
-use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 use crate::publisher::Publisher::DIE_MARKTRADIKALEN;
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct DieMarktradikalenHost {
-    pub(crate) url: String,
-    path: String,
-    pub page_to: i32
-}
-
-impl PublisherHost for DieMarktradikalenHost {
-    fn publisher(&self) -> Publisher { DIE_MARKTRADIKALEN }
-    fn url(&self) -> &str { &self.url }
-    fn path(&self) -> &str { &self.path }
-    fn page_to(&self) -> i32 { self.page_to }
-
-    fn with_pages(&self) -> Vec<(Publisher, String)> {
-        let v: Vec<&str> = self.path.split(", ").collect();
-        v.into_iter().map(|p| {
-            let uri: String = format!("{}{}", self.url, p);
-            (DIE_MARKTRADIKALEN, uri)
-        }).collect()
-    }
-}
+use crate::publisher::publishers::PublisherModel;
 
 pub struct DieMarktradikalen {
     #[allow(dead_code)]

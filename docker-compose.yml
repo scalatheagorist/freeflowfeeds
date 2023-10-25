@@ -11,7 +11,7 @@ services:
     environment:
       - FFF_FS_PATH=/app/data
       - FFF_SERVER_HOST=0.0.0.0
-      - FFF_MAX_CONCURRENCY=3
+      - FFF_CONCURRENCY=3
       - FFF_UPDATE_TIME=18:00
       - FFF_EFMAGAZIN_PAGE_TO=2
       - FFF_FREIHEITSFUNKEN_PAGE_TO=2

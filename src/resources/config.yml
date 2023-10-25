@@ -3,35 +3,35 @@ fs:
   suffix: ".json"
 
 hosts:
-  efmagazin:
-    url: "https://ef-magazin.de/"
+  - url: "https://ef-magazin.de/"
     path: "?page="
     page_to: 2
-  freiheitsfunken:
-    url: "https://freiheitsfunken.info/"
+    publisher: "EFMAGAZIN"
+  - url: "https://freiheitsfunken.info/"
     path: "?page="
     page_to: 2
-  misesde:
-    url: "https://www.misesde.org/"
+    publisher: "FREIHEITSFUNKEN"
+  - url: "https://www.misesde.org/"
     path: "?_page="
     page_to: 2
-  schweizer_monat:
-    url: "https://schweizermonat.ch/"
+    publisher: "MISESDE"
+  - url: "https://schweizermonat.ch/"
     path: "archivperlen/, dossiers/, kolumnen/, schwerpunkte/"
     page_to: 0
-  hayek_institut:
-    url: "https://hayek-institut.at/blog/"
+    publisher: "SCHWEIZER_MONAT"
+  - url: "https://hayek-institut.at/blog/"
     path: "page/"
     page_to: 2
-  die_marktradikalen:
-    url: "https://www.die-marktradikalen.de/blog/"
+    publisher: "HAYEK_INSTITUT"
+  - url: "https://www.die-marktradikalen.de/blog/"
     path: "artikel/, uebersetzung/, hoerbuch/, buchvorstellung/"
     page_to: 0
+    publisher: "DIE_MARKTRADIKALEN"
 
-max_concurrency: 4
+concurrency: 4
 
 httpserver:
   address: "0.0.0.0"
   port: 8989
 
-update: "10:00"
+update: "10:10"

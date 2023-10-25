@@ -4,34 +4,11 @@ use log::error;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
-use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::{Publisher, PublisherHost, PublisherModel};
 use crate::publisher::Publisher::SCHWEIZER_MONAT;
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct SchweizerMonatHost {
-    pub(crate) url: String,
-    path: String,
-    pub page_to: i32
-}
-
-impl PublisherHost for SchweizerMonatHost {
-    fn publisher(&self) -> Publisher { SCHWEIZER_MONAT }
-    fn url(&self) -> &str { &self.url }
-    fn path(&self) -> &str { &self.path }
-    fn page_to(&self) -> i32 { self.page_to }
-
-    fn with_pages(&self) -> Vec<(Publisher, String)> {
-        let v: Vec<&str> = self.path.split(", ").collect();
-        v.into_iter().map(|p| {
-            let uri: String = format!("{}{}", self.url, p);
-            (SCHWEIZER_MONAT, uri)
-        }).collect()
-    }
-}
+use crate::publisher::publishers::PublisherModel;
 
 pub struct SchweizerMonat {
     #[allow(dead_code)]

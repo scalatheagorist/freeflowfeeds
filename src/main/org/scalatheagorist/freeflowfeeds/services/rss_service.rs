@@ -9,7 +9,7 @@ use tokio_stream::Iter;
 use crate::app_config::AppConfig;
 use crate::core::{FileStoreClient, FileStoreConfig};
 use crate::models::RSSFeed;
-use crate::publisher::Publisher;
+use crate::publisher::{AsPublisher, Publisher};
 use crate::services::HtmlScrapeService;
 use crate::view::RSSBuilder;
 
@@ -22,20 +22,21 @@ pub struct RSSService {
 
 impl RSSService {
     pub fn new(app_config: AppConfig) -> Self {
-        let scape_service: HtmlScrapeService = HtmlScrapeService::new(
-            app_config.clone().hosts.as_publisher(),
-            app_config.clone().max_concurrency,
-            app_config.clone().fs.suffix
-        );
+        let scape_service: HtmlScrapeService =
+            HtmlScrapeService::new(
+                app_config.clone().hosts.as_publisher(),
+                app_config.clone().concurrency,
+                app_config.clone().fs.suffix,
+            );
         let rss_builder: RSSBuilder = RSSBuilder::new();
 
         RSSService { app_config, scape_service, rss_builder }
     }
 
     pub async fn pull(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
-        let config: FileStoreConfig = self.app_config.fs.clone();
+        let config: FileStoreConfig         = self.app_config.fs.clone();
         let stream: Iter<IntoIter<RSSFeed>> = FileStoreClient::load_from_dir(&config).await;
-        let builder: RSSBuilder = self.rss_builder.clone();
+        let builder: RSSBuilder             = self.rss_builder.clone();
 
         builder.build(stream, publisher).await
     }
@@ -53,7 +54,7 @@ impl RSSService {
                     }
 
                     sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
-                    info!("publish new articles to fs");
+                    info!("push new articles to '{}'", self.app_config.clone().fs.path);
 
                     // wait a whole second, just to be sure
                     sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
