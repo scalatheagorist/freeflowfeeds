@@ -20,14 +20,13 @@ pub(crate) fn get_header_view() -> String {
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item mx-2">
-                <button class="btn btn-secondary"><a href="/articles">Home</a><span class="sr-only">(current)</span>
-                </button>
+            <li class="nav-item text-center mx-2">
+                <button class="btn btn-secondary nav-btn"><a href="/articles">Home</a><span class="sr-only">(current)</span></button>
             </li>
-            <li class="nav-item dropdown mx-2">
+            <li class="nav-item text-center dropdown mx-2">
                 <div class="ml-auto">
                     <div class="dropdown ml-auto">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Magazin
                         </button>
@@ -150,6 +149,10 @@ fn css() -> String {
                 background-color: #ffb400 !important;
             }
 
+            .nav-btn {
+                width: 125px;
+            }
+
             .grid-container {
                 margin-top: 7%;
             }
@@ -261,24 +264,30 @@ fn css() -> String {
                     margin-top: 30%;
                 }
 
+                .nav-btn {
+                    width: 125px;
+                }
+
+                .navbar-collapse {
+                    display: flex !important;
+                    align-items: center;
+                }
+
+                .navbar-nav .btn {
+                    display: inline-flex;
+                    flex: 1;
+                    justify-content: center;
+                    align-items: center;
+                    white-space: nowrap;
+                }
+
                 body {
                     background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
                     font-size: 14px;
                 }
 
                 .logo {
-                    max-width: 120px;
-                }
-
-                .logo-link {
-                    max-width: 120px;
-                    margin-right: 10%;
-                    margin-left: 2%;
-                }
-
-                .lightning-logo {
-                    max-width: 50px;
-                    height: auto;
+                    display: none;
                 }
 
                 .custom-grid {
@@ -289,13 +298,14 @@ fn css() -> String {
                     margin-top: 1%
                 }
 
-                .lightning {
-                    margin-left: 30%;
-                    background-color: #ffb400 !important;
+                .card-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
 
                 .card {
-                    max-width: 97%;
+                    max-width: 94%;
                     margin-bottom: 20px;
                 }
             }
