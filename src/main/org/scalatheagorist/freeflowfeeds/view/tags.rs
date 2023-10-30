@@ -1,55 +1,86 @@
 pub(crate) fn get_header_view() -> String {
     format!(r##"
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <link rel="icon"
           href="https://image.nostr.build/0dde81d203685372a5228eda585bc169c6aad83b5c7491b89988042774f98593.png"
           type="image/png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="canonical" href="https://www.liblit.org/articles">
+    <meta name="description" content="Freiheitliche Meta Feeds">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="Liberty Freiheit Marktradikal Ankap Libertarismus Liberalismus">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.75, user-scalable=0">
     <meta charset="UTF-8">
     {}
-    <title>liblit</title>
+    <title>liberty literature</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-primary fixed-top">
-    <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
+        <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
         <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
-             alt="Die Marktradikalen" class="logo">
+             alt="Die Marktradikalen" class="logo" title="Zu den Marktradikalen">
     </a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+    <form class="form-inline my-2 my-lg-0">
+        <input class="form-control" type="search" placeholder="Suche: '2023/10'" aria-label="Search" id="search-input">
+    </form>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
             <li class="nav-item text-center mx-2">
-                <button class="btn btn-secondary nav-btn"><a href="/articles">Home</a><span class="sr-only">(current)</span></button>
+                <a class="btn btn-secondary nav-btn" href="/articles"><i class="fas fa-home" title="Zur Startseite"></i></a>
             </li>
             <li class="nav-item text-center dropdown mx-2">
-                <div class="ml-auto">
-                    <div class="dropdown ml-auto">
-                        <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Magazin
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="/articles">Alle</a>
-                            <a class="dropdown-item" href="/articles/misesde">MisesDE</a>
-                            <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut</a>
-                            <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat</a>
-                            <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei</a>
-                            <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken</a>
-                            <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen</a>
+                <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alle Magazine">
+                    Magazin
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/articles">Alle Magazine</a>
+                    <a class="dropdown-item" href="/articles/misesde">MisesDE</a>
+                    <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut</a>
+                    <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat</a>
+                    <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei</a>
+                    <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken</a>
+                    <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen</a>
+                </div>
+            </li>
+            <li class="nav-item text-center mx-2">
+                <button type="button" class="btn btn-secondary nav-btn" data-toggle="modal" data-target="#impressumModal">
+                    §
+                </button>
+                <div class="modal fade" id="impressumModal" tabindex="-1" role="dialog" aria-labelledby="impressumModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="impressumModalLabel">Rechtliches</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-left">
+                                <p>Diese Seite wird ausschließlich freiwillig und privat betrieben. Es gibt keine Geschäftsbeziehungen zu den verlinkten Websites.</p>
+                                <p>Kontakt: lightningrises@proton.me</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control" type="search" placeholder="Suche: '2023/10'" aria-label="Search"
-                   id="search-input">
-        </form>
     </div>
 </nav>
-<a href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
+<a href="https://ankap.store/" id="ankapstore" target="_blank">
+    <img class="ankapstore-logo"
+         src="https://image.nostr.build/220255ad63062fce0b39883ac49b501c0e372e1c44e40c096d19f7fb31925346.png"/>
+</a>
+<a id="opensource-band" href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
     100% Open Source
 </a>
 <a href="#" id="scrollToTopButton"><i class="fas fa-arrow-up"></i></a>
@@ -138,219 +169,329 @@ $(document).ready(function () {
     });
 });
 
-
     "#.to_string()
 }
 
 fn css() -> String {
     r#"
-        <style>
-            .navbar {
-                background-color: #ffb400 !important;
-            }
+<style>
+.navbar {
+    background-color: #ffb400 !important;
+}
 
-            .nav-btn {
-                width: 125px;
-            }
+.ankapstore-logo {
+    height: 50px;
+}
 
-            .grid-container {
-                margin-top: 7%;
-            }
+.nav-btn {
+    width: 125px;
+}
 
-            .custom-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-                grid-gap: 10px;
-                justify-content: start;
-                margin-top: 1%
-            }
+.grid-container {
+    margin-top: 7%;
+    position: relative;
+    left: -100px;
+}
 
-            .input-group {
-                width: 100%;
-                max-width: 400px;
-            }
+.input-group {
+    width: 100%;
+    max-width: 400px;
+}
 
-            .logo {
-                max-width: 160px;
-            }
+.logo {
+    max-width: 160px;
+}
 
-            .logo-link {
-                max-width: 160px;
-                height: auto;
-                margin-right: 27%;
-                margin-left: 3%;
-            }
+.logo-link {
+    max-width: 160px;
+    height: auto;
+    margin-right: 27%;
+    margin-left: 3%;
+}
 
-            .lightning-logo {
-                max-width: 50px;
-                height: auto;
-            }
+.lightning-logo {
+    max-width: 50px;
+    height: auto;
+}
 
-            #search-input {
-                min-width: 100px;
-                margin: 0;
-            }
+#search-input {
+    min-width: 100px !important;
+    height: 100% !important;
+}
 
-            .input-group {
-                width: 100%;
-                max-width: 400px;
-            }
+.input-group {
+    width: 100%;
+    max-width: 400px;
+}
 
-            .card {
-                width: 100%;
-                height: 200px;
-            }
+.card {
+    width: 900px;
+    height: 200px;
+}
 
-            .highlight-title {
-                font-weight: bold;
-                font-style: italic;
-            }
+.highlight-title {
+    font-weight: bold;
+    font-style: italic;
+}
 
-            .card a {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                max-width: 100%;
-            }
+.card a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 90%;
+}
 
-            .card.mb-3 {
-                background-color: #30311f !important;
-                color: white !important;
-                transform: translateY(0);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                box-shadow: none;
-            }
+.card.mb-3 {
+    background-color: #30311f !important;
+    color: white !important;
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: none;
+}
 
-            .card:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-            body {
-                background-color: #ffb400 !important;
-                color: black !important;
-                background-image: url('https://image.nostr.build/5f7a0e8a7ea75e62774d90822d98c5a8168e2a6f75e33c710ebe48333c06680d.jpg');
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                background-size: cover;
-                opacity: 0.95;
-                font-size: 16px;
-                font-family: 'Gilmer', sans-serif;
-                line-height: 1.5;
-            }
+body {
+    background-color: #0f0f0f;
+    margin: 0;
+    padding: 0;
+    animation: backgroundChange 128s linear infinite;
+    background-attachment: fixed;
+    background-position: right 130px;
+    background-size: auto 70%;
+    background-repeat: no-repeat;
+    transition: background-image 5s ease-in-out;
+}
 
-            #scrollToTopButton {
-                display: none;
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                background: #cb4643;
-                color: #fff;
-                border-radius: 50%;
-                padding: 20px;
-                text-align: center;
-                font-size: 24px;
-                cursor: pointer;
-                z-index: 999;
-            }
+@keyframes backgroundChange {
+    0% {
+        background-image: url('https://ankap.store/images/poster/menschliches-handeln/vorderseite.jpg');
+    }
+    5% {
+        background-image: url('https://ankap.store/images/hoodies/anonymous-man/fashion-schwarz-vorderseite.jpg');
+    }
+    10% {
+        background-image: url('https://ankap.store/images/tank-tops/honey-badger-dont-care/frau-weiss-vorderseite.jpg');
+    }
+    15% {
+        background-image: url('https://ankap.store/images/t-shirts/gadsden/mann-gelb-vorderseite.jpg');
+    }
+    20% {
+        background-image: url('https://ankap.store/images/sweatshirts/die-libertaeren/lichtgraumeliert-vorderseite.jpg');
+    }
+    25% {
+        background-image: url('https://ankap.store/images/t-shirts/libertaere-weltherrschaft/mann-helltuerkis-vorderseite.jpg');
+    }
+    30% {
+        background-image: url('https://ankap.store/images/sweatshirts/freiheitsfunken/beige-vorderseite.jpg');
+    }
+    35% {
+        background-image: url('https://ankap.store/images/tank-tops/end-gov/mann-schwarz-vorderseite.jpg');
+    }
+    40% {
+        background-image: url('https://ankap.store/images/sweatshirts/ssr-sturmhaube/800x/schwarz-vorderseite.jpg');
+    }
+    45% {
+        background-image: url('https://ankap.store/images/hoodies/regierungsblabla/classic-navyblau-vorderseite.jpg');
+    }
+    50% {
+        background-image: url('https://ankap.store/images/tassen/ludwig-von-mises/weissglaenzend-vorderseite.jpg');
+    }
+    55% {
+        background-image: url('https://ankap.store/images/t-shirts/all-eyes-on-bitcoin/mann-dunkeltuerkis-vorderseite.jpg');
+    }
+    60% {
+        background-image: url('https://ankap.store/images/t-shirts/whisper-study-bitcoin/mann-orange-vorderseite.jpg');
+    }
+    65% {
+        background-image: url('https://ankap.store/images/t-shirts/marktradikavel/mann-navyblau-vorderseite.jpg');
+    }
+    70% {
+        background-image: url('https://ankap.store/images/t-shirts/sowell/mann-navyblau-vorderseite.jpg');
+    }
+    75% {
+        background-image: url('https://ankap.store/images/t-shirts/privacy-responsibility-freedom/mann-helltuerkis-vorderseite.jpg');
+    }
+    80% {
+        background-image: url('https://ankap.store/images/t-shirts/mindestlohn-fanboy/frau-beige-vorderseite.jpg');
+    }
+    85% {
+        background-image: url('https://ankap.store/images/t-shirts/ahoj-ancap/mann-helltuerkis-vorderseite.jpg');
+    }
+    90% {
+        background-image: url('https://ankap.store/images/sweatshirts/kyle/rot-vorderseite.jpg');
+    }
+    95% {
+        background-image: url('https://ankap.store/images/t-shirts/free-ross/mann-dunkelgruen-vorderseite.jpg');
+    }
+    100% {
+        background-image: url('https://ankap.store/images/t-shirts/extremely-peaceful/mann-gelb-vorderseite.jpg');
+    }
+}
 
-            #scrollToTopButton:hover {
-                background: darkred; /* Hintergrundfarbe bei Hover */
-            }
+a.keyframe-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
-            @media (max-width: 768px) {
-                .grid-container {
-                    margin-top: 30%;
-                }
+#scrollToTopButton {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #373827;
+    color: #feb60c;
+    border-radius: 20%;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 999;
+}
 
-                .nav-btn {
-                    width: 125px;
-                }
+#ankapstore {
+    position: fixed;
+    top: 120px;
+    right: 30px;
+    color: #feb60c;
+    padding: 1px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-                .navbar-collapse {
-                    display: flex !important;
-                    align-items: center;
-                }
+#ankapstore:hover {
+    background: darkred;
+}
 
-                .navbar-nav .btn {
-                    display: inline-flex;
-                    flex: 1;
-                    justify-content: center;
-                    align-items: center;
-                    white-space: nowrap;
-                }
+#scrollToTopButton:hover {
+    background: darkred;
+}
 
-                body {
-                    background-image: url('https://image.nostr.build/2c6b51e2500e8aa57e6195e0a913035ace5411f6a7978f3edc4d425fb77be271.png');
-                    font-size: 14px;
-                }
+@media (max-width: 768px) {
+    .grid-container {
+        margin-top: 20%;
+        left: 0px;
+    }
 
-                .logo {
-                    display: none;
-                }
+    #ankapstore {
+       display: none;
+    }
 
-                .custom-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-                    grid-gap: 10px;
-                    justify-content: start;
-                    margin-top: 1%
-                }
+    #opensource-band {
+       display: none;
+    }
 
-                .card-container {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
+    .logo {
+        display: none;
+    }
 
-                .card {
-                    max-width: 94%;
-                    margin-bottom: 20px;
-                }
-            }
+    .nav-btn {
+        width: 125px;
+    }
 
-            a {
-                color: white;
-            }
+    .navbar-nav {
+        display: table;
+        flex-direction: column;
+    }
 
-            a:hover {
-                text-decoration: none;
-                color: white;
-                border: 2px solid transparent;
-                transition: border-color 0.5s;
-            }
+    .navbar-toggler {
+        position: relative;
+        z-index: 1;
+    }
 
-            .btn {
-                background-color: #30311f !important;
-                padding: 10px 20px;
-                font-size: 18px;
-            }
+    .navbar-nav .btn {
+        display: table;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+    }
 
-            .open-source-badge {
-                position: fixed;
-                bottom: 138px;
-                right: -45px;
-                background-color: #ffb400 !important;
-                color: #000;
-                padding: 20px 48px;
-                border-radius: 5px;
-                transform: rotate(-45deg);
-                transform-origin: bottom right;
-                font-size: 18px;
-                line-height: 1;
-                border: 2px solid #000;
-            }
+    body {
+        background-color: #0f0f0f !important;
+        margin: 0;
+        padding: 0;
+        animation: none;
+        background-attachment: fixed;
+        background-position: right top;
+        background-size: auto 100%;
+        background-repeat: repeat-y;
+    }
 
-            .modal-backdrop {
-                position: inherit !important;
-                top: 0;
-                left: 0;
-                z-index: 1040;
-                width: 100vw;
-                height: 100vh;
-                background-color: #000;
-            }
-        </style>
+    .logo {
+        display: none;
+    }
+
+    .custom-grid {
+        display: grid;
+        grid-template-columns: auto !important;
+        grid-gap: 10px;
+        justify-content: start;
+        margin-top: 1%;
+    }
+
+    .card-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        max-width: 470px;
+    }
+}
+
+a {
+    color: white;
+}
+
+a:hover {
+    text-decoration: none;
+    color: white;
+    border: 2px solid transparent;
+    transition: border-color 0.5s;
+}
+
+.btn {
+    background-color: #30311f !important;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+.open-source-badge {
+    position: fixed;
+    bottom: 138px;
+    right: -45px;
+    background-color: #ffb400 !important;
+    color: #000;
+    padding: 20px 48px;
+    border-radius: 5px;
+    transform: rotate(-45deg);
+    transform-origin: bottom right;
+    font-size: 18px;
+    line-height: 1;
+    border: 2px solid #000;
+}
+
+.modal-backdrop {
+    position: inherit !important;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+}
+</style>
         "#.to_string()
 }

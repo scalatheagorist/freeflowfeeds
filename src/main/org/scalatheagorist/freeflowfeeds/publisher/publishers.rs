@@ -64,13 +64,13 @@ impl PublisherHost {
     pub fn to_publisher_urls(&self) -> Vec<(Publisher, String)> {
         match self.publisher.clone() {
             Publisher::SCHWEIZER_MONAT | Publisher::DIE_MARKTRADIKALEN =>
-                self.from_path(),
+                self.by_path(),
             _ =>
-                self.from_pages()
+                self.by_page()
         }
     }
 
-    fn from_pages(&self) -> Vec<(Publisher, String)> {
+    fn by_page(&self) -> Vec<(Publisher, String)> {
         (1..=self.page_to)
             .collect::<Vec<i32>>()
             .into_iter()
@@ -81,7 +81,7 @@ impl PublisherHost {
             .collect::<Vec<_>>()
     }
 
-    fn from_path(&self) -> Vec<(Publisher, String)> {
+    fn by_path(&self) -> Vec<(Publisher, String)> {
         let v: Vec<&str> = self.path.split(", ").collect();
         v.into_iter().map(|p| {
             let uri: String = format!("{}{}", self.url, p);
