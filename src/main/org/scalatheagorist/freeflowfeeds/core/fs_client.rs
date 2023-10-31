@@ -1,7 +1,6 @@
 use std::fs::Metadata;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
-use std::time::SystemTime;
 use std::vec::IntoIter;
 
 use futures_util::StreamExt;
@@ -51,13 +50,13 @@ impl FileStoreClient {
         }).await
     }
 
-    pub async fn load_from_dir<W>(config: &FileStoreConfig) -> Iter<IntoIter<W>>
+    pub async fn load_from_dir<W>(config: &FileStoreConfig) -> Vec<(Metadata, W)>
         where W: for<'de> serde::de::Deserialize<'de> + Send + 'static + serde::Serialize{
         let mut dir: ReadDir = match fs::read_dir(Path::new(&config.path)).await {
             Ok(dir) => dir,
             Err(err) => {
                 error!("Error reading directory: {}", err);
-                return tokio_stream::iter(vec![]);
+                return vec![];
             }
         };
         let mut files: Vec<(Metadata, W)> = Vec::new();
@@ -83,12 +82,6 @@ impl FileStoreClient {
             }
         }
 
-        files.sort_by(|(entry1, _), (entry2, _)| {
-            let m1: SystemTime = entry1.created().unwrap();
-            let m2: SystemTime = entry2.created().unwrap();
-            m1.cmp(&m2)
-        });
-
-        tokio_stream::iter(files.into_iter().map(|(_, data)| data).collect::<Vec<_>>())
+        files
     }
 }

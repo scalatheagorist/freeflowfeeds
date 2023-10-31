@@ -21,27 +21,20 @@ impl RSSBuilder {
     ) -> Iter<IntoIter<String>> {
         let mut stream: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
-        let mut count: i32 = 0;
         let this: RSSBuilder = self.clone();
 
         view.push(r#"<div class="container grid-container">"#.to_string());
         view.push(r#"<div class="custom-grid">"#.to_string());
 
-        fn _generate_feeds(this: RSSBuilder, message: RSSFeed, count: &mut i32, view: &mut Vec<String>) {
+        fn _generate_feeds(this: RSSBuilder, message: RSSFeed, view: &mut Vec<String>) {
             view.push(this.generate_feeds(message));
-            *count += 1;
-
-            if *count % 2 == 0 {
-                view.push("</div>".to_string());
-                view.push(r#"<div class="custom-grid">"#.to_string());
-            }
         }
 
         if let Some(publisher) = publisher {
             let mut stream = messages.filter(|rss| rss.publisher == publisher);
-            while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut count, &mut view) }
+            while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut view) }
         } else {
-            while let Some(message) = messages.next().await { _generate_feeds(this.clone(), message, &mut count, &mut view) }
+            while let Some(message) = messages.next().await { _generate_feeds(this.clone(), message, &mut view) }
         }
 
         view.push("</div>".to_string());

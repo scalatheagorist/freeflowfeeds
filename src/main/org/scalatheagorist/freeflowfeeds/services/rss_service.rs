@@ -1,3 +1,4 @@
+use std::fs::Metadata;
 use std::time::Duration;
 use std::vec::IntoIter;
 
@@ -34,11 +35,25 @@ impl RSSService {
     }
 
     pub async fn pull(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
-        let config: FileStoreConfig         = self.app_config.fs.clone();
-        let stream: Iter<IntoIter<RSSFeed>> = FileStoreClient::load_from_dir(&config).await;
-        let builder: RSSBuilder             = self.rss_builder.clone();
+        let builder: RSSBuilder = self.rss_builder.clone();
+        let config: FileStoreConfig = self.app_config.fs.clone();
+        let stream: Iter<IntoIter<RSSFeed>> =
+            tokio_stream::iter({
+                let mut feeds: Vec<(Metadata, RSSFeed)> =
+                    FileStoreClient::load_from_dir::<RSSFeed>(&config).await;
+
+                self.sort_by_modified(&mut feeds);
+
+                feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
+            });
 
         builder.build(stream, publisher).await
+    }
+
+    fn sort_by_modified(&self, feeds: &mut Vec<(Metadata, RSSFeed)>) {
+        feeds.sort_by(|(entry1, _), (entry2, _)| {
+            entry1.modified().unwrap().cmp(&entry2.modified().unwrap())
+        });
     }
 
     pub async fn push(&self) {
@@ -58,7 +73,9 @@ impl RSSService {
 
                     // wait a whole second, just to be sure
                     sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
-                    self._push().await;
+
+                    // scrape
+                    self.scape_service.run(self.app_config.clone().fs).await
                 }
             }
             Err(err) => {
@@ -66,9 +83,5 @@ impl RSSService {
                 return;
             }
         }
-    }
-
-    async fn _push(&self) -> () {
-        self.scape_service.run(self.app_config.clone().fs).await
     }
 }
