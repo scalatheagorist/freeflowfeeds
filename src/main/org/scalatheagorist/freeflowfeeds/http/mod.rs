@@ -5,8 +5,6 @@ use crate::publisher::Publisher;
 
 mod http_server;
 
-pub(crate) const ROOT: &str = "/";
-pub(crate) const ENDPOINT_ARTICLES: &str = "/articles";
 pub(crate) const ENDPOINT_MISESDE: &str = "/articles/misesde";
 pub(crate) const ENDPOINT_FREIHEITSFUNKEN: &str = "/articles/freiheitsfunken";
 pub(crate) const ENDPOINT_SCHWEIZERMONAT: &str = "/articles/schweizermonat";

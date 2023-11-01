@@ -54,29 +54,6 @@ impl HttpServer {
                     let rss_service: RSSService = rss_service.clone();
                     async move {
                         match req.uri().path() {
-                            crate::http::ROOT | crate::http::ENDPOINT_ARTICLES => {
-                                info!("request to {:?}", req.headers());
-                                let iterator: Iter<IntoIter<String>> = rss_service.pull(None).await;
-                                let stream =
-                                    iterator.map(|result| {
-                                        Ok::<Bytes, std::io::Error>(
-                                            hyper::body::Bytes::from(result)
-                                        )
-                                    });
-
-                                match {
-                                    Headers.to_content_header(HeaderType::ContentTypeHtml)
-                                } {
-                                    Some(header) =>
-                                        Response::builder()
-                                            .header(header.0, header.1)
-                                            .body(Body::wrap_stream(stream)),
-                                    None =>
-                                        Response::builder()
-                                            .status(500)
-                                            .body(Body::from("Internal Server Error"))
-                                }
-                            }
                             e @ (
                                 crate::http::ENDPOINT_MISESDE |
                                 crate::http::ENDPOINT_SCHWEIZERMONAT |
@@ -107,8 +84,30 @@ impl HttpServer {
                                             .status(500)
                                             .body(Body::from("Internal Server Error"))
                                 }
+                            },
+                            _ => {
+                                info!("request to {:?}", req.headers());
+                                let iterator: Iter<IntoIter<String>> = rss_service.pull(None).await;
+                                let stream =
+                                    iterator.map(|result| {
+                                        Ok::<Bytes, std::io::Error>(
+                                            hyper::body::Bytes::from(result)
+                                        )
+                                    });
+
+                                match {
+                                    Headers.to_content_header(HeaderType::ContentTypeHtml)
+                                } {
+                                    Some(header) =>
+                                        Response::builder()
+                                            .header(header.0, header.1)
+                                            .body(Body::wrap_stream(stream)),
+                                    None =>
+                                        Response::builder()
+                                            .status(500)
+                                            .body(Body::from("Internal Server Error"))
+                                }
                             }
-                            _ => Response::builder().status(404).body(Body::from("Not Found"))
                         }
                     }
                 }))
