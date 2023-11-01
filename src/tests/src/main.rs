@@ -8,4 +8,5 @@ async fn main() {
     //schweizermonat_html_select_test()
     //hayek_institut_html_select_test()
     //diemarktradikalen_html_select_test()
+    //sandwirt_html_select_test()
 }

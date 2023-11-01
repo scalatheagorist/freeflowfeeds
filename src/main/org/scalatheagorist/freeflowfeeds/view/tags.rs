@@ -59,6 +59,7 @@ pub(crate) fn get_header_view() -> String {
                     <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei</a>
                     <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken</a>
                     <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen</a>
+                    <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt</a>
                 </div>
             </li>
             <li class="nav-item text-center mx-2">
