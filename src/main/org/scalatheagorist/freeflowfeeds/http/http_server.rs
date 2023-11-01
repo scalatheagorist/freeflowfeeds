@@ -60,7 +60,8 @@ impl HttpServer {
                                 crate::http::ENDPOINT_EFMAGAZIN |
                                 crate::http::ENDPOINT_HAYEKINSTITUT |
                                 crate::http::ENDPOINT_FREIHEITSFUNKEN |
-                                crate::http::ENDPOINT_DIEMARKTRADIKALEN
+                                crate::http::ENDPOINT_DIEMARKTRADIKALEN |
+                                crate::http::ENDPOINT_SANDWIRT
                             ) => {
                                 info!("request to {:?}", req.headers());
 
