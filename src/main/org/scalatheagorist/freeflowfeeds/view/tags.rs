@@ -9,10 +9,22 @@ pub(crate) fn get_header_view() -> String {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="canonical" href="https://www.liblit.org/articles">
+
     <meta name="description" content="Freiheitliche Meta Feeds">
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="Liberty Freiheit Marktradikal Ankap Libertarismus Liberalismus">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.75, user-scalable=0">
+
+    <meta property="og:title" content="Titel Ihrer Website">
+    <meta property="og:description" content="Liberty Literature">
+    <meta property="og:image" content="https://image.nostr.build/5ccc2e5b408290cf990e6ef96cbc6d7483d845848a05773ddda794e72409b7e9.png">
+    <meta property="og:url" content="https://www.liblit.org">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="liblit">
+    <meta name="twitter:description" content="Liberty Literature">
+    <meta name="twitter:image" content="https://image.nostr.build/5ccc2e5b408290cf990e6ef96cbc6d7483d845848a05773ddda794e72409b7e9.png">
+
     <meta charset="UTF-8">
     {}
     <title>liberty literature</title>
