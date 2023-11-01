@@ -9,6 +9,7 @@ use crate::publisher::efmagazin::EfMagazin;
 use crate::publisher::freiheitsfunken::Freiheitsfunken;
 use crate::publisher::hayekinstitut::HayekInstitut;
 use crate::publisher::misesde::MisesDE;
+use crate::publisher::sandwirt::Sandwirt;
 use crate::publisher::schweizermonat::SchweizerMonat;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
@@ -24,7 +25,9 @@ pub enum Publisher {
     #[allow(non_camel_case_types)]
     HAYEK_INSTITUT,
     #[allow(non_camel_case_types)]
-    DIE_MARKTRADIKALEN
+    DIE_MARKTRADIKALEN,
+    #[allow(non_camel_case_types)]
+    SANDWIRT
 }
 
 impl Publisher {
@@ -41,7 +44,9 @@ impl Publisher {
             Publisher::HAYEK_INSTITUT =>
                 Box::new(HayekInstitut::new(None)),
             Publisher::DIE_MARKTRADIKALEN =>
-                Box::new(DieMarktradikalen::new(Some("https://www.die-marktradikalen.de")))
+                Box::new(DieMarktradikalen::new(Some("https://www.die-marktradikalen.de"))),
+            Publisher::SANDWIRT =>
+                Box::new(Sandwirt::new(Some("https://www.dersandwirt.de")))
         };
 
         publisher.get_rss(html_response)
@@ -63,7 +68,9 @@ pub struct PublisherHost {
 impl PublisherHost {
     pub fn to_publisher_urls(&self) -> Vec<(Publisher, String)> {
         match self.publisher.clone() {
-            Publisher::SCHWEIZER_MONAT | Publisher::DIE_MARKTRADIKALEN =>
+            Publisher::SCHWEIZER_MONAT |
+            Publisher::DIE_MARKTRADIKALEN |
+            Publisher::SANDWIRT =>
                 self.by_path(),
             _ =>
                 self.by_page()

@@ -9,3 +9,4 @@ mod schweizermonat;
 mod publishers;
 mod hayekinstitut;
 mod diemarktradikalen;
+mod sandwirt;

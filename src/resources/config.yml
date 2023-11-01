@@ -27,6 +27,10 @@ hosts:
     path: "artikel/, uebersetzung/, hoerbuch/, buchvorstellung/"
     page_to: 0
     publisher: "DIE_MARKTRADIKALEN"
+  - url: "https://www.dersandwirt.de/"
+    path: "archiv/"
+    page_to: 0
+    publisher: "SANDWIRT"
 
 concurrency: 4
 
@@ -34,4 +38,4 @@ httpserver:
   address: "0.0.0.0"
   port: 8989
 
-update: "10:10"
+update: "17:00"
