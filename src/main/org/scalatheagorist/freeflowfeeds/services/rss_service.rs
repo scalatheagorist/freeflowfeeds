@@ -52,7 +52,7 @@ impl RSSService {
 
     fn sort_by_modified(&self, feeds: &mut Vec<(Metadata, RSSFeed)>) {
         feeds.sort_by(|(entry1, _), (entry2, _)| {
-            entry1.modified().unwrap().cmp(&entry2.modified().unwrap())
+            entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
         });
     }
 
