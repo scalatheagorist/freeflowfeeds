@@ -42,7 +42,7 @@ impl RSSService {
                 let mut feeds: Vec<(Metadata, RSSFeed)> =
                     FileStoreClient::load_from_dir::<RSSFeed>(&config).await;
 
-                self.sort_by_modified(&mut feeds);
+                self.sort_descending_by_modified(&mut feeds);
 
                 feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
             });
@@ -50,7 +50,7 @@ impl RSSService {
         builder.build(stream, publisher).await
     }
 
-    fn sort_by_modified(&self, feeds: &mut Vec<(Metadata, RSSFeed)>) {
+    fn sort_descending_by_modified(&self, feeds: &mut Vec<(Metadata, RSSFeed)>) {
         feeds.sort_by(|(entry1, _), (entry2, _)| {
             entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
         });

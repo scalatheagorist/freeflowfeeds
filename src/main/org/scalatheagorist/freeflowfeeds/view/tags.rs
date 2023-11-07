@@ -4,7 +4,7 @@ pub(crate) fn get_header_view() -> String {
 <html>
 <head>
     <link rel="icon"
-          href="https://image.nostr.build/0dde81d203685372a5228eda585bc169c6aad83b5c7491b89988042774f98593.png"
+          href="https://image.nostr.build/86fed7343053943f87b8370dd1c38637a28b555f04f09c0acda3bf5ac675fe9f.png"
           type="image/png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
