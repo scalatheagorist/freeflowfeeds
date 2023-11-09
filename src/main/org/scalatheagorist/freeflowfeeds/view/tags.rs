@@ -10,22 +10,27 @@ pub(crate) fn get_header_view() -> String {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="canonical" href="https://www.liblit.org/articles">
 
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="description" content="Freiheitliche Meta Feeds">
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="Liberty Freiheit Marktradikal Ankap Libertarismus Liberalismus">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.75, user-scalable=0">
 
-    <meta property="og:title" content="Titel Ihrer Website">
-    <meta property="og:description" content="Liberty Literature">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:site_name">
+    <meta property="og:title" content="Liberty Literature">
+    <meta property="og:description" content="Freiheitliche Meta Feeds">
     <meta property="og:image" content="https://image.nostr.build/f4d0b15b73e5cf806087e646c92305b363cfc9e18678b14be4fde83f98aa07f8.png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="683">
     <meta property="og:url" content="https://www.liblit.org">
+    <meta property="og:type" content="website">
 
-    <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="liblit">
     <meta name="twitter:description" content="Liberty Literature">
     <meta name="twitter:image" content="https://image.nostr.build/f4d0b15b73e5cf806087e646c92305b363cfc9e18678b14be4fde83f98aa07f8.png">
-
-    <meta charset="UTF-8">
+    <meta name="twitter:card" content="summary_large_image">
     {}
     <title>liberty literature</title>
 </head>
