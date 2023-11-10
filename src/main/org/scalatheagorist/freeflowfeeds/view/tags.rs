@@ -45,7 +45,7 @@ pub(crate) fn get_header_view() -> String {
     <form class="form-inline my-2 my-lg-0">
         <input class="form-control" type="search" placeholder="Suche: '2023/10'" aria-label="Search" id="search-input">
     </form>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" id="navbar-nav-toggle">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -395,7 +395,7 @@ a.keyframe-image {
 
 @media (max-width: 768px) {
     .grid-container {
-        margin-top: 20%;
+        margin-top: 28%;
         left: 0px;
     }
 
@@ -419,6 +419,10 @@ a.keyframe-image {
     .navbar-nav {
         display: table;
         flex-direction: column;
+    }
+
+    #navbar-nav-toggle {
+        top: -50px;
     }
 
     .navbar-toggler {
@@ -466,6 +470,11 @@ a.keyframe-image {
     .card {
         margin-bottom: 20px;
         max-width: 470px;
+    }
+
+    #search-input {
+        width: 50% !important;
+        margin-left: 100px;
     }
 }
 
