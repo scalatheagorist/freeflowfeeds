@@ -8,6 +8,8 @@ pub(crate) fn get_header_view() -> String {
           type="image/png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.2/dist/terminal.min.css" /><link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.1/dist/terminal.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.1/dist/terminal.min.css" />
     <link rel="canonical" href="https://www.liblit.org/articles">
 
     <meta charset="UTF-8">
@@ -195,6 +197,7 @@ fn css() -> String {
 <style>
 .navbar {
     background-color: #ffb400 !important;
+    padding: inherit;
 }
 
 .ankapstore-logo {
@@ -203,12 +206,13 @@ fn css() -> String {
 
 .nav-btn {
     width: 125px;
+    height: 50px;
 }
 
 .grid-container {
     margin-top: 7%;
     position: relative;
-    left: -100px;
+    left: -170px;
 }
 
 .input-group {
@@ -409,6 +413,7 @@ a.keyframe-image {
 
     .nav-btn {
         width: 125px;
+        height: 50px;
     }
 
     .navbar-nav {
@@ -481,7 +486,7 @@ a:hover {
 
 .open-source-badge {
     position: fixed;
-    bottom: 138px;
+    bottom: 145px;
     right: -45px;
     background-color: #ffb400 !important;
     color: #000;
