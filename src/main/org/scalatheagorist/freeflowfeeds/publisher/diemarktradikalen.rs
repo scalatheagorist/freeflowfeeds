@@ -1,9 +1,6 @@
-use std::vec::IntoIter;
-
 use log::{error, warn};
 use select::document::Document;
 use select::predicate::Name;
-use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::Publisher::DIE_MARKTRADIKALEN;
@@ -21,8 +18,8 @@ impl DieMarktradikalen {
 }
 
 impl PublisherModel for DieMarktradikalen {
-    fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
-        tokio_stream::iter( match Document::from_read(html_response.response.as_bytes()) {
+    fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed> {
+        match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at die marktradikalen {}", err);
                 vec![]
@@ -43,7 +40,7 @@ impl PublisherModel for DieMarktradikalen {
                                         let url: String = format!("{}{}", uri, link);
                                         articles.push((title_node.text().trim().to_owned(), url.to_owned()))
                                     },
-                                    None =>  articles.push((title_node.text().trim().to_owned(), link.to_owned()))
+                                    None => articles.push((title_node.text().trim().to_owned(), link.to_owned()))
                                 }
                             } else {
                                 articles.push((title_node.text().trim().to_owned(), link.to_owned()));
@@ -59,6 +56,6 @@ impl PublisherModel for DieMarktradikalen {
                     rss
                 }).collect::<Vec<_>>()
             }
-        })
+        }
     }
 }

@@ -13,7 +13,8 @@ pub struct AppConfig {
     pub fs: FileStoreConfig,
     pub httpserver: HttpServerConfig,
     pub concurrency: i32,
-    pub update: String
+    pub update: String,
+    pub initial_pull: bool
 }
 
 impl AppConfig {
@@ -40,6 +41,9 @@ impl AppConfig {
             }
         }
 
+        app_config.initial_pull =
+            get_env_var_or_default("FFF_INITIAL_PULL", app_config.initial_pull.clone());
+
         app_config.fs.path =
             get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
         app_config.httpserver.address =
@@ -50,11 +54,11 @@ impl AppConfig {
             get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
 
         for host in app_config.hosts.iter_mut() {
-            let new_page_to = match host.publisher {
-                Publisher::EFMAGAZIN       => get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", 2),
-                Publisher::FREIHEITSFUNKEN => get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", 2),
-                Publisher::MISESDE         => get_env_var_or_default("FFF_MISESDE_PAGE_TO", 2),
-                Publisher::HAYEK_INSTITUT  => get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", 2),
+            let new_page_to = match host.clone().publisher {
+                Publisher::EFMAGAZIN       => get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", host.clone().page_to),
+                Publisher::FREIHEITSFUNKEN => get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", host.clone().page_to),
+                Publisher::MISESDE         => get_env_var_or_default("FFF_MISESDE_PAGE_TO", host.clone().page_to),
+                Publisher::HAYEK_INSTITUT  => get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", host.clone().page_to),
                 _ => 2,
             };
 

@@ -1,10 +1,7 @@
-use std::vec::IntoIter;
-
 use log::error;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
-use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::Publisher::SCHWEIZER_MONAT;
@@ -22,13 +19,13 @@ impl SchweizerMonat {
 }
 
 impl PublisherModel for SchweizerMonat {
-    fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
+    fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed> {
         fn extract_author(article: &Node) -> Option<String> {
             let author_node = article.find(Name("a").and(Class("meta-author"))).next();
             author_node.map(|author| author.text())
         }
 
-        tokio_stream::iter( match Document::from_read(html_response.response.as_bytes()) {
+        match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at schweizer monat {}", err);
                 vec![]
@@ -62,6 +59,6 @@ impl PublisherModel for SchweizerMonat {
                     rss
                 }).collect::<Vec<_>>()
             }
-        })
+        }
     }
 }

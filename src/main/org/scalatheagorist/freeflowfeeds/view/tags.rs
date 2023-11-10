@@ -48,10 +48,10 @@ pub(crate) fn get_header_view() -> String {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item text-center mx-2">
+            <li class="nav-item text-center mx-1">
                 <a class="btn btn-secondary nav-btn" href="/articles"><i class="fas fa-home" title="Zur Startseite"></i></a>
             </li>
-            <li class="nav-item text-center dropdown mx-2">
+            <li class="nav-item text-center dropdown mx-1">
                 <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alle Magazine">
                     Magazin
@@ -67,7 +67,7 @@ pub(crate) fn get_header_view() -> String {
                     <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt</a>
                 </div>
             </li>
-            <li class="nav-item text-center mx-2">
+            <li class="nav-item text-center mx-1">
                 <button type="button" class="btn btn-secondary nav-btn" data-toggle="modal" data-target="#impressumModal">
                     §
                 </button>
@@ -227,11 +227,6 @@ fn css() -> String {
     margin-left: 3%;
 }
 
-.lightning-logo {
-    max-width: 50px;
-    height: auto;
-}
-
 #search-input {
     min-width: 100px !important;
     height: 100% !important;
@@ -277,12 +272,12 @@ body {
     background-color: #0f0f0f;
     margin: 0;
     padding: 0;
-    animation: backgroundChange 128s linear infinite;
+    animation: backgroundChange 512s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
     background-attachment: fixed;
     background-position: right 130px;
     background-size: auto 70%;
     background-repeat: no-repeat;
-    transition: background-image 5s ease-in-out;
+
 }
 
 @keyframes backgroundChange {
@@ -475,8 +470,6 @@ a {
 
 a:hover {
     text-decoration: none;
-    color: white;
-    border: 2px solid transparent;
     transition: border-color 0.5s;
 }
 

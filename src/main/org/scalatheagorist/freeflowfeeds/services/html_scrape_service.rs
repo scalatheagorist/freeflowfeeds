@@ -78,55 +78,55 @@ impl HtmlScrapeService {
         uris: Vec<(Publisher, String)>,
         headers: Vec<(String, String)>,
     ) -> Vec<JoinHandle<Option<HtmlResponse>>> {
+        async fn extract_body(response: &mut Response<Body>, uri: Uri) -> Option<String> {
+            if response.status() != StatusCode::OK {
+                error!("response code {} from {}", response.status(), uri.path());
+                return None;
+            }
+
+            let body: &mut Body = response.body_mut();
+
+            hyper::body::to_bytes(body)
+                .await
+                .ok()
+                .flat_map(|bytes| String::from_utf8(bytes.to_vec()).ok())
+        }
+
+        fn get_concurrently(
+            host: Result<Uri, InvalidUri>,
+            publisher: Publisher,
+            headers: Vec<(String, String)>,
+            client: HttpClient
+        ) -> JoinHandle<Option<HtmlResponse>> {
+            spawn(async move {
+                let _host: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
+                let mut result: Response<Body> =
+                    match client.get(_host.clone(), headers) {
+                        Some(resp) => {
+                            resp
+                                .await
+                                .map_err(|err| warn!("{}", err))
+                                .unwrap_or(Response::new(Body::empty()))
+                        }
+                        None => {
+                            warn!("response was empty");
+                            Response::new(Body::empty())
+                        }
+                    };
+
+                extract_body(&mut result, _host).await.map(|response|
+                    HtmlResponse { publisher, response }
+                )
+            })
+        }
+
         uris.clone().into_iter().map(|(publisher, uri)| {
-            self.get_concurrently(
+            get_concurrently(
                 Uri::from_str(&*uri),
                 publisher,
                 headers.clone(),
+                self.http_client.clone()
             )
         }).collect::<Vec<_>>()
-    }
-
-    fn get_concurrently(
-        &self,
-        host: Result<Uri, InvalidUri>,
-        publisher: Publisher,
-        headers: Vec<(String, String)>,
-    ) -> JoinHandle<Option<HtmlResponse>> {
-        let client: HttpClient = self.http_client.clone();
-        spawn(async move {
-            let _host: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
-            let mut result: Response<Body> =
-                match client.get(_host.clone(), headers) {
-                    Some(resp) => {
-                        resp
-                            .await
-                            .map_err(|err| warn!("{}", err))
-                            .unwrap_or(Response::new(Body::empty()))
-                    }
-                    None => {
-                        warn!("response was empty");
-                        Response::new(Body::empty())
-                    }
-                };
-
-            HtmlScrapeService::get_html_str(&mut result, _host)
-                .await
-                .map(|response| HtmlResponse { publisher, response })
-        })
-    }
-
-    async fn get_html_str(response: &mut Response<Body>, uri: Uri) -> Option<String> {
-        if response.status() != StatusCode::OK {
-            error!("response code {} from {}", response.status(), uri.path());
-            return None;
-        }
-
-        let body: &mut Body = response.body_mut();
-
-        hyper::body::to_bytes(body)
-            .await
-            .ok()
-            .flat_map(|bytes| String::from_utf8(bytes.to_vec()).ok())
     }
 }

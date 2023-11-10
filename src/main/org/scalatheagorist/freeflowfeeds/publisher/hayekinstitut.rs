@@ -1,10 +1,7 @@
-use std::vec::IntoIter;
-
 use log::error;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name};
-use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::Publisher::HAYEK_INSTITUT;
@@ -22,8 +19,8 @@ impl HayekInstitut {
 }
 
 impl PublisherModel for HayekInstitut {
-    fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
-        tokio_stream::iter( match Document::from_read(html_response.response.as_bytes()) {
+    fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed> {
+        match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at hayek-institut {}", err);
                 vec![]
@@ -52,6 +49,6 @@ impl PublisherModel for HayekInstitut {
 
                 rss_feeds
             }
-        })
+        }
     }
 }
