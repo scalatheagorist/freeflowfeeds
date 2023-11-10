@@ -23,15 +23,15 @@ pub(crate) fn get_header_view() -> String {
     <meta property="og:site_name">
     <meta property="og:title" content="Liberty Literature">
     <meta property="og:description" content="Freiheitliche Meta Feeds">
-    <meta property="og:image" content="https://image.nostr.build/f4d0b15b73e5cf806087e646c92305b363cfc9e18678b14be4fde83f98aa07f8.png">
-    <meta property="og:image:width" content="1280">
-    <meta property="og:image:height" content="683">
+    <meta property="og:image" content="https://image.nostr.build/99b3afb4def317934f3fbc2b8a854b3ded800c80ca2fba445303fe6d6d9ace57.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="543">
     <meta property="og:url" content="https://www.liblit.org">
     <meta property="og:type" content="website">
 
     <meta name="twitter:title" content="liblit">
     <meta name="twitter:description" content="Liberty Literature">
-    <meta name="twitter:image" content="https://image.nostr.build/f4d0b15b73e5cf806087e646c92305b363cfc9e18678b14be4fde83f98aa07f8.png">
+    <meta name="twitter:image" content="https://image.nostr.build/99b3afb4def317934f3fbc2b8a854b3ded800c80ca2fba445303fe6d6d9ace57.jpg">
     <meta name="twitter:card" content="summary_large_image">
     {}
     <title>liberty literature</title>
