@@ -2,9 +2,9 @@ use log::error;
 use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
-use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::Publisher::MISESDE;
-use crate::publisher::publishers::PublisherModel;
+use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Publisher::MISESDE;
+use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct MisesDE {
     #[allow(dead_code)]

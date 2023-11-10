@@ -3,9 +3,9 @@ use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 
-use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::Publisher::SCHWEIZER_MONAT;
-use crate::publisher::publishers::PublisherModel;
+use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Publisher::SCHWEIZER_MONAT;
+use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct SchweizerMonat {
     #[allow(dead_code)]

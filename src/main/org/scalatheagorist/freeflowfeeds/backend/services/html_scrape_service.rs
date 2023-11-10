@@ -7,10 +7,9 @@ use map_for::FlatMap;
 use tokio::spawn;
 use tokio::task::JoinHandle;
 
-use crate::core::{FileStoreClient, FileStoreConfig};
-use crate::HttpClient;
-use crate::models::HtmlResponse;
-use crate::publisher::Publisher;
+use crate::backend::clients::{FileStoreClient, FileStoreConfig, HttpClient};
+use crate::backend::models::HtmlResponse;
+use crate::backend::publisher::Publisher;
 
 #[derive(Clone)]
 pub struct HtmlScrapeService {

@@ -272,7 +272,7 @@ body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: 
 <link rel="stylesheet" id="woocommerce-nyp-css" href="https://schweizermonat.ch/wp-content/plugins/woocommerce-name-your-price/assets/css/name-your-price.css?ver=2.9.6" type="text/css" media="all"><style class="darkreader darkreader--sync" media="screen"></style>
 <link rel="stylesheet" id="monat-style-css" href="https://schweizermonat.ch/wp-content/themes/monat/dist/bundle/theme-sm.css?ver=1697176202" type="text/css" media="all"><style class="darkreader darkreader--sync" media="screen"></style>
 <link rel="stylesheet" id="monat-woocommerce-style-css" href="https://schweizermonat.ch/wp-content/themes/monat/dist/bundle/woocommerce.css?ver=6.3.2" type="text/css" media="all"><style class="darkreader darkreader--sync" media="screen"></style>
-<script type="text/javascript" src="https://schweizermonat.ch/wp-includes/js/jquery/jquery.min.js?ver=3.7.0" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://schweizermonat.ch/wp-includes/js/jquery/jquery.min.js?ver=3.7.0" id="jquery-clients-js"></script>
 <script type="text/javascript" id="WCPAY_ASSETS-js-extra">
 /* <![CDATA[ */
 var wcpayAssets = {"url":"https:\/\/schweizermonat.ch\/wp-content\/plugins\/woocommerce-payments\/dist\/"};

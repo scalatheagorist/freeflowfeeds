@@ -2,9 +2,9 @@ use log::error;
 use select::document::Document;
 use select::predicate::{Attr, Name};
 
-use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::Publisher::SANDWIRT;
-use crate::publisher::publishers::PublisherModel;
+use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Publisher::SANDWIRT;
+use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct Sandwirt {
     #[allow(dead_code)]

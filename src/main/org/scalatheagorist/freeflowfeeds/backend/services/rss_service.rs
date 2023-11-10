@@ -8,10 +8,10 @@ use tokio::time::{Instant, sleep_until};
 use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
-use crate::core::{FileStoreClient, FileStoreConfig};
-use crate::models::RSSFeed;
-use crate::publisher::{AsPublisher, Publisher};
-use crate::services::HtmlScrapeService;
+use crate::backend::clients::{FileStoreClient, FileStoreConfig};
+use crate::backend::models::RSSFeed;
+use crate::backend::publisher::{AsPublisher, Publisher};
+use crate::backend::services::HtmlScrapeService;
 use crate::view::RSSBuilder;
 
 #[derive(Clone)]

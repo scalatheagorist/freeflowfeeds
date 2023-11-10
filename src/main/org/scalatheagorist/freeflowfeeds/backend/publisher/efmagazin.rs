@@ -3,44 +3,38 @@ use map_for::FlatMap;
 use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
-use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::Publisher::FREIHEITSFUNKEN;
-use crate::publisher::publishers::PublisherModel;
+use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Publisher::EFMAGAZIN;
+use crate::backend::publisher::publishers::PublisherModel;
 
-pub struct Freiheitsfunken {
+pub struct EfMagazin {
     uri_prefix: Option<&'static str>
 }
 
-impl Freiheitsfunken {
+impl EfMagazin {
     pub fn new(uri_prefix: Option<&'static str>) -> Self {
-        Freiheitsfunken { uri_prefix }
+        EfMagazin { uri_prefix }
     }
 }
 
-impl PublisherModel for Freiheitsfunken {
+impl PublisherModel for EfMagazin {
     fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed> {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
-                error!("html transformation error at freiheitsfunken {}", err);
+                error!("html transformation error at efmagazin {}", err);
                 vec![]
             },
             Ok(document) => {
                 document.find(Name("article")).into_iter().map(|article| {
-                    let author0: Option<String> =
+                    let author =
                         article
                             .clone()
                             .find(Attr("class", "author").descendant(Name("a")))
                             .next()
-                            .map(|node| node.text());
-
-                    let author1: Option<String> =
-                        article
-                            .find(Name("p").descendant(Name("em")))
-                            .next()
-                            .map(|text| text.text().replace("von", "").trim().to_string());
-
-                    let author: String =
-                        author0.or(author1).unwrap_or("Freiheitsfunken".to_string()).trim().to_owned();
+                            .map(|node| node.text())
+                            .unwrap_or("EigentümlichFrei".to_string())
+                            .trim()
+                            .to_owned();
 
                     let title_element =
                         article
@@ -69,7 +63,7 @@ impl PublisherModel for Freiheitsfunken {
                     };
 
                     let article: Article = Article::new(title, href_with_uri_prefix);
-                    let rss: RSSFeed = RSSFeed::new(author, article, FREIHEITSFUNKEN);
+                    let rss: RSSFeed = RSSFeed::new(author, article, EFMAGAZIN);
 
                     rss
                 }).collect::<Vec<_>>()

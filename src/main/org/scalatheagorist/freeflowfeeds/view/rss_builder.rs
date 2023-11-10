@@ -2,8 +2,8 @@ use std::vec::IntoIter;
 
 use tokio_stream::{Iter, StreamExt};
 
-use crate::models::RSSFeed;
-use crate::publisher::Publisher;
+use crate::backend::models::RSSFeed;
+use crate::backend::publisher::Publisher;
 use crate::view::tags;
 
 #[derive(Clone)]

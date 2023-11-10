@@ -3,14 +3,14 @@ use std::vec::IntoIter;
 use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
 
-use crate::models::{HtmlResponse, RSSFeed};
-use crate::publisher::diemarktradikalen::DieMarktradikalen;
-use crate::publisher::efmagazin::EfMagazin;
-use crate::publisher::freiheitsfunken::Freiheitsfunken;
-use crate::publisher::hayekinstitut::HayekInstitut;
-use crate::publisher::misesde::MisesDE;
-use crate::publisher::sandwirt::Sandwirt;
-use crate::publisher::schweizermonat::SchweizerMonat;
+use crate::backend::models::{HtmlResponse, RSSFeed};
+use crate::backend::publisher::diemarktradikalen::DieMarktradikalen;
+use crate::backend::publisher::efmagazin::EfMagazin;
+use crate::backend::publisher::freiheitsfunken::Freiheitsfunken;
+use crate::backend::publisher::hayekinstitut::HayekInstitut;
+use crate::backend::publisher::misesde::MisesDE;
+use crate::backend::publisher::sandwirt::Sandwirt;
+use crate::backend::publisher::schweizermonat::SchweizerMonat;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub enum Publisher {

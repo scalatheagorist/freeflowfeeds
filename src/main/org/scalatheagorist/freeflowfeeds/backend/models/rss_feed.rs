@@ -4,8 +4,8 @@ use std::fmt;
 use hyper::body::Bytes;
 use serde::{Deserialize, Serialize};
 
-use crate::models::Article;
-use crate::publisher::Publisher;
+use crate::backend::models::Article;
+use crate::backend::publisher::Publisher;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub struct RSSFeed {

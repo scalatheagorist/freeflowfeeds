@@ -2,9 +2,9 @@ use log::{error, warn};
 use select::document::Document;
 use select::predicate::Name;
 
-use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::Publisher::DIE_MARKTRADIKALEN;
-use crate::publisher::publishers::PublisherModel;
+use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Publisher::DIE_MARKTRADIKALEN;
+use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct DieMarktradikalen {
     #[allow(dead_code)]

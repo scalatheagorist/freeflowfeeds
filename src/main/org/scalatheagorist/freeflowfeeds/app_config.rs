@@ -3,9 +3,9 @@ use std::path::Path;
 use config::{Config, File};
 use serde::{Deserialize, Serialize};
 
-use crate::core::FileStoreConfig;
-use crate::http::HttpServerConfig;
-use crate::publisher::{Publisher, PublisherHost};
+use crate::backend::clients::FileStoreConfig;
+use crate::backend::http::HttpServerConfig;
+use crate::backend::publisher::{Publisher, PublisherHost};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AppConfig {

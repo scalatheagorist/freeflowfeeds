@@ -1,7 +1,7 @@
 pub use http_server::HttpServer;
 pub use http_server::HttpServerConfig;
 
-use crate::publisher::Publisher;
+use crate::backend::publisher::Publisher;
 
 mod http_server;
 

@@ -328,7 +328,7 @@ embed[type="application/pdf"] { filter: invert(100%) contrast(90%); }</style><me
     }
 
     </script>
-        <script type="text/javascript" src="https://www.misesde.org/wp-includes/js/jquery/jquery.min.js?ver=3.7.0" id="jquery-core-js"></script>
+        <script type="text/javascript" src="https://www.misesde.org/wp-includes/js/jquery/jquery.min.js?ver=3.7.0" id="jquery-clients-js"></script>
         <script type="text/javascript" src="https://www.misesde.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
         <script type="text/javascript" id="cookie-law-info-js-extra">
         /* <![CDATA[ */
@@ -1367,7 +1367,7 @@ embed[type="application/pdf"] { filter: invert(100%) contrast(90%); }</style><me
     </script><script type="text/html" id="wpb-modifications"> window.wpbCustomElement = 1; </script><link rel="stylesheet" id="vc_animate-css-css" href="https://www.misesde.org/wp-content/plugins/js_composer_theme/assets/lib/bower/animate-css/animate.min.css?ver=7.0" type="text/css" media="all"><style class="darkreader darkreader--sync" media="screen"></style>
     <link rel="stylesheet" id="vc_font_awesome_5_shims-css" href="https://www.misesde.org/wp-content/plugins/js_composer_theme/assets/lib/bower/font-awesome/css/v4-shims.min.css?ver=7.0" type="text/css" media="all"><style class="darkreader darkreader--sync" media="screen"></style>
     <link rel="stylesheet" id="vc_font_awesome_5-css" href="https://www.misesde.org/wp-content/plugins/js_composer_theme/assets/lib/bower/font-awesome/css/all.min.css?ver=7.0" type="text/css" media="all"><style class="darkreader darkreader--sync" media="screen"></style>
-    <style id="core-block-supports-inline-css" type="text/css">
+    <style id="clients-block-supports-inline-css" type="text/css">
     .wp-container-2.wp-container-2{flex-wrap:nowrap;}
     </style><style class="darkreader darkreader--sync" media="screen"></style>
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=5.8.1" id="swv-js"></script>
@@ -1391,7 +1391,7 @@ embed[type="application/pdf"] { filter: invert(100%) contrast(90%); }</style><me
     /* ]]> */
     </script>
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/email-subscribers/lite/public/js/email-subscribers-public.js?ver=5.6.23" id="email-subscribers-js"></script>
-    <script type="text/javascript" src="https://www.misesde.org/wp-includes/js/jquery/ui/core.min.js?ver=1.13.2" id="jquery-ui-core-js"></script>
+    <script type="text/javascript" src="https://www.misesde.org/wp-includes/js/jquery/ui/clients.min.js?ver=1.13.2" id="jquery-ui-clients-js"></script>
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/ultimate-social-media-plus/js/shuffle/modernizr.custom.min.js?ver=6.3.1" id="SFSIPLUSjqueryModernizr-js"></script>
     <script type="text/javascript" id="SFSIPLUSCustomJs-js-extra">
     /* <![CDATA[ */
@@ -1428,7 +1428,7 @@ embed[type="application/pdf"] { filter: invert(100%) contrast(90%); }</style><me
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/contact-form-7/modules/recaptcha/index.js?ver=5.8.1" id="wpcf7-recaptcha-js"></script>
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/js_composer_theme/assets/js/dist/js_composer_front.min.js?ver=7.0" id="wpb_composer_front_js-js"></script>
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/masterslider/public/assets/js/jquery.easing.min.js?ver=3.6.5" id="jquery-easing-js"></script>
-    <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/masterslider/public/assets/js/masterslider.min.js?ver=3.6.5" id="masterslider-core-js"></script>
+    <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/masterslider/public/assets/js/masterslider.min.js?ver=3.6.5" id="masterslider-clients-js"></script>
     <script type="text/javascript" src="https://www.misesde.org/wp-content/plugins/js_composer_theme/assets/lib/vc_waypoints/vc-waypoints.min.js?ver=7.0" id="vc_waypoints-js"></script>
     <script id="pt-cv-append-scripts">if( PT_CV_PAGINATION ) { PT_CV_PAGINATION.links = {"page_1":"https:\/\/www.misesde.org\/","page_n":"https:\/\/www.misesde.org\/?_page=_CVNUMBER_"}; }
     </script><script></script>		<script type="text/javascript">

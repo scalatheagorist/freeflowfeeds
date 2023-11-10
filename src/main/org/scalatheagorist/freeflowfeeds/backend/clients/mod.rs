@@ -1,5 +1,5 @@
 pub use http_client::HttpClient;
-use hyper_client::HyperClient;
+pub use hyper_client::HyperClient;
 pub use fs_client::FileStoreClient;
 pub use fs_client::FileStoreConfig;
 

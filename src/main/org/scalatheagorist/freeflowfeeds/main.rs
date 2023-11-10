@@ -8,8 +8,8 @@ use log4rs::encode::pattern::PatternEncoder;
 use tokio::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
-use freeflowfeeds::http::HttpServer;
-use freeflowfeeds::services::RSSService;
+use freeflowfeeds::backend::http::HttpServer;
+use freeflowfeeds::backend::services::RSSService;
 
 #[tokio::main]
 async fn main() {

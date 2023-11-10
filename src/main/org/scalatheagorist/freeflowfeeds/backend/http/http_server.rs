@@ -10,7 +10,7 @@ use log::{error, info};
 use serde::{Deserialize, Serialize};
 use tokio_stream::{Iter, StreamExt};
 
-use crate::services::RSSService;
+use crate::backend::services::RSSService;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HttpServerConfig {
@@ -54,17 +54,17 @@ impl HttpServer {
                     async move {
                         match req.uri().path() {
                             e @ (
-                                crate::http::ENDPOINT_MISESDE |
-                                crate::http::ENDPOINT_SCHWEIZERMONAT |
-                                crate::http::ENDPOINT_EFMAGAZIN |
-                                crate::http::ENDPOINT_HAYEKINSTITUT |
-                                crate::http::ENDPOINT_FREIHEITSFUNKEN |
-                                crate::http::ENDPOINT_DIEMARKTRADIKALEN |
-                                crate::http::ENDPOINT_SANDWIRT
+                                crate::backend::http::ENDPOINT_MISESDE |
+                                crate::backend::http::ENDPOINT_SCHWEIZERMONAT |
+                                crate::backend::http::ENDPOINT_EFMAGAZIN |
+                                crate::backend::http::ENDPOINT_HAYEKINSTITUT |
+                                crate::backend::http::ENDPOINT_FREIHEITSFUNKEN |
+                                crate::backend::http::ENDPOINT_DIEMARKTRADIKALEN |
+                                crate::backend::http::ENDPOINT_SANDWIRT
                             ) => {
                                 info!("request to {:?}", req.headers());
 
-                                let iterator: Iter<IntoIter<String>> = rss_service.generate(Some(crate::http::to_publisher(e))).await;
+                                let iterator: Iter<IntoIter<String>> = rss_service.generate(Some(crate::backend::http::to_publisher(e))).await;
                                 let stream =
                                     iterator.map(|result| {
                                         Ok::<Bytes, std::io::Error>(

@@ -3,9 +3,9 @@ use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name};
 
-use crate::models::{Article, HtmlResponse, RSSFeed};
-use crate::publisher::Publisher::HAYEK_INSTITUT;
-use crate::publisher::publishers::PublisherModel;
+use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Publisher::HAYEK_INSTITUT;
+use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct HayekInstitut {
     #[allow(dead_code)]

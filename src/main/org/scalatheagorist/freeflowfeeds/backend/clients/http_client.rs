@@ -3,8 +3,8 @@ use hyper::client::ResponseFuture;
 use hyper::header::{HeaderName, HeaderValue};
 use log::{error, info};
 
-use crate::core::HyperClient;
-use crate::models::CustomHyperError;
+use crate::backend::clients::HyperClient;
+use crate::backend::models::CustomHyperError;
 
 #[derive(Clone)]
 pub struct HttpClient {
