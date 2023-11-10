@@ -65,7 +65,7 @@ impl HttpServer {
                             ) => {
                                 info!("request to {:?}", req.headers());
 
-                                let iterator: Iter<IntoIter<String>> = rss_service.pull(Some(crate::http::to_publisher(e))).await;
+                                let iterator: Iter<IntoIter<String>> = rss_service.generate(Some(crate::http::to_publisher(e))).await;
                                 let stream =
                                     iterator.map(|result| {
                                         Ok::<Bytes, std::io::Error>(
@@ -88,7 +88,7 @@ impl HttpServer {
                             },
                             _ => {
                                 info!("request to {:?}", req.headers());
-                                let iterator: Iter<IntoIter<String>> = rss_service.pull(None).await;
+                                let iterator: Iter<IntoIter<String>> = rss_service.generate(None).await;
                                 let stream =
                                     iterator.map(|result| {
                                         Ok::<Bytes, std::io::Error>(

@@ -17,6 +17,7 @@ services:
       - FFF_FREIHEITSFUNKEN_PAGE_TO=2
       - FFF_MISESDE_PAGE_TO=2
       - FFF_HAYEKINSTITUT_PAGE_TO=2
+      - FFF_INITIAL_PULL=false
 
   nginx:
     image: nginx:latest

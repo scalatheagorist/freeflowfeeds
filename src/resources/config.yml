@@ -39,3 +39,5 @@ httpserver:
   port: 8989
 
 update: "17:00"
+
+initial_pull: true

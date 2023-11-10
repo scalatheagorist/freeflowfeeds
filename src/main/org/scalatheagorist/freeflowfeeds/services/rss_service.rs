@@ -23,9 +23,14 @@ pub struct RSSService {
 
 impl RSSService {
     pub fn new(app_config: AppConfig) -> Self {
+        let initial_pull: bool = app_config.clone().initial_pull;
+        let mut publisher: Vec<(Publisher, String)> = app_config.clone().hosts.as_publisher();
+
+        if initial_pull { publisher.reverse() };
+
         let scape_service: HtmlScrapeService =
             HtmlScrapeService::new(
-                app_config.clone().hosts.as_publisher(),
+                publisher,
                 app_config.clone().concurrency,
                 app_config.clone().fs.suffix,
             );
@@ -34,7 +39,7 @@ impl RSSService {
         RSSService { app_config, scape_service, rss_builder }
     }
 
-    pub async fn pull(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
+    pub async fn generate(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
         let builder: RSSBuilder = self.rss_builder.clone();
         let config: FileStoreConfig = self.app_config.fs.clone();
         let stream: Iter<IntoIter<RSSFeed>> =
@@ -56,8 +61,9 @@ impl RSSService {
         });
     }
 
-    pub async fn push(&self) {
+    pub async fn pull(&self) {
         let time: String = self.app_config.clone().update;
+
         match NaiveTime::parse_from_str(&time, "%H:%M") {
             Ok(target_time) => {
                 loop {
@@ -69,7 +75,7 @@ impl RSSService {
                     }
 
                     sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
-                    info!("push new articles to '{}'", self.app_config.clone().fs.path);
+                    info!("pull new articles into '{}'", self.app_config.clone().fs.path);
 
                     // wait a whole second, just to be sure
                     sleep_until(Instant::now() + Duration::from_secs(1u64)).await;

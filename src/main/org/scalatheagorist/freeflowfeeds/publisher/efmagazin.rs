@@ -1,10 +1,7 @@
-use std::vec::IntoIter;
-
 use log::error;
 use map_for::FlatMap;
 use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
-use tokio_stream::Iter;
 
 use crate::models::{Article, HtmlResponse, RSSFeed};
 use crate::publisher::Publisher::EFMAGAZIN;
@@ -21,8 +18,8 @@ impl EfMagazin {
 }
 
 impl PublisherModel for EfMagazin {
-    fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
-        tokio_stream::iter(match Document::from_read(html_response.response.as_bytes()) {
+    fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed> {
+        match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at efmagazin {}", err);
                 vec![]
@@ -71,6 +68,6 @@ impl PublisherModel for EfMagazin {
                     rss
                 }).collect::<Vec<_>>()
             }
-        })
+        }
     }
 }

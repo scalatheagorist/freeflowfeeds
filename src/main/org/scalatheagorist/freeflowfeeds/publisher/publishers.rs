@@ -49,12 +49,17 @@ impl Publisher {
                 Box::new(Sandwirt::new(Some("https://www.dersandwirt.de")))
         };
 
-        publisher.get_rss(html_response)
+        let mut feeds: Vec<RSSFeed> = publisher.get_rss(html_response);
+
+        // sort oldest to newest
+        feeds.reverse();
+
+        tokio_stream::iter(feeds)
     }
 }
 
 pub trait PublisherModel {
-    fn get_rss(&self, html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>>;
+    fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed>;
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
