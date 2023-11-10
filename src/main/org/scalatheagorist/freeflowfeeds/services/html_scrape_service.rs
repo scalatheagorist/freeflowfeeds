@@ -11,7 +11,6 @@ use crate::core::{FileStoreClient, FileStoreConfig};
 use crate::HttpClient;
 use crate::models::HtmlResponse;
 use crate::publisher::Publisher;
-use crate::utils::headers::{Headers, HeaderType};
 
 #[derive(Clone)]
 pub struct HtmlScrapeService {
@@ -29,16 +28,11 @@ impl HtmlScrapeService {
         file_suffix: String
     ) -> Self {
         let http_client: HttpClient = HttpClient::new();
-        let headers: Vec<(String, String)> = [
-            Headers
-                .to_content_header(HeaderType::ContentTypeHtml)
-                .into_iter()
-                .collect::<Vec<_>>(),
-            Headers
-                .to_content_header(HeaderType::AcceptHtml)
-                .into_iter()
-                .collect::<Vec<_>>()
-        ].concat();
+        let headers: Vec<(String, String)> =
+          vec![
+              Some(("Content-Type".to_string(), "text/html; charset=utf-8".to_string())),
+              Some(("Accept".to_string(), "text/html; charset=utf-8".to_string()))
+          ].into_iter().flatten().collect::<Vec<_>>();
 
         HtmlScrapeService { http_client, hosts, concurrency, headers, file_suffix }
     }

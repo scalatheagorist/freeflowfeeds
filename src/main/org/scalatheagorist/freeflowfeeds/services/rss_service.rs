@@ -18,7 +18,7 @@ use crate::view::RSSBuilder;
 pub struct RSSService {
     app_config: AppConfig,
     scape_service: HtmlScrapeService,
-    rss_builder: RSSBuilder
+    rss_builder: RSSBuilder,
 }
 
 impl RSSService {
@@ -29,17 +29,19 @@ impl RSSService {
         if initial_pull { publisher.reverse() };
 
         let scape_service: HtmlScrapeService =
-            HtmlScrapeService::new(
-                publisher,
-                app_config.clone().concurrency,
-                app_config.clone().fs.suffix,
-            );
+            HtmlScrapeService::new(publisher, app_config.clone().concurrency, app_config.clone().fs.suffix);
         let rss_builder: RSSBuilder = RSSBuilder::new();
 
         RSSService { app_config, scape_service, rss_builder }
     }
 
     pub async fn generate(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
+        fn sort_descending_by_modified(feeds: &mut Vec<(Metadata, RSSFeed)>) {
+            feeds.sort_by(|(entry1, _), (entry2, _)| {
+                entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
+            });
+        }
+
         let builder: RSSBuilder = self.rss_builder.clone();
         let config: FileStoreConfig = self.app_config.fs.clone();
         let stream: Iter<IntoIter<RSSFeed>> =
@@ -47,7 +49,7 @@ impl RSSService {
                 let mut feeds: Vec<(Metadata, RSSFeed)> =
                     FileStoreClient::load_from_dir::<RSSFeed>(&config).await;
 
-                self.sort_descending_by_modified(&mut feeds);
+                sort_descending_by_modified(&mut feeds);
 
                 feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
             });
@@ -55,12 +57,7 @@ impl RSSService {
         builder.build(stream, publisher).await
     }
 
-    fn sort_descending_by_modified(&self, feeds: &mut Vec<(Metadata, RSSFeed)>) {
-        feeds.sort_by(|(entry1, _), (entry2, _)| {
-            entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
-        });
-    }
-
+    // pull every 24h from time HH:MM
     pub async fn pull(&self) {
         let time: String = self.app_config.clone().update;
 
@@ -70,11 +67,11 @@ impl RSSService {
                     let current_time: NaiveTime = chrono::Local::now().time();
                     let mut delay: chrono::Duration = target_time - current_time;
 
-                    if delay < chrono::Duration::zero() {
-                        delay = delay + chrono::Duration::hours(24);
-                    }
+                    // adjust delay after run
+                    if delay < chrono::Duration::zero() { delay = delay + chrono::Duration::hours(24); }
 
                     sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
+
                     info!("pull new articles into '{}'", self.app_config.clone().fs.path);
 
                     // wait a whole second, just to be sure

@@ -11,7 +11,6 @@ use serde::{Deserialize, Serialize};
 use tokio_stream::{Iter, StreamExt};
 
 use crate::services::RSSService;
-use crate::utils::headers::{Headers, HeaderType};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HttpServerConfig {
@@ -73,18 +72,9 @@ impl HttpServer {
                                         )
                                     });
 
-                                match {
-                                    Headers.to_content_header(HeaderType::ContentTypeHtml)
-                                } {
-                                    Some(header) =>
-                                        Response::builder()
-                                            .header(header.0, header.1)
-                                            .body(Body::wrap_stream(stream)),
-                                    None =>
-                                        Response::builder()
-                                            .status(500)
-                                            .body(Body::from("Internal Server Error"))
-                                }
+                                Response::builder()
+                                    .header("Content-Type".to_string(), "text/html; charset=utf-8".to_string())
+                                    .body(Body::wrap_stream(stream))
                             },
                             _ => {
                                 info!("request to {:?}", req.headers());
@@ -96,18 +86,9 @@ impl HttpServer {
                                         )
                                     });
 
-                                match {
-                                    Headers.to_content_header(HeaderType::ContentTypeHtml)
-                                } {
-                                    Some(header) =>
-                                        Response::builder()
-                                            .header(header.0, header.1)
-                                            .body(Body::wrap_stream(stream)),
-                                    None =>
-                                        Response::builder()
-                                            .status(500)
-                                            .body(Body::from("Internal Server Error"))
-                                }
+                                Response::builder()
+                                    .header("Content-Type".to_string(), "text/html; charset=utf-8".to_string())
+                                    .body(Body::wrap_stream(stream))
                             }
                         }
                     }
