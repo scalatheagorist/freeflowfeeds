@@ -8,7 +8,7 @@ use tokio::time::{Instant, sleep_until};
 use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
-use crate::backend::clients::{FileStoreClient, FileStoreConfig};
+use crate::backend::clients::FileStoreClient;
 use crate::backend::models::RSSFeed;
 use crate::backend::publisher::{AsPublisher, Publisher};
 use crate::backend::services::HtmlScrapeService;
@@ -42,24 +42,22 @@ impl RSSService {
             });
         }
 
-        let builder: RSSBuilder = self.rss_builder.clone();
-        let config: FileStoreConfig = self.app_config.fs.clone();
         let stream: Iter<IntoIter<RSSFeed>> =
             tokio_stream::iter({
                 let mut feeds: Vec<(Metadata, RSSFeed)> =
-                    FileStoreClient::load_from_dir::<RSSFeed>(&config).await;
+                    FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
                 sort_descending_by_modified(&mut feeds);
 
                 feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
             });
 
-        builder.build(stream, publisher).await
+        self.rss_builder.build(stream, publisher).await
     }
 
-    // pull every 24h from time HH:MM
-    pub async fn pull(&self) {
+    pub async fn pull_with_interval(&self) {
         let time: String = self.app_config.clone().update;
+        let interval: i64 = self.app_config.clone().update_interval;
 
         match NaiveTime::parse_from_str(&time, "%H:%M") {
             Ok(target_time) => {
@@ -68,7 +66,7 @@ impl RSSService {
                     let mut delay: chrono::Duration = target_time - current_time;
 
                     // adjust delay after run
-                    if delay < chrono::Duration::zero() { delay = delay + chrono::Duration::hours(24); }
+                    if delay < chrono::Duration::zero() { delay = delay + chrono::Duration::hours(interval); }
 
                     sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
 

@@ -34,7 +34,7 @@ async fn main() {
     let app_config: AppConfig   = AppConfig::get_app_config();
     let rss_service: RSSService = RSSService::new(app_config.clone());
     let server: HttpServer      = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
-    let _                       = spawn(async move { rss_service.pull().await });
+    let _                       = spawn(async move { rss_service.pull_with_interval().await });
 
     info!("{:?}", app_config);
 

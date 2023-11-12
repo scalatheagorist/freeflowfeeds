@@ -14,6 +14,7 @@ pub struct AppConfig {
     pub httpserver: HttpServerConfig,
     pub concurrency: i32,
     pub update: String,
+    pub update_interval: i64,
     pub initial_pull: bool
 }
 
@@ -43,6 +44,12 @@ impl AppConfig {
 
         app_config.initial_pull =
             get_env_var_or_default("FFF_INITIAL_PULL", app_config.initial_pull.clone());
+        app_config.update_interval =
+            get_env_var_or_default("FFF_UPDATE_INTERVAL", app_config.update_interval.clone());
+
+        if app_config.update_interval > 24 {
+            panic!("interval is above 24 hours, it must be within the range of 1 to 24 hours!")
+        }
 
         app_config.fs.path =
             get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());

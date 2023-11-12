@@ -39,5 +39,6 @@ httpserver:
   port: 8989
 
 update: "17:00"
-
+update_interval: 24 # 24h
 initial_pull: true
+
