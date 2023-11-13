@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub struct Article {
-    pub(crate) title: String,
-    pub(crate) link: String
+    pub title: String,
+    pub link: String
 }
 
 impl Article {

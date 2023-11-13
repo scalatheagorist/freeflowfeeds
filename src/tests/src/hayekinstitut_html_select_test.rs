@@ -1,12 +1,6 @@
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name};
-use select::predicate::Predicate;
-
-fn extract_author(article: &Node) -> Option<String> {
-    let author_node = article.find(Name("a").and(Class("meta-author"))).next();
-    author_node.map(|author| author.text())
-}
 
 pub fn hayek_institut_html_select_test() {
     let document = Document::from_read(html_example().as_bytes()).unwrap();
