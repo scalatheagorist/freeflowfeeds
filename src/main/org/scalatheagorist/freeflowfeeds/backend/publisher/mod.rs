@@ -1,4 +1,5 @@
 pub use crate::backend::publisher::diemarktradikalen::DieMarktradikalen;
+pub use crate::backend::publisher::efmagazin::EfMagazin;
 pub use crate::backend::publisher::publishers::AsPublisher;
 pub use crate::backend::publisher::publishers::Publisher;
 pub use crate::backend::publisher::publishers::PublisherHost;

@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod diemarktradikalen {
+mod die_marktradikalen {
     use freeflowfeeds::backend::models::{Article, HtmlResponse, RSSFeed};
     use freeflowfeeds::backend::publisher::{DieMarktradikalen, Publisher, PublisherModel};
 
