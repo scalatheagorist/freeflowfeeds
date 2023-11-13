@@ -50,8 +50,8 @@ fn json_to_rss_item(json_str: &str) -> Option<Item> {
             .unwrap_or_default();
 
     let mut item = Item::default();
-    item.set_title(title.to_string());
-    item.set_link(link.to_string());
+    item.set_title(title.to_owned());
+    item.set_link(link.to_owned());
     item.set_author(format!("{}", author));
 
     Some(item)

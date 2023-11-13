@@ -13,12 +13,12 @@ pub fn hayek_institut_html_select_test() {
 
     fn get_title(node: &Node) -> String {
         let title_node = node.find(Name("a")).next().unwrap();
-        title_node.attr("title").unwrap_or("N/A").to_string()
+        title_node.attr("title").unwrap_or("N/A").to_owned()
     }
 
     fn get_href(node: &Node) -> Option<String> {
         let link_node = node.find(Name("a")).next().unwrap();
-        link_node.attr("href").map(|s| s.to_string())
+        link_node.attr("href").map(|s| s.to_owned())
     }
 
     for node in document.find(Class("fusion-post-card-image")) {
@@ -26,7 +26,7 @@ pub fn hayek_institut_html_select_test() {
             let title = get_title(&node);
 
             println!("Titel: {}", title);
-            println!("Link (href): {:?}", link.to_string());
+            println!("Link (href): {:?}", link.to_owned());
         })
     }
 }

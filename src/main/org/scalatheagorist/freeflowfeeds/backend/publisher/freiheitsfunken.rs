@@ -37,10 +37,10 @@ impl PublisherModel for Freiheitsfunken {
                         article
                             .find(Name("p").descendant(Name("em")))
                             .next()
-                            .map(|text| text.text().replace("von", "").trim().to_string());
+                            .map(|text| text.text().replace("von", "").trim().to_owned());
 
                     let author: String =
-                        author0.or(author1).unwrap_or("Freiheitsfunken".to_string()).trim().to_owned();
+                        author0.or(author1).unwrap_or(String::from("Freiheitsfunken")).trim().to_owned();
 
                     let title_element =
                         article
@@ -50,7 +50,7 @@ impl PublisherModel for Freiheitsfunken {
                     let title =
                         title_element
                             .map(|node| node.text())
-                            .unwrap_or("".to_string())
+                            .unwrap_or(String::from(""))
                             .trim()
                             .to_owned();
 

@@ -104,25 +104,25 @@ pub(crate) fn get_header_view() -> String {
     100% Open Source
 </a>
 <a href="#" id="scrollToTopButton"><i class="fas fa-arrow-up"></i></a>
-        "##, css()).to_string()
+        "##, css())
 }
 
 pub(crate) fn get_footer_view() -> String {
     format!(
         r#"
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-            </body>
-            </html>
-            <script>
-                {}
-            </script>
-            "#, js()
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        </body>
+        </html>
+        <script>
+            {}
+        </script>
+        "#, js()
     )
 }
 
 fn js() -> String {
-    r#"
+    r##"
 function initializeNavbar() {
     const searchForm = document.querySelector('.navbar .form-inline');
     const searchInput = document.querySelector('.navbar #search-input');
@@ -188,8 +188,7 @@ $(document).ready(function () {
         return false;
     });
 });
-
-    "#.to_string()
+    "##.to_owned()
 }
 
 fn css() -> String {
@@ -518,5 +517,5 @@ a:hover {
     background-color: #000;
 }
 </style>
-        "#.to_string()
+        "#.to_owned()
 }

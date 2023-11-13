@@ -33,7 +33,7 @@ impl PublisherModel for MisesDE {
                                 .next()
                                 .and_then(|node| node.find(Name("span")).next())
                                 .map(|node| node.text())
-                                .unwrap_or("Mises DE".to_string())
+                                .unwrap_or(String::from("Mises DE"))
                                 .trim()
                                 .to_owned();
 
@@ -42,7 +42,7 @@ impl PublisherModel for MisesDE {
                                 .next()
                                 .and_then(|node| node.find(Name("a")).next())
                                 .map(|node| node.text())
-                                .unwrap_or("".to_string())
+                                .unwrap_or(String::from(""))
                                 .trim()
                                 .to_owned();
 

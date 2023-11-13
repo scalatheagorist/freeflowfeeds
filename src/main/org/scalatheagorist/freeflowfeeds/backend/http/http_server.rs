@@ -73,7 +73,7 @@ impl HttpServer {
                                     });
 
                                 Response::builder()
-                                    .header("Content-Type".to_string(), "text/html; charset=utf-8".to_string())
+                                    .header("Content-Type", "text/html; charset=utf-8")
                                     .body(Body::wrap_stream(stream))
                             },
                             _ => {
@@ -87,7 +87,7 @@ impl HttpServer {
                                     });
 
                                 Response::builder()
-                                    .header("Content-Type".to_string(), "text/html; charset=utf-8".to_string())
+                                    .header("Content-Type", "text/html; charset=utf-8")
                                     .body(Body::wrap_stream(stream))
                             }
                         }

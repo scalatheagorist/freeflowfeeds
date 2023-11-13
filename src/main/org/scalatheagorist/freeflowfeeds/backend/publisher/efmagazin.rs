@@ -32,7 +32,7 @@ impl PublisherModel for EfMagazin {
                             .find(Attr("class", "author").descendant(Name("a")))
                             .next()
                             .map(|node| node.text())
-                            .unwrap_or("EigentümlichFrei".to_string())
+                            .unwrap_or(String::from("EigentümlichFrei"))
                             .trim()
                             .to_owned();
 
@@ -44,7 +44,7 @@ impl PublisherModel for EfMagazin {
                     let title =
                         title_element
                             .map(|node| node.text())
-                            .unwrap_or("".to_string())
+                            .unwrap_or(String::from(""))
                             .trim()
                             .to_owned();
 
@@ -59,7 +59,7 @@ impl PublisherModel for EfMagazin {
                         Some(prefix) if !href.clone().contains("https://") =>
                             prefix.to_owned() + &*href,
                         _ =>
-                            href.to_string()
+                            href.to_owned()
                     };
 
                     let article: Article = Article::new(title, href_with_uri_prefix);

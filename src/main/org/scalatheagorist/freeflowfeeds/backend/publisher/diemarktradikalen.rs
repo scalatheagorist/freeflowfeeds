@@ -52,7 +52,7 @@ impl PublisherModel for DieMarktradikalen {
 
                 articles.into_iter().map(|(title, link)| {
                     let article: Article = Article::new(title, link);
-                    let rss: RSSFeed = RSSFeed::new("Die Marktradikalen".to_string(), article, DIE_MARKTRADIKALEN);
+                    let rss: RSSFeed = RSSFeed::new(String::from("Die Marktradikalen"), article, DIE_MARKTRADIKALEN);
                     rss
                 }).collect::<Vec<_>>()
             }
