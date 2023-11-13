@@ -13,11 +13,11 @@ use crate::backend::publisher::Publisher;
 
 #[derive(Clone)]
 pub struct HtmlScrapeService {
-    http_client: HttpClient,
-    hosts: Vec<(Publisher, String)>,
-    concurrency: i32,
-    headers: Vec<(String, String)>,
-    file_suffix: String
+    pub http_client: HttpClient,
+    pub hosts: Vec<(Publisher, String)>,
+    pub concurrency: i32,
+    pub headers: Vec<(String, String)>,
+    pub file_suffix: String
 }
 
 impl HtmlScrapeService {

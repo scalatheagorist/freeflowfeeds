@@ -9,7 +9,9 @@ use tokio::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
 use freeflowfeeds::backend::http::HttpServer;
-use freeflowfeeds::backend::services::RSSService;
+use freeflowfeeds::backend::publisher::{AsPublisher, Publisher};
+use freeflowfeeds::backend::services::{HtmlScrapeService, RSSService};
+use freeflowfeeds::view::RSSBuilder;
 
 #[tokio::main]
 async fn main() {
@@ -30,11 +32,25 @@ async fn main() {
         }
     }
 
-    let _                       = set_logging();
-    let app_config: AppConfig   = AppConfig::get_app_config();
-    let rss_service: RSSService = RSSService::new(app_config.clone());
-    let server: HttpServer      = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
-    let _                       = spawn(async move { rss_service.pull_with_interval().await });
+    let _ = set_logging();
+
+    let app_config: AppConfig = AppConfig::get_app_config();
+
+    let initial_pull: bool = app_config.clone().initial_pull;
+
+    let mut publisher: Vec<(Publisher, String)> = app_config.clone().hosts.as_publisher();
+
+    if initial_pull { publisher.reverse() };
+
+    let scape_service: HtmlScrapeService =
+        HtmlScrapeService::new(publisher, app_config.clone().concurrency, app_config.clone().fs.suffix);
+    let rss_builder: RSSBuilder = RSSBuilder::new();
+
+    let rss_service: RSSService = RSSService::new(app_config.clone(), scape_service, rss_builder);
+
+    let server: HttpServer = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
+
+    let _ = spawn(async move { rss_service.pull_with_interval().await });
 
     info!("{:?}", app_config);
 

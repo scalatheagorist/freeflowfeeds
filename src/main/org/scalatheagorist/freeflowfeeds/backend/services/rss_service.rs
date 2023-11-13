@@ -10,7 +10,7 @@ use tokio_stream::Iter;
 use crate::app_config::AppConfig;
 use crate::backend::clients::FileStoreClient;
 use crate::backend::models::RSSFeed;
-use crate::backend::publisher::{AsPublisher, Publisher};
+use crate::backend::publisher::Publisher;
 use crate::backend::services::HtmlScrapeService;
 use crate::view::RSSBuilder;
 
@@ -22,16 +22,11 @@ pub struct RSSService {
 }
 
 impl RSSService {
-    pub fn new(app_config: AppConfig) -> Self {
-        let initial_pull: bool = app_config.clone().initial_pull;
-        let mut publisher: Vec<(Publisher, String)> = app_config.clone().hosts.as_publisher();
-
-        if initial_pull { publisher.reverse() };
-
-        let scape_service: HtmlScrapeService =
-            HtmlScrapeService::new(publisher, app_config.clone().concurrency, app_config.clone().fs.suffix);
-        let rss_builder: RSSBuilder = RSSBuilder::new();
-
+    pub fn new(
+        app_config: AppConfig,
+        scape_service: HtmlScrapeService,
+        rss_builder: RSSBuilder,
+    ) -> Self {
         RSSService { app_config, scape_service, rss_builder }
     }
 
