@@ -13,7 +13,7 @@ pub fn eigentuemlichfrei_html_select_test() {
                 .find(Attr("class", "author").descendant(Name("a")))
                 .next()
                 .map(|node| node.text())
-                .unwrap_or("".to_string())
+                .unwrap_or(String::from(""))
                 .trim()
                 .to_owned();
 
@@ -25,7 +25,7 @@ pub fn eigentuemlichfrei_html_select_test() {
         let title =
             title_element
                 .map(|node| node.text())
-                .unwrap_or("".to_string())
+                .unwrap_or(String::from(""))
                 .trim()
                 .to_owned();
 
@@ -39,7 +39,7 @@ pub fn eigentuemlichfrei_html_select_test() {
         let href_with_uri_prefix = if !href.clone().contains("https://") {
             URI_PREFIX.to_owned() + &*href
         } else {
-            href.to_string()
+            href.to_owned()
         };
 
         println!("Author: {}", author);

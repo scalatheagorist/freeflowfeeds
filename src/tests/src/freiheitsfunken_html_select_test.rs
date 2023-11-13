@@ -18,10 +18,10 @@ pub fn freiheitsfunken_html_select_test() {
             article
                 .find(Name("p").descendant(Name("em")))
                 .next()
-                .map(|text| text.text().replace("von", "").trim().to_string());
+                .map(|text| text.text().replace("von", "").trim().to_owned());
 
         let author: String =
-            author0.or(author1).unwrap_or("".to_string()).trim().to_owned();
+            author0.or(author1).unwrap_or(String::from("")).trim().to_owned();
 
         let title_element =
             article
@@ -31,7 +31,7 @@ pub fn freiheitsfunken_html_select_test() {
         let title =
             title_element
                 .map(|node| node.text())
-                .unwrap_or("".to_string())
+                .unwrap_or(String::from(""))
                 .trim()
                 .to_owned();
 
@@ -45,7 +45,7 @@ pub fn freiheitsfunken_html_select_test() {
         let href_with_uri_prefix = if !href.clone().contains("https://") {
             URI_PREFIX.to_owned() + &*href
         } else {
-            href.to_string()
+            href.to_owned()
         };
 
         println!("Author: {}", author);

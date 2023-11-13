@@ -11,7 +11,7 @@ pub fn sandwirt_html_select_test() {
                 .find(Attr("class", "post-author-name fn"))
                 .next()
                 .map(|node| node.text())
-                .unwrap_or("Der Sandwirt".to_string())
+                .unwrap_or(String::from("Der Sandwirt"))
                 .trim()
                 .to_owned();
 
@@ -21,7 +21,7 @@ pub fn sandwirt_html_select_test() {
                 .find(Name("a"))
                 .next()
                 .map(|node| node.text())
-                .unwrap_or("".to_string())
+                .unwrap_or(String::from(""))
                 .trim()
                 .to_owned();
 

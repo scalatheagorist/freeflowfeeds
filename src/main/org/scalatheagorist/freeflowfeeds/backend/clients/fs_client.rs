@@ -32,7 +32,7 @@ impl FileStoreClient {
             let suffix_clone = suffix.clone();
             async move {
                 let hashed: u64 = hash_value::<R>(value.clone());
-                let filename: String = format!("{}/data_{}{}", &config.clone().path, hashed.to_string(), &suffix_clone);
+                let filename: String = format!("{}/data_{}{}", &config.clone().path, hashed.to_owned(), &suffix_clone);
                 let file_path: &Path = Path::new(&filename);
 
                 if file_path.exists() {

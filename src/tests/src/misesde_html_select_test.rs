@@ -12,7 +12,7 @@ pub fn misesde_html_select_test() {
                    .next()
                    .and_then(|node| node.find(Name("span")).next())
                    .map(|node| node.text())
-                   .unwrap_or("".to_string())
+                   .unwrap_or(String::from(""))
                    .trim()
                    .to_owned();
 
@@ -21,7 +21,7 @@ pub fn misesde_html_select_test() {
                    .next()
                    .and_then(|node| node.find(Name("a")).next())
                    .map(|node| node.text())
-                   .unwrap_or("".to_string())
+                   .unwrap_or(String::from(""))
                    .trim()
                    .to_owned();
 

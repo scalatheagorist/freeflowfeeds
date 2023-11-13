@@ -17,7 +17,7 @@ pub fn schweizermonat_html_select_test() {
         let href = article.attr("href").unwrap_or_default();
         let author = extract_author(&article);
 
-        let a = (title.trim().to_owned(), href.to_owned(), author.unwrap_or("Schweizer Monat".to_string()).trim().to_owned());
+        let a = (title.trim().to_owned(), href.to_owned(), author.unwrap_or(String::from("Schweizer Monat")).trim().to_owned());
         articles.push(a)
     }
 

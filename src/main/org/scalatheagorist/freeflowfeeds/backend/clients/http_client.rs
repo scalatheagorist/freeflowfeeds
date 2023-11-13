@@ -41,7 +41,7 @@ impl HttpClient {
                 (Ok(key), Ok(value)) => {
                     request.headers_mut().insert(key, value);
                 }
-                _ => error!("{}", "Header conversion error".to_string())
+                _ => error!("{}", String::from("Header conversion error"))
             }
         }
     }

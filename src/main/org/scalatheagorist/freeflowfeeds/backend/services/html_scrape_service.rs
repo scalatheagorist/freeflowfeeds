@@ -29,8 +29,8 @@ impl HtmlScrapeService {
         let http_client: HttpClient = HttpClient::new();
         let headers: Vec<(String, String)> =
           vec![
-              Some(("Content-Type".to_string(), "text/html; charset=utf-8".to_string())),
-              Some(("Accept".to_string(), "text/html; charset=utf-8".to_string()))
+              Some((String::from("Content-Type"), String::from("text/html; charset=utf-8"))),
+              Some((String::from("Accept"), String::from("text/html; charset=utf-8")))
           ].into_iter().flatten().collect::<Vec<_>>();
 
         HtmlScrapeService { http_client, hosts, concurrency, headers, file_suffix }

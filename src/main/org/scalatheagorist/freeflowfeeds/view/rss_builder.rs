@@ -23,8 +23,8 @@ impl RSSBuilder {
         let mut view: Vec<String> = vec![];
         let this: RSSBuilder = self.clone();
 
-        view.push(r#"<div class="container grid-container">"#.to_string());
-        view.push(r#"<div class="custom-grid">"#.to_string());
+        view.push(String::from(r#"<div class="container grid-container">"#));
+        view.push(String::from(r#"<div class="custom-grid">"#));
 
         fn _generate_feeds(this: RSSBuilder, message: RSSFeed, view: &mut Vec<String>) {
             view.push(this.generate_feeds(message));
@@ -37,8 +37,7 @@ impl RSSBuilder {
             while let Some(message) = messages.next().await { _generate_feeds(this.clone(), message, &mut view) }
         }
 
-        view.push("</div>".to_string());
-        view.push("</div>".to_string());
+        for _ in 0..1 { view.push(String::from("</div>")); }
 
         stream.push(tags::get_header_view());
         stream.extend(view);

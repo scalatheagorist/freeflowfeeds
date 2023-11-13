@@ -32,7 +32,7 @@ impl PublisherModel for Sandwirt {
                             .find(Attr("class", "post-author-name fn"))
                             .next()
                             .map(|node| node.text())
-                            .unwrap_or("Der Sandwirt".to_string())
+                            .unwrap_or(String::from("Der Sandwirt"))
                             .trim()
                             .to_owned();
 
@@ -42,7 +42,7 @@ impl PublisherModel for Sandwirt {
                             .find(Name("a"))
                             .next()
                             .map(|node| node.text())
-                            .unwrap_or("".to_string())
+                            .unwrap_or(String::from(""))
                             .trim()
                             .to_owned();
 
