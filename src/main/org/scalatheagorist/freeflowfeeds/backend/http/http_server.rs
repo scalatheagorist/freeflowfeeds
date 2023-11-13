@@ -15,7 +15,7 @@ use crate::backend::services::RSSService;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HttpServerConfig {
     pub address: String,
-    port: i32,
+    pub port: i32,
 }
 
 impl HttpServerConfig {

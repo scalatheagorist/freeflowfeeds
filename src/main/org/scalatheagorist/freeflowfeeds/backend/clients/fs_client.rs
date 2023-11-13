@@ -15,7 +15,7 @@ use crate::utils::hash_value::hash_value;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FileStoreConfig {
     pub path: String,
-    pub(crate) suffix: String
+    pub suffix: String
 }
 
 pub struct FileStoreClient;
