@@ -16,6 +16,7 @@ tokio = "1.32.0"
 tokio-stream = "0.1.14"
 serde_json = { version = "1.0.107", features = [] }
 serde = { version = "1.0.188", features = ["derive"] }
+chrono = "0.4.31"
 
 [lib]
 name = "tests"

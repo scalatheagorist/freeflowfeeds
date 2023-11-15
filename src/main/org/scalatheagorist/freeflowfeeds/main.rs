@@ -42,8 +42,8 @@ async fn main() {
 
     if initial_pull { publisher.reverse() };
 
-    let scape_service: HtmlScrapeService =
-        HtmlScrapeService::new(publisher, app_config.clone().concurrency, app_config.clone().fs.suffix);
+    let scape_service: HtmlScrapeService = HtmlScrapeService::new(publisher, app_config.clone().concurrency, app_config.clone().fs.suffix);
+
     let rss_builder: RSSBuilder = RSSBuilder::new();
 
     let rss_service: RSSService = RSSService::new(app_config.clone(), scape_service, rss_builder);
