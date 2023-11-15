@@ -37,29 +37,31 @@ pub(crate) fn get_header_view() -> String {
     <title>liberty literature</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-primary fixed-top">
-        <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
         <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
              alt="Die Marktradikalen" class="logo" title="Zu den Marktradikalen">
     </a>
-    <form class="form-inline my-2 my-lg-0">
-        <input class="form-control" type="search" placeholder="Suche: '2023/10'" aria-label="Search" id="search-input">
-    </form>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" id="navbar-nav-toggle">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item text-center mx-1">
-                <a class="btn btn-secondary nav-btn" href="/articles"><i class="fas fa-home" title="Zur Startseite"></i></a>
+        <ul class="navbar-nav">
+            <li class="nav-item text-center mr-auto">
+               <form class="form-inline">
+                <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-input">
+            </form>
             </li>
-            <li class="nav-item text-center dropdown mx-1">
+            <li class="nav-item text-center mr-auto">
+                <a class="btn btn-secondary nav-btn" href="/articles">Home</a>
+            </li>
+            <li class="nav-item text-center dropdown mr-auto">
                 <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alle Magazine">
-                    Magazin
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="all magazines">
+                    Magazine
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/articles">Alle Magazine</a>
+                    <a class="dropdown-item" href="/articles">all magazines</a>
                     <a class="dropdown-item" href="/articles/misesde">MisesDE</a>
                     <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut</a>
                     <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat</a>
@@ -69,37 +71,39 @@ pub(crate) fn get_header_view() -> String {
                     <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt</a>
                 </div>
             </li>
-            <li class="nav-item text-center mx-1">
+            <li class="nav-item text-center mr-auto">
                 <button type="button" class="btn btn-secondary nav-btn" data-toggle="modal" data-target="#impressumModal">
-                    §
+                    Legal
                 </button>
                 <div class="modal fade" id="impressumModal" tabindex="-1" role="dialog" aria-labelledby="impressumModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="impressumModalLabel">Rechtliches</h5>
+                                <h5 class="modal-title" id="impressumModalLabel">Legal</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body text-left">
-                                <p>Diese Seite wird ausschließlich freiwillig und privat betrieben. Es gibt keine Geschäftsbeziehungen zu den verlinkten Websites.</p>
-                                <p>Kontakt: lightningrises@proton.me</p>
+                                <p>This site is operated exclusively on a voluntary and private basis. There are no business relationships with the linked websites.</p>
+                                <p>Contact: lightningrises@proton.me</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">close</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </li>
         </ul>
+        <div class="nav-item ml-auto">
+        <a href="https://ankap.store/" id="ankapstore" target="_blank">
+           <img class="ankapstore-logo"
+                src="https://image.nostr.build/220255ad63062fce0b39883ac49b501c0e372e1c44e40c096d19f7fb31925346.png"/>
+        </a>
+        </div>
     </div>
 </nav>
-<a href="https://ankap.store/" id="ankapstore" target="_blank">
-    <img class="ankapstore-logo"
-         src="https://image.nostr.build/220255ad63062fce0b39883ac49b501c0e372e1c44e40c096d19f7fb31925346.png"/>
-</a>
 <a id="opensource-band" href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
     100% Open Source
 </a>
@@ -196,11 +200,23 @@ fn css() -> String {
 <style>
 .navbar {
     background-color: #ffb400 !important;
-    padding: inherit;
+}
+
+.navbar-brand {
+    height: 90px;
+}
+
+a.navbar-brand:focus, a.navbar-brand:active {
+    outline: none !important;
 }
 
 .ankapstore-logo {
     height: 50px;
+    margin-bottom: -15px;
+}
+
+#ankapstore:hover {
+    background: darkred;
 }
 
 .nav-btn {
@@ -221,6 +237,7 @@ fn css() -> String {
 
 .logo {
     max-width: 160px;
+    margin-top: -7px;
 }
 
 .logo-link {
@@ -269,6 +286,71 @@ fn css() -> String {
 .card:hover {
     transform: translateY(-10px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+a:hover {
+    text-decoration: none;
+    outline: none;
+}
+
+.btn {
+    background-color: #30311f !important;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+.open-source-badge {
+    position: fixed;
+    bottom: 145px;
+    right: -45px;
+    background-color: #ffb400 !important;
+    color: #000;
+    padding: 20px 48px;
+    border-radius: 5px;
+    transform: rotate(-45deg);
+    transform-origin: bottom right;
+    font-size: 18px;
+    line-height: 1;
+    border: 2px solid #000;
+}
+
+.modal-backdrop {
+    position: inherit !important;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+}
+
+
+a.keyframe-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#scrollToTopButton {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #373827;
+    color: #feb60c;
+    border-radius: 20%;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 999;
+}
+
+#scrollToTopButton:hover {
+    background: darkred;
 }
 
 body {
@@ -349,49 +431,6 @@ body {
     }
 }
 
-a.keyframe-image {
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#scrollToTopButton {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background: #373827;
-    color: #feb60c;
-    border-radius: 20%;
-    padding: 16px;
-    text-align: center;
-    font-size: 16px;
-    cursor: pointer;
-    z-index: 999;
-}
-
-#ankapstore {
-    position: fixed;
-    top: 120px;
-    right: 30px;
-    color: #feb60c;
-    padding: 1px;
-    text-align: center;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-#ankapstore:hover {
-    background: darkred;
-}
-
-#scrollToTopButton:hover {
-    background: darkred;
-}
-
 @media (max-width: 768px) {
     .grid-container {
         margin-top: 28%;
@@ -406,37 +445,6 @@ a.keyframe-image {
        display: none;
     }
 
-    .logo {
-        display: none;
-    }
-
-    .nav-btn {
-        width: 125px;
-        height: 50px;
-    }
-
-    .navbar-nav {
-        display: table;
-        flex-direction: column;
-    }
-
-    #navbar-nav-toggle {
-        top: -50px;
-    }
-
-    .navbar-toggler {
-        position: relative;
-        z-index: 1;
-    }
-
-    .navbar-nav .btn {
-        display: table;
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        white-space: nowrap;
-    }
-
     body {
         background-color: #0f0f0f !important;
         margin: 0;
@@ -446,10 +454,6 @@ a.keyframe-image {
         background-position: right top;
         background-size: auto 100%;
         background-repeat: repeat-y;
-    }
-
-    .logo {
-        display: none;
     }
 
     .custom-grid {
@@ -468,53 +472,9 @@ a.keyframe-image {
 
     .card {
         margin-bottom: 20px;
-        max-width: 470px;
+        max-width: 469px;
     }
 
-    #search-input {
-        width: 50% !important;
-        margin-left: 100px;
-    }
-}
-
-a {
-    color: white;
-}
-
-a:hover {
-    text-decoration: none;
-    transition: border-color 0.5s;
-}
-
-.btn {
-    background-color: #30311f !important;
-    padding: 10px 20px;
-    font-size: 18px;
-}
-
-.open-source-badge {
-    position: fixed;
-    bottom: 145px;
-    right: -45px;
-    background-color: #ffb400 !important;
-    color: #000;
-    padding: 20px 48px;
-    border-radius: 5px;
-    transform: rotate(-45deg);
-    transform-origin: bottom right;
-    font-size: 18px;
-    line-height: 1;
-    border: 2px solid #000;
-}
-
-.modal-backdrop {
-    position: inherit !important;
-    top: 0;
-    left: 0;
-    z-index: 1040;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
 }
 </style>
         "#.to_owned()
