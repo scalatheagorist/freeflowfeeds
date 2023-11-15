@@ -2,15 +2,15 @@
 mod rss_service_tests {
     use std::thread::sleep;
     use std::time::Duration;
-    use tokio::spawn;
-    use mockall::automock;
-
-    use tokio_stream::{Iter, StreamExt};
     use std::vec::IntoIter;
-    use select::document::Document;
-    use freeflowfeeds::app_config::AppConfig;
-    use chrono::{DateTime, NaiveTime, Utc};
 
+    use chrono::{DateTime, NaiveTime, Utc};
+    use mockall::automock;
+    use select::document::Document;
+    use tokio::spawn;
+    use tokio_stream::{Iter, StreamExt};
+
+    use freeflowfeeds::app_config::AppConfig;
     use freeflowfeeds::backend::clients::{FileStoreConfig, HttpClient};
     use freeflowfeeds::backend::http::HttpServerConfig;
     use freeflowfeeds::backend::publisher::Publisher::EFMAGAZIN;
@@ -86,17 +86,14 @@ mod rss_service_tests {
         let rss_service = RSSService::new(
             concrete_app_config,
             concrete_html_scrape_service,
-            concrete_rss_builder
+            concrete_rss_builder,
         );
 
         // action & test
         let iter: Iter<IntoIter<String>> = rss_service.generate(Some(EFMAGAZIN)).await;
         let html_str: String = iter.collect::<Vec<_>>().await.into_iter().fold(String::new(), |acc, item| acc + &item);
 
-        match Document::from_read(html_str.as_bytes()).ok() {
-            Some(_) => assert!(true),
-            None => assert!(false)
-        }
+        assert!(Document::from_read(html_str.as_bytes()).is_ok())
     }
 
     #[tokio::test]
@@ -127,7 +124,7 @@ mod rss_service_tests {
                 address: String::from("0.0.0.0"),
                 port: 8989,
             },
-            concurrency:2,
+            concurrency: 2,
             update: mock_app_config.update(),
             update_interval: mock_app_config.update_interval(),
             initial_pull: false,
@@ -146,14 +143,15 @@ mod rss_service_tests {
         let rss_service = RSSService::new(
             concrete_app_config,
             concrete_html_scrape_service,
-            concrete_rss_builder
+            concrete_rss_builder,
         );
 
         // action & test
-        let iter = spawn(async move { rss_service.pull_with_interval().await });
+        let handle: tokio::task::JoinHandle<()> =
+            spawn(async move { rss_service.pull_with_interval().await });
 
-        let _ = sleep(Duration::from_millis(10));
+        let _ = sleep(Duration::from_millis(1000));
 
-        assert!(true)
+        assert_eq!(handle.is_finished(), false)
     }
 }
