@@ -5,7 +5,7 @@ use log4rs::append::console::ConsoleAppender;
 use log4rs::Config as Log4rsConfig;
 use log4rs::config::{Appender as Log4rsAppender, Root};
 use log4rs::encode::pattern::PatternEncoder;
-use tokio::spawn;
+use tokio::task::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
 use freeflowfeeds::backend::http::HttpServer;
