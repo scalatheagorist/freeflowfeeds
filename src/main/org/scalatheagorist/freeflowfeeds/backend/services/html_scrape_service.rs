@@ -4,7 +4,7 @@ use hyper::{Body, Response, StatusCode, Uri};
 use hyper::http::uri::InvalidUri;
 use log::{error, warn};
 use map_for::FlatMap;
-use tokio::spawn;
+use tokio::task::spawn;
 use tokio::task::JoinHandle;
 
 use crate::backend::clients::{FileStoreClient, FileStoreConfig, HttpClient};
