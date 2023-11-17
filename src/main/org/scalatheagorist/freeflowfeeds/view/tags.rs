@@ -62,13 +62,13 @@ pub(crate) fn get_header_view() -> String {
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="/articles">all magazines</a>
-                    <a class="dropdown-item" href="/articles/misesde">MisesDE</a>
-                    <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut</a>
-                    <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat</a>
-                    <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei</a>
-                    <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken</a>
-                    <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen</a>
-                    <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt</a>
+                    <a class="dropdown-item" href="/articles/misesde">MisesDE (German)</a>
+                    <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut (German)</a>
+                    <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat (German)</a>
+                    <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei (German)</a>
+                    <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken (German)</a>
+                    <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen (German)</a>
+                    <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt (German)</a>
                 </div>
             </li>
             <li class="nav-item text-center mr-auto">
@@ -96,6 +96,7 @@ pub(crate) fn get_header_view() -> String {
                 </div>
             </li>
         </ul>
+        <span class="navbar-text" id="info">English article publishers coming soon...</span>
         <div class="nav-item ml-auto">
         <a href="https://ankap.store/" id="ankapstore" target="_blank">
            <img class="ankapstore-logo"
@@ -198,6 +199,10 @@ $(document).ready(function () {
 fn css() -> String {
     r#"
 <style>
+#info {
+    margin-left: 30px;
+    margin-top: 20px;
+}
 .navbar {
     background-color: #ffb400 !important;
 }
@@ -432,6 +437,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    #info {
+        display: none;
+    }
+
     .grid-container {
         margin-top: 28%;
         left: 0px;
