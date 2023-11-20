@@ -3,7 +3,7 @@ use std::vec::IntoIter;
 use tokio_stream::{Iter, StreamExt};
 
 use crate::backend::models::RSSFeed;
-use crate::backend::publisher::Publisher;
+use crate::backend::publisher::{Lang, Publisher};
 use crate::view::tags;
 
 #[derive(Clone)]
@@ -18,6 +18,7 @@ impl RSSBuilder {
         &self,
         mut messages: Iter<IntoIter<RSSFeed>>,
         publisher: Option<Publisher>,
+        lang: Option<Lang>
     ) -> Iter<IntoIter<String>> {
         let mut stream: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
@@ -32,6 +33,9 @@ impl RSSBuilder {
 
         if let Some(publisher) = publisher {
             let mut stream = messages.filter(|rss| rss.publisher == publisher);
+            while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut view) }
+        } else if let Some(lang) = lang {
+            let mut stream = messages.filter(|rss| rss.lang == lang);
             while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut view) }
         } else {
             while let Some(message) = messages.next().await { _generate_feeds(this.clone(), message, &mut view) }

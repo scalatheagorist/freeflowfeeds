@@ -5,22 +5,24 @@ use hyper::body::Bytes;
 use serde::{Deserialize, Serialize};
 
 use crate::backend::models::Article;
-use crate::backend::publisher::Publisher;
+use crate::backend::publisher::{Lang, Publisher};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub struct RSSFeed {
     pub author: String,
     pub article: Article,
-    pub publisher: Publisher
+    pub publisher: Publisher,
+    pub lang: Lang
 }
 
 impl RSSFeed {
     pub fn new(
         author: String,
         article: Article,
-        publisher: Publisher
+        publisher: Publisher,
+        lang: Lang
     ) -> Self {
-        RSSFeed { author, article, publisher }
+        RSSFeed { author, article, publisher, lang }
     }
 
     pub fn writes(&self) -> serde_json::Result<String> {

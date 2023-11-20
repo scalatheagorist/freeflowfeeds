@@ -3,6 +3,7 @@ use select::document::Document;
 use select::predicate::Name;
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::DIE_MARKTRADIKALEN;
 use crate::backend::publisher::publishers::PublisherModel;
 
@@ -52,7 +53,7 @@ impl PublisherModel for DieMarktradikalen {
 
                 articles.into_iter().map(|(title, link)| {
                     let article: Article = Article::new(title, link);
-                    let rss: RSSFeed = RSSFeed::new(String::from("Die Marktradikalen"), article, DIE_MARKTRADIKALEN);
+                    let rss: RSSFeed = RSSFeed::new(String::from("Die Marktradikalen"), article, DIE_MARKTRADIKALEN, DE);
                     rss
                 }).collect::<Vec<_>>()
             }

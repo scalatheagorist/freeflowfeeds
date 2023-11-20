@@ -4,6 +4,7 @@ use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::SCHWEIZER_MONAT;
 use crate::backend::publisher::publishers::PublisherModel;
 
@@ -55,7 +56,7 @@ impl PublisherModel for SchweizerMonat {
 
                 valid_articles.into_iter().map(|(title, link, author)| {
                     let article: Article = Article::new(title, link);
-                    let rss: RSSFeed = RSSFeed::new(author, article, SCHWEIZER_MONAT);
+                    let rss: RSSFeed = RSSFeed::new(author, article, SCHWEIZER_MONAT, DE);
                     rss
                 }).collect::<Vec<_>>()
             }
