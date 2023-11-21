@@ -18,6 +18,7 @@ services:
       - FFF_MISESDE_PAGE_TO=2
       - FFF_HAYEKINSTITUT_PAGE_TO=2
       - FFF_INITIAL_PULL=false
+      - FFF_UPDATE_INTERVAL=24
 
   nginx:
     image: nginx:latest
