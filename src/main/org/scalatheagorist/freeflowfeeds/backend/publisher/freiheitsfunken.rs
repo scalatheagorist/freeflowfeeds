@@ -4,6 +4,7 @@ use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::FREIHEITSFUNKEN;
 use crate::backend::publisher::publishers::PublisherModel;
 
@@ -69,7 +70,7 @@ impl PublisherModel for Freiheitsfunken {
                     };
 
                     let article: Article = Article::new(title, href_with_uri_prefix);
-                    let rss: RSSFeed = RSSFeed::new(author, article, FREIHEITSFUNKEN);
+                    let rss: RSSFeed = RSSFeed::new(author, article, FREIHEITSFUNKEN, DE);
 
                     rss
                 }).collect::<Vec<_>>()

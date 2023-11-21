@@ -60,11 +60,15 @@ impl HttpServer {
                                 crate::backend::http::ENDPOINT_HAYEKINSTITUT |
                                 crate::backend::http::ENDPOINT_FREIHEITSFUNKEN |
                                 crate::backend::http::ENDPOINT_DIEMARKTRADIKALEN |
-                                crate::backend::http::ENDPOINT_SANDWIRT
+                                crate::backend::http::ENDPOINT_EN |
+                                crate::backend::http::ENDPOINT_DE
                             ) => {
                                 info!("request to {:?}", req.headers());
 
-                                let iterator: Iter<IntoIter<String>> = rss_service.generate(Some(crate::backend::http::to_publisher(e))).await;
+                                let iterator: Iter<IntoIter<String>> = rss_service.generate(
+                                    crate::backend::http::to_publisher(e),
+                                    crate::backend::http::to_lang(e)
+                                ).await;
                                 let stream =
                                     iterator.map(|result| {
                                         Ok::<Bytes, std::io::Error>(
@@ -78,7 +82,7 @@ impl HttpServer {
                             },
                             _ => {
                                 info!("request to {:?}", req.headers());
-                                let iterator: Iter<IntoIter<String>> = rss_service.generate(None).await;
+                                let iterator: Iter<IntoIter<String>> = rss_service.generate(None, None).await;
                                 let stream =
                                     iterator.map(|result| {
                                         Ok::<Bytes, std::io::Error>(

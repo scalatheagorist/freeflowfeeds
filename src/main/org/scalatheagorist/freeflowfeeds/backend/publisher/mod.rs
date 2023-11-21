@@ -1,4 +1,5 @@
 pub use crate::backend::publisher::publishers::AsPublisher;
+pub use crate::backend::publisher::publishers::Lang;
 pub use crate::backend::publisher::publishers::Publisher;
 pub use crate::backend::publisher::publishers::PublisherHost;
 

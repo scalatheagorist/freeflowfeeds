@@ -71,6 +71,17 @@ pub(crate) fn get_header_view() -> String {
                     <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt (German)</a>
                 </div>
             </li>
+            <li class="nav-item text-center dropdown mr-auto">
+                <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Language
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/articles">language</a>
+                    <a class="dropdown-item" href="/articles/english">English</a>
+                    <a class="dropdown-item" href="/articles/german">German</a>
+                </div>
+            </li>
             <li class="nav-item text-center mr-auto">
                 <button type="button" class="btn btn-secondary nav-btn" data-toggle="modal" data-target="#impressumModal">
                     Legal
@@ -97,12 +108,6 @@ pub(crate) fn get_header_view() -> String {
             </li>
         </ul>
         <span class="navbar-text" id="info">English article publishers coming soon...</span>
-        <div class="nav-item ml-auto">
-        <a href="https://ankap.store/" id="ankapstore" target="_blank">
-           <img class="ankapstore-logo"
-                src="https://image.nostr.build/220255ad63062fce0b39883ac49b501c0e372e1c44e40c096d19f7fb31925346.png"/>
-        </a>
-        </div>
     </div>
 </nav>
 <a id="opensource-band" href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
@@ -263,7 +268,7 @@ a.navbar-brand:focus, a.navbar-brand:active {
 }
 
 .card {
-    width: 900px;
+    width: 130%;
     height: 200px;
 }
 
@@ -368,72 +373,6 @@ body {
     background-size: auto 70%;
     background-repeat: no-repeat;
 
-}
-
-@keyframes backgroundChange {
-    0% {
-        background-image: url('https://ankap.store/images/poster/menschliches-handeln/vorderseite.jpg');
-    }
-    5% {
-        background-image: url('https://ankap.store/images/hoodies/anonymous-man/fashion-schwarz-vorderseite.jpg');
-    }
-    10% {
-        background-image: url('https://ankap.store/images/tank-tops/honey-badger-dont-care/frau-weiss-vorderseite.jpg');
-    }
-    15% {
-        background-image: url('https://ankap.store/images/t-shirts/gadsden/mann-gelb-vorderseite.jpg');
-    }
-    20% {
-        background-image: url('https://ankap.store/images/sweatshirts/die-libertaeren/lichtgraumeliert-vorderseite.jpg');
-    }
-    25% {
-        background-image: url('https://ankap.store/images/t-shirts/libertaere-weltherrschaft/mann-helltuerkis-vorderseite.jpg');
-    }
-    30% {
-        background-image: url('https://ankap.store/images/sweatshirts/freiheitsfunken/beige-vorderseite.jpg');
-    }
-    35% {
-        background-image: url('https://ankap.store/images/tank-tops/end-gov/mann-schwarz-vorderseite.jpg');
-    }
-    40% {
-        background-image: url('https://ankap.store/images/sweatshirts/ssr-sturmhaube/800x/schwarz-vorderseite.jpg');
-    }
-    45% {
-        background-image: url('https://ankap.store/images/hoodies/regierungsblabla/classic-navyblau-vorderseite.jpg');
-    }
-    50% {
-        background-image: url('https://ankap.store/images/tassen/ludwig-von-mises/weissglaenzend-vorderseite.jpg');
-    }
-    55% {
-        background-image: url('https://ankap.store/images/t-shirts/all-eyes-on-bitcoin/mann-dunkeltuerkis-vorderseite.jpg');
-    }
-    60% {
-        background-image: url('https://ankap.store/images/t-shirts/whisper-study-bitcoin/mann-orange-vorderseite.jpg');
-    }
-    65% {
-        background-image: url('https://ankap.store/images/t-shirts/marktradikavel/mann-navyblau-vorderseite.jpg');
-    }
-    70% {
-        background-image: url('https://ankap.store/images/t-shirts/sowell/mann-navyblau-vorderseite.jpg');
-    }
-    75% {
-        background-image: url('https://ankap.store/images/t-shirts/privacy-responsibility-freedom/mann-helltuerkis-vorderseite.jpg');
-    }
-    80% {
-        background-image: url('https://ankap.store/images/t-shirts/mindestlohn-fanboy/frau-beige-vorderseite.jpg');
-    }
-    85% {
-        background-image: url('https://ankap.store/images/t-shirts/ahoj-ancap/mann-helltuerkis-vorderseite.jpg');
-    }
-    90% {
-        background-image: url('https://ankap.store/images/sweatshirts/kyle/rot-vorderseite.jpg');
-    }
-    95% {
-        background-image: url('https://ankap.store/images/t-shirts/free-ross/mann-dunkelgruen-vorderseite.jpg');
-    }
-    100% {
-        background-image: url('https://ankap.store/images/t-shirts/extremely-peaceful/mann-gelb-vorderseite.jpg');
-    }
 }
 
 @media (max-width: 768px) {

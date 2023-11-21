@@ -10,7 +10,7 @@ use tokio_stream::Iter;
 use crate::app_config::AppConfig;
 use crate::backend::clients::FileStoreClient;
 use crate::backend::models::RSSFeed;
-use crate::backend::publisher::{AsPublisher, Publisher};
+use crate::backend::publisher::{AsPublisher, Lang, Publisher};
 use crate::backend::services::HtmlScrapeService;
 use crate::view::RSSBuilder;
 
@@ -35,7 +35,7 @@ impl RSSService {
         RSSService { app_config, scape_service, rss_builder }
     }
 
-    pub async fn generate(&self, publisher: Option<Publisher>) -> Iter<IntoIter<String>> {
+    pub async fn generate(&self, publisher: Option<Publisher>, lang: Option<Lang>) -> Iter<IntoIter<String>> {
         fn sort_descending_by_modified(feeds: &mut Vec<(Metadata, RSSFeed)>) {
             feeds.sort_by(|(entry1, _), (entry2, _)| {
                 entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
@@ -52,7 +52,7 @@ impl RSSService {
                 feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
             });
 
-        self.rss_builder.build(stream, publisher).await
+        self.rss_builder.build(stream, publisher, lang).await
     }
 
     pub async fn pull_with_interval(&self) {

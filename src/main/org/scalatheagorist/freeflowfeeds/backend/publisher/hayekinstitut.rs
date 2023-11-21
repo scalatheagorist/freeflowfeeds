@@ -4,6 +4,7 @@ use select::node::Node;
 use select::predicate::{Class, Name};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::HAYEK_INSTITUT;
 use crate::backend::publisher::publishers::PublisherModel;
 
@@ -42,7 +43,7 @@ impl PublisherModel for HayekInstitut {
                     get_href(&node).iter().for_each(|link| {
                         let title: String = get_title(&node);
                         let article: Article = Article::new(title, link.to_owned());
-                        let rss: RSSFeed = RSSFeed::new(String::from("Hayek Institut Wien"), article, HAYEK_INSTITUT);
+                        let rss: RSSFeed = RSSFeed::new(String::from("Hayek Institut Wien"), article, HAYEK_INSTITUT, DE);
                         rss_feeds.push(rss)
                     })
                 }

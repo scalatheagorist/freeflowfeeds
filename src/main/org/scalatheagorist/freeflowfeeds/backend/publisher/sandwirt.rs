@@ -3,6 +3,7 @@ use select::document::Document;
 use select::predicate::{Attr, Name};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::SANDWIRT;
 use crate::backend::publisher::publishers::PublisherModel;
 
@@ -55,7 +56,7 @@ impl PublisherModel for Sandwirt {
                             .to_owned();
 
                     let article: Article = Article::new(title, href);
-                    let rss: RSSFeed = RSSFeed::new(author, article, SANDWIRT);
+                    let rss: RSSFeed = RSSFeed::new(author, article, SANDWIRT, DE);
 
                     rss
                 }).collect::<Vec<_>>()

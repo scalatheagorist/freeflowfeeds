@@ -58,6 +58,14 @@ impl Publisher {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
+pub enum Lang {
+    #[allow(non_camel_case_types)]
+    DE,
+    #[allow(non_camel_case_types)]
+    EN
+}
+
 pub trait PublisherModel {
     fn get_rss(&self, html_response: HtmlResponse) -> Vec<RSSFeed>;
 }

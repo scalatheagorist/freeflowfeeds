@@ -3,6 +3,7 @@ use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::MISESDE;
 use crate::backend::publisher::publishers::PublisherModel;
 
@@ -56,7 +57,7 @@ impl PublisherModel for MisesDE {
                                 .to_owned();
 
                             let article: Article = Article::new(title, href);
-                            let rss: RSSFeed = RSSFeed::new(author, article, MISESDE);
+                            let rss: RSSFeed = RSSFeed::new(author, article, MISESDE, DE);
 
                             Some(rss)
                         },
