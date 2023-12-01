@@ -1,6 +1,7 @@
 use std::vec::IntoIter;
 
-use tokio_stream::{Iter, StreamExt};
+use futures_util::{Stream, StreamExt};
+use futures_util::stream::Iter;
 
 use crate::backend::models::RSSFeed;
 use crate::backend::publisher::{Lang, Publisher};
@@ -16,7 +17,7 @@ impl RSSBuilder {
 
     pub async fn build(
         &self,
-        mut messages: Iter<IntoIter<RSSFeed>>,
+        messages: impl Stream<Item = RSSFeed>,
         publisher: Option<Publisher>,
         lang: Option<Lang>
     ) -> Iter<IntoIter<String>> {
@@ -31,14 +32,22 @@ impl RSSBuilder {
             view.push(this.generate_feeds(message));
         }
 
-        if let Some(publisher) = publisher {
-            let mut stream = messages.filter(|rss| rss.publisher == publisher);
-            while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut view) }
-        } else if let Some(lang) = lang {
-            let mut stream = messages.filter(|rss| rss.lang == lang);
-            while let Some(message) = stream.next().await { _generate_feeds(this.clone(), message, &mut view) }
-        } else {
-            while let Some(message) = messages.next().await { _generate_feeds(this.clone(), message, &mut view) }
+        let mut messages = Box::pin(messages);
+
+        while let Some(message) = messages.as_mut().next().await {
+            if let Some(publ) = publisher.clone() {
+                if message.publisher == publ {
+                    _generate_feeds(this.clone(), message, &mut view);
+                }
+            }
+            else if let Some(l) = lang.clone() {
+                if message.lang == l {
+                    _generate_feeds(this.clone(), message, &mut view);
+                }
+            }
+            else {
+                _generate_feeds(this.clone(), message, &mut view);
+            }
         }
 
         for _ in 0..1 { view.push(String::from("</div>")); }
@@ -47,7 +56,7 @@ impl RSSBuilder {
         stream.extend(view);
         stream.push(tags::get_footer_view());
 
-        tokio_stream::iter(stream)
+        futures::stream::iter(stream)
     }
 
     fn generate_feeds(&self, rss_feed: RSSFeed) -> String {

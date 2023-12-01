@@ -1,6 +1,6 @@
 extern crate num_traits;
 
-use log::{error, info, LevelFilter};
+use log::{info, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::Config as Log4rsConfig;
 use log4rs::config::{Appender as Log4rsAppender, Root};
@@ -32,11 +32,12 @@ async fn main() {
 
     let _                       = set_logging();
     let app_config: AppConfig   = AppConfig::get_app_config();
-    let rss_service: RSSService = RSSService::new(app_config.clone());
-    let server: HttpServer      = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
-    let _                       = spawn(async move { rss_service.pull_with_interval().await });
 
     info!("{:?}", app_config);
 
-    if let Err(e) = server.serve().await { error!("server error: {}", e); }
+    let rss_service: RSSService = RSSService::new(app_config.clone());
+    let http_server             = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
+
+    let _                       = spawn(async move { rss_service.pull_with_interval().await });
+    let _                       = http_server.serve().await;
 }

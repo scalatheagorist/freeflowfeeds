@@ -1,11 +1,10 @@
-use std::fs::Metadata;
 use std::time::Duration;
 use std::vec::IntoIter;
 
 use chrono::NaiveTime;
+use futures_util::stream::Iter;
 use log::{error, info};
 use tokio::time::{Instant, sleep_until};
-use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
 use crate::backend::clients::FileStoreClient;
@@ -36,21 +35,8 @@ impl RSSService {
     }
 
     pub async fn generate(&self, publisher: Option<Publisher>, lang: Option<Lang>) -> Iter<IntoIter<String>> {
-        fn sort_descending_by_modified(feeds: &mut Vec<(Metadata, RSSFeed)>) {
-            feeds.sort_by(|(entry1, _), (entry2, _)| {
-                entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
-            });
-        }
-
-        let stream: Iter<IntoIter<RSSFeed>> =
-            tokio_stream::iter({
-                let mut feeds: Vec<(Metadata, RSSFeed)> =
-                    FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
-
-                sort_descending_by_modified(&mut feeds);
-
-                feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
-            });
+        let stream =
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
         self.rss_builder.build(stream, publisher, lang).await
     }
