@@ -1,41 +1,39 @@
-use hyper::{Body, Request, Uri};
-use hyper::client::ResponseFuture;
+use axum::http::Response;
+use http_body_util::Empty;
+use hyper::body::{Bytes, Incoming};
 use hyper::header::{HeaderName, HeaderValue};
+use hyper::Request;
+use hyper::Uri;
+use hyper_tls::HttpsConnector;
+use hyper_util::client::legacy::{Client, Error};
+use hyper_util::client::legacy::connect::HttpConnector;
+use hyper_util::rt::TokioExecutor;
 use log::{error, info};
 
-use crate::backend::clients::HyperClient;
 use crate::backend::models::CustomHyperError;
 
 #[derive(Clone)]
-pub struct HttpClient {
-    client: HyperClient,
-}
+pub struct HttpClient {}
 
 impl HttpClient {
-    pub fn new() -> Self {
-        let client: HyperClient = HyperClient::new();
-        HttpClient { client }
-    }
+    pub fn new() -> Self { HttpClient {} }
 
-    pub fn get(&self, uri: Uri, headers: Vec<(String, String)>) -> Option<Box<ResponseFuture>> {
-        Request::builder()
-            .uri(uri.clone())
-            .method("GET")
-            .body(Body::empty())
-            .map_err(|err| {
-                let error_message: String = format!("request on uri {} with building error {}", uri, err);
-                error!("{error_message}");
-                CustomHyperError(error_message)
-            })
-            .ok()
-            .map(|mut request| {
-                HttpClient::extract_header_by_request(&mut request, headers.clone());
-                info!("send request to {}", Uri::to_string(&(uri.clone())));
-                self.client.fetch(request)
-            })
-    }
+    pub async fn get(&self, uri: Uri, headers: Vec<(String, String)>) -> Result<Response<Incoming>, Error> {
+        let https_connector: HttpsConnector<HttpConnector> =
+            HttpsConnector::new();
+        let client: Client<HttpsConnector<HttpConnector>, Empty<Bytes>> =
+            Client::builder(TokioExecutor::new()).build(https_connector);
+        let mut request: Request<Empty<Bytes>> =
+            Request::builder()
+                .uri(uri.clone())
+                .method("GET")
+                .body(Empty::<Bytes>::new())
+                .map_err(|err| {
+                    let error_message: String = format!("request on uri {} with building error {}", uri.clone(), err);
+                    error!("{error_message}");
+                    CustomHyperError(error_message)
+                }).unwrap();
 
-    fn extract_header_by_request(request: &mut Request<Body>, headers: Vec<(String, String)>) {
         for (key, value) in headers.clone() {
             match (HeaderName::try_from(key.clone()), HeaderValue::try_from(value.clone())) {
                 (Ok(key), Ok(value)) => {
@@ -44,5 +42,9 @@ impl HttpClient {
                 _ => error!("{}", String::from("Header conversion error"))
             }
         }
+
+        info!("send GET request to {}", uri);
+
+        client.request(request).await
     }
 }

@@ -1,14 +1,14 @@
-use std::fs::Metadata;
+use std::sync::Arc;
 use std::time::Duration;
 use std::vec::IntoIter;
 
 use chrono::NaiveTime;
+use futures_util::stream::Iter;
 use log::{error, info};
 use tokio::time::{Instant, sleep_until};
-use tokio_stream::Iter;
 
 use crate::app_config::AppConfig;
-use crate::backend::clients::FileStoreClient;
+use crate::backend::clients::{FileStoreClient, FileStoreConfig};
 use crate::backend::models::RSSFeed;
 use crate::backend::publisher::{AsPublisher, Lang, Publisher};
 use crate::backend::services::HtmlScrapeService;
@@ -16,50 +16,46 @@ use crate::view::RSSBuilder;
 
 #[derive(Clone)]
 pub struct RSSService {
-    app_config: AppConfig,
+    app_config: Arc<AppConfig>,
     scape_service: HtmlScrapeService,
     rss_builder: RSSBuilder,
 }
 
 impl RSSService {
     pub fn new(app_config: AppConfig) -> Self {
-        let initial_pull: bool = app_config.clone().initial_pull;
-        let mut publisher: Vec<(Publisher, String)> = app_config.clone().hosts.as_publisher();
+        let conf: Arc<AppConfig> = Arc::new(app_config);
+
+        let initial_pull: bool = conf.initial_pull;
+        let mut publisher: Vec<(Publisher, String)> = conf.hosts.as_publisher();
 
         if initial_pull { publisher.reverse() };
 
+        let suffix: &String = &conf.fs.suffix;
         let scape_service: HtmlScrapeService =
-            HtmlScrapeService::new(publisher, app_config.clone().concurrency, app_config.clone().fs.suffix);
+            HtmlScrapeService::new(publisher, conf.concurrency, suffix.to_string());
         let rss_builder: RSSBuilder = RSSBuilder::new();
 
-        RSSService { app_config, scape_service, rss_builder }
+        RSSService {
+            app_config: conf.clone(),
+            scape_service,
+            rss_builder
+        }
     }
 
     pub async fn generate(&self, publisher: Option<Publisher>, lang: Option<Lang>) -> Iter<IntoIter<String>> {
-        fn sort_descending_by_modified(feeds: &mut Vec<(Metadata, RSSFeed)>) {
-            feeds.sort_by(|(entry1, _), (entry2, _)| {
-                entry2.modified().unwrap().cmp(&entry1.modified().unwrap())
-            });
-        }
-
-        let stream: Iter<IntoIter<RSSFeed>> =
-            tokio_stream::iter({
-                let mut feeds: Vec<(Metadata, RSSFeed)> =
-                    FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
-
-                sort_descending_by_modified(&mut feeds);
-
-                feeds.into_iter().map(|(_, data)| data).collect::<Vec<_>>()
-            });
+        let stream =
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
         self.rss_builder.build(stream, publisher, lang).await
     }
 
     pub async fn pull_with_interval(&self) {
-        let time: String = self.app_config.clone().update;
+        let time: &String = &self.app_config.clone().update;
         let interval: i64 = self.app_config.clone().update_interval;
+        let fs_path: &String = &self.app_config.clone().fs.path;
+        let fs: &FileStoreConfig = &self.app_config.clone().fs;
 
-        match NaiveTime::parse_from_str(&time, "%H:%M") {
+        match NaiveTime::parse_from_str(time, "%H:%M") {
             Ok(target_time) => {
                 loop {
                     let current_time: NaiveTime = chrono::Local::now().time();
@@ -70,13 +66,13 @@ impl RSSService {
 
                     sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
 
-                    info!("pull new articles into '{}'", self.app_config.clone().fs.path);
+                    info!("pull new articles into '{}'", fs_path);
 
                     // wait a whole second, just to be sure
                     sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
 
                     // scrape
-                    self.scape_service.run(self.app_config.clone().fs).await
+                    self.scape_service.run(fs).await
                 }
             }
             Err(err) => {

@@ -1,12 +1,14 @@
-use std::fs::Metadata;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
 use std::vec::IntoIter;
 
-use futures_util::StreamExt;
+use futures_util::{Stream, StreamExt};
 use log::{debug, error};
 use serde::{Deserialize, Serialize};
+use tokio::fs;
+use tokio::fs::{DirEntry, ReadDir};
 use tokio_stream::Iter;
+use tokio_stream::wrappers::ReadDirStream;
 
 use crate::utils::hash_value::hash_value;
 
@@ -48,38 +50,43 @@ impl FileStoreClient {
         }).await
     }
 
-    pub async fn load_from_dir<W>(config: &FileStoreConfig) -> Vec<(Metadata, W)>
-        where W: for<'de> serde::de::Deserialize<'de> + Send + 'static + serde::Serialize{
-        let mut dir: tokio::fs::ReadDir = match tokio::fs::read_dir(Path::new(&config.path)).await {
-            Ok(dir) => dir,
-            Err(err) => {
-                error!("Error reading directory: {}", err);
-                return vec![];
-            }
-        };
-        let mut files: Vec<(Metadata, W)> = Vec::new();
+    pub async fn load_from_dir<W>(config: &FileStoreConfig) -> impl Stream<Item = W>
+        where W: for<'de> serde::de::Deserialize<'de> + Send + 'static + serde::Serialize {
+        let dir: ReadDir =
+            tokio::fs::read_dir(Path::new(&config.path))
+                .await
+                .expect("could not read from dir");
 
-        while let Some(entry) = dir.next_entry().await.ok().flatten() {
-            if let Ok(file_type) = entry.file_type().await {
-                if file_type.is_file() {
-                    let file_path: PathBuf = entry.path();
-                    let metadata: Metadata = entry.path().metadata().unwrap();
-
-                    match tokio::fs::read_to_string(file_path.clone()).await.ok() {
-                        Some(data) => {
-                            if let Some(w) = serde_json::from_str(&data).ok() {
-                                files.push((metadata, w))
-                            } else {
-                                error!("could not deserialize json: {}", data)
-                            }
-                        },
-                        None => error!("could not read file {:?}", file_path)
+        ReadDirStream::new(dir)
+            .filter_map(|entry_result| async move {
+                match entry_result {
+                    Ok(entry) => Some(entry),
+                    Err(err) => {
+                        error!("Error reading directory entry: {}", err);
+                        None
                     }
-
                 }
-            }
-        }
-
-        files
+            })
+            .filter_map(|entry: DirEntry| async move {
+                match entry.file_type().await {
+                    Ok(file_type) if file_type.is_file() => Some(entry.path()),
+                    _ => None,
+                }
+            })
+            .filter_map(|file_path: PathBuf| async move {
+                match fs::read_to_string(&file_path).await {
+                    Ok(data) => match serde_json::from_str::<W>(&data) {
+                        Ok(w) => Some(w),
+                        Err(err) => {
+                            error!("Could not deserialize JSON from file {:?}: {}", file_path, err);
+                            None
+                        }
+                    },
+                    Err(err) => {
+                        error!("Could not read file {:?}: {}", file_path, err);
+                        None
+                    }
+                }
+            })
     }
 }
