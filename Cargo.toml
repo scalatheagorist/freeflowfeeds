@@ -1,6 +1,6 @@
 [package]
 name = "freeflowfeeds"
-version = "2.0.0"
+version = "2.0.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -28,7 +28,7 @@ bytes = "1.5.0"
 chrono = "0.4.31"
 config = "0.13.3"
 futures = "0.3.29"
-futures-lite = "1.13.0"
+futures-lite = "2.1.0"
 futures-util = "0.3.29"
 hyper = { version = "1", features = ["full"] }
 http-body-util = "0.1"

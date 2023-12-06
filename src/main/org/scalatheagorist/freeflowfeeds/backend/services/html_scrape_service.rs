@@ -1,5 +1,6 @@
 use std::error::Error;
 use std::str::FromStr;
+use std::sync::Arc;
 
 use bytes::BytesMut;
 use http_body_util::BodyExt;
@@ -16,7 +17,7 @@ use crate::backend::publisher::Publisher;
 
 #[derive(Clone)]
 pub struct HtmlScrapeService {
-    http_client: HttpClient,
+    http_client: Arc<HttpClient>,
     hosts: Vec<(Publisher, String)>,
     concurrency: i32,
     headers: Vec<(String, String)>,
@@ -29,7 +30,7 @@ impl HtmlScrapeService {
         concurrency: i32,
         file_suffix: String
     ) -> Self {
-        let http_client: HttpClient = HttpClient::new();
+        let http_client: Arc<HttpClient> = Arc::new(HttpClient::new());
         let headers: Vec<(String, String)> =
           vec![
               Some((String::from("Content-Type"), String::from("text/html; charset=utf-8"))),
@@ -96,7 +97,7 @@ impl HtmlScrapeService {
             host: Result<Uri, InvalidUri>,
             publisher: Publisher,
             headers: Vec<(String, String)>,
-            client: HttpClient
+            client: Arc<HttpClient>
         ) -> JoinHandle<Option<HtmlResponse>> {
             spawn(async move {
                 let _host: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
