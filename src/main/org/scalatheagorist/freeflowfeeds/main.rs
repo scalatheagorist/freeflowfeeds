@@ -1,5 +1,6 @@
 extern crate num_traits;
 
+use std::sync::Arc;
 use log::{info, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::Config as Log4rsConfig;
@@ -30,14 +31,15 @@ async fn main() {
         }
     }
 
-    let _                       = set_logging();
-    let app_config: AppConfig   = AppConfig::get_app_config();
+    let _ = set_logging();
+    let app_config = AppConfig::get_app_config();
 
     info!("{:?}", app_config);
 
-    let rss_service: RSSService = RSSService::new(app_config.clone());
-    let http_server             = HttpServer::new(app_config.clone().httpserver, rss_service.clone());
+    let rss_service = RSSService::new(app_config.clone());
+    let arc_rss_service = Arc::new(rss_service);
+    let http_server = HttpServer::new(app_config.clone().httpserver, arc_rss_service.clone());
 
-    let _                       = spawn(async move { rss_service.pull_with_interval().await });
-    let _                       = http_server.serve().await;
+    let _ = spawn(async move { arc_rss_service.clone().pull_with_interval().await });
+    let _ = http_server.serve().await;
 }

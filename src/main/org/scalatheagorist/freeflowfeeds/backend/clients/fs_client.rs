@@ -52,7 +52,10 @@ impl FileStoreClient {
 
     pub async fn load_from_dir<W>(config: &FileStoreConfig) -> impl Stream<Item = W>
         where W: for<'de> serde::de::Deserialize<'de> + Send + 'static + serde::Serialize {
-        let dir: ReadDir = tokio::fs::read_dir(Path::new(&config.path)).await.expect("could not read from dir");
+        let dir: ReadDir =
+            tokio::fs::read_dir(Path::new(&config.path))
+                .await
+                .expect("could not read from dir");
 
         ReadDirStream::new(dir)
             .filter_map(|entry_result| async move {

@@ -31,10 +31,9 @@ pub struct HttpServer {
 }
 
 impl HttpServer {
-    pub fn new(config: HttpServerConfig, rss_service: RSSService) -> Self {
+    pub fn new(config: HttpServerConfig, rss_service: Arc<RSSService>) -> Self {
         let address: String = config.to_url();
-        let service: Arc<RSSService> = Arc::new(rss_service);
-        HttpServer { address, rss_service: service }
+        HttpServer { address, rss_service}
     }
 
     pub async fn serve(&self) {
