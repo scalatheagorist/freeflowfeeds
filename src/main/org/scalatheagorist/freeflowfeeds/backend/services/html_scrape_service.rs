@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::str::FromStr;
 use std::sync::Arc;
+use std::vec::IntoIter;
 
 use bytes::BytesMut;
 use http_body_util::BodyExt;
@@ -10,9 +11,10 @@ use hyper::http::uri::InvalidUri;
 use log::{error, warn};
 use tokio::task::JoinHandle;
 use tokio::task::spawn;
+use tokio_stream::Iter;
 
 use crate::backend::clients::{FileStoreClient, FileStoreConfig, HttpClient};
-use crate::backend::models::HtmlResponse;
+use crate::backend::models::{HtmlResponse, RSSFeed};
 use crate::backend::publisher::Publisher;
 
 #[derive(Clone)]
@@ -20,15 +22,13 @@ pub struct HtmlScrapeService {
     http_client: Arc<HttpClient>,
     hosts: Vec<(Publisher, String)>,
     concurrency: i32,
-    headers: Vec<(String, String)>,
-    file_suffix: String
+    headers: Vec<(String, String)>
 }
 
 impl HtmlScrapeService {
     pub fn new(
         hosts: Vec<(Publisher, String)>,
-        concurrency: i32,
-        file_suffix: String
+        concurrency: i32
     ) -> Self {
         let http_client: Arc<HttpClient> = Arc::new(HttpClient::new());
         let headers: Vec<(String, String)> =
@@ -37,34 +37,30 @@ impl HtmlScrapeService {
               Some((String::from("Accept"), String::from("text/html; charset=utf-8")))
           ].into_iter().flatten().collect::<Vec<_>>();
 
-        HtmlScrapeService { http_client, hosts, concurrency, headers, file_suffix }
+        HtmlScrapeService { http_client, hosts, concurrency, headers }
     }
 
     pub async fn run(&self, fs_config: &FileStoreConfig) {
         for chunk in self.hosts.chunks(self.concurrency as usize) {
-            let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
+            let html_responses =
                 chunk
                     .to_vec()
                     .into_iter()
-                    .flat_map(|uri| self.get(vec![uri], self.clone().headers))
-                    .collect::<Vec<_>>();
+                    .flat_map(|uri| self.get(vec![uri], self.clone().headers));
 
-            let chunk_responses: Vec<HtmlResponse> =
-                futures::future::join_all(scrape_futures)
+
+            let html_resp_chunks =
+                futures::future::join_all(html_responses)
                     .await
                     .into_iter()
-                    .filter_map(|resp| resp.ok().unwrap_or(None))
-                    .collect::<Vec<_>>();
+                    .filter_map(|resp| resp.ok().unwrap_or(None));
 
-            for rss in chunk_responses {
+            for rss in html_resp_chunks {
                 let config: FileStoreConfig = fs_config.clone();
-                let suffix: String = self.file_suffix.clone();
+
                 spawn(async move {
-                    FileStoreClient::save_in_dir(
-                        &config,
-                        Publisher::get_rss(rss),
-                        suffix
-                    ).await
+                    let values: Iter<IntoIter<RSSFeed>> = Publisher::get_rss(rss);
+                    FileStoreClient::save_in_dir(&config, values).await
                 });
             }
         }
@@ -81,16 +77,16 @@ impl HtmlScrapeService {
                 return None;
             }
 
-            let mut buf: BytesMut = BytesMut::new();
+            let mut body_as_bytes: BytesMut = BytesMut::new();
 
             while let Some(next) = response.frame().await {
                 let frame = next.unwrap();
                 if let Some(chunk) = frame.data_ref() {
-                    buf.extend_from_slice(&chunk);
+                    body_as_bytes.extend_from_slice(&chunk);
                 }
             }
 
-            String::from_utf8( buf.to_vec()).ok()
+            String::from_utf8(body_as_bytes.to_vec()).ok()
         }
 
         fn get_concurrently(
@@ -100,10 +96,10 @@ impl HtmlScrapeService {
             client: Arc<HttpClient>
         ) -> JoinHandle<Option<HtmlResponse>> {
             spawn(async move {
-                let _host: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
-                match client.get(_host.clone(), headers).await {
+                let host0: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
+                match client.get(host0.clone(), headers).await {
                     Ok(mut resp) =>{
-                        extract_body(&mut resp, _host).await.map(|response|
+                        extract_body(&mut resp, host0).await.map(|response|
                             HtmlResponse { publisher, response }
                         )
                     },

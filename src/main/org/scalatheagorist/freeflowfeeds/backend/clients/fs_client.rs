@@ -15,13 +15,14 @@ use crate::utils::hash_value::hash_value;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FileStoreConfig {
     pub path: String,
-    pub(crate) suffix: String
+    pub(crate) suffix: String,
+    pub(crate) prefix: String
 }
 
 pub struct FileStoreClient;
 
 impl FileStoreClient {
-    pub async fn save_in_dir<R>(config: &FileStoreConfig, values: Iter<IntoIter<R>>, suffix: String)
+    pub async fn save_in_dir<R>(config: &FileStoreConfig, values: Iter<IntoIter<R>>)
         where R: for<'de> serde::de::Deserialize<'de> + Send + 'static + serde::Serialize + Hash + Clone {
         if let Err(err) = tokio::fs::create_dir_all(Path::new(&config.clone().path)).await {
             error!("Could not create directory: {}", err);
@@ -29,10 +30,12 @@ impl FileStoreClient {
         }
 
         values.for_each_concurrent(None, |value| {
-            let suffix_clone = suffix.clone();
+            let suffix_clone: String = config.suffix.clone();
+            let prefix_clone: String = config.prefix.clone();
+
             async move {
                 let hashed: u64 = hash_value::<R>(value.clone());
-                let filename: String = format!("{}/data_{}{}", &config.clone().path, hashed.to_owned(), &suffix_clone);
+                let filename: String = format!("{}{}{}{}", &config.clone().path, prefix_clone, hashed.to_owned(), suffix_clone);
                 let file_path: &Path = Path::new(&filename);
 
                 if file_path.exists() {

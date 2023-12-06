@@ -21,7 +21,7 @@ impl RSSBuilder {
         publisher: Option<Publisher>,
         lang: Option<Lang>
     ) -> Iter<IntoIter<String>> {
-        let mut stream: Vec<String> = Vec::new();
+        let mut html_view: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
         let this: RSSBuilder = self.clone();
 
@@ -52,11 +52,11 @@ impl RSSBuilder {
 
         for _ in 0..1 { view.push(String::from("</div>")); }
 
-        stream.push(tags::get_header_view());
-        stream.extend(view);
-        stream.push(tags::get_footer_view());
+        html_view.push(tags::get_header_view());
+        html_view.extend(view);
+        html_view.push(tags::get_footer_view());
 
-        futures::stream::iter(stream)
+        futures::stream::iter(html_view)
     }
 
     fn generate_feeds(&self, rss_feed: RSSFeed) -> String {

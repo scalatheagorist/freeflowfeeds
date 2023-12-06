@@ -31,7 +31,7 @@ pub struct HttpServer {
 }
 
 impl HttpServer {
-    pub fn new(config: HttpServerConfig, rss_service: Arc<RSSService>) -> Self {
+    pub fn new(config: &HttpServerConfig, rss_service: Arc<RSSService>) -> Self {
         let address: String = config.to_url();
         HttpServer { address, rss_service}
     }
