@@ -39,7 +39,7 @@ impl HtmlScrapeService {
         HtmlScrapeService { http_client, hosts, concurrency, headers, file_suffix }
     }
 
-    pub async fn run(&self, fs_config: FileStoreConfig) {
+    pub async fn run(&self, fs_config: &FileStoreConfig) {
         for chunk in self.hosts.chunks(self.concurrency as usize) {
             let scrape_futures: Vec<JoinHandle<Option<HtmlResponse>>> =
                 chunk

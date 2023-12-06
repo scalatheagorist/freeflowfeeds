@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::vec::IntoIter;
 
 use axum::{Router, routing};
@@ -26,106 +27,104 @@ impl HttpServerConfig {
 
 pub struct HttpServer {
     address: String,
-    rss_service: RSSService,
+    rss_service: Arc<RSSService>,
 }
 
 impl HttpServer {
     pub fn new(config: HttpServerConfig, rss_service: RSSService) -> Self {
         let address: String = config.to_url();
-        HttpServer { address, rss_service }
+        let service: Arc<RSSService> = Arc::new(rss_service);
+        HttpServer { address, rss_service: service }
     }
 
     pub async fn serve(&self) {
-        async fn get_publisher(e: &str, rss_service: RSSService) -> Response<Body> {
+        async fn get_publisher(e: &str, rss_service: Arc<RSSService>) -> Response<Body> {
             let iterator: Iter<IntoIter<String>> =
                 rss_service
                     .generate(crate::backend::http::to_publisher(e), crate::backend::http::to_lang(e))
                     .await;
-
-            let feeds = iterator.map(|feed| Ok::<String, Error>(feed));
+            let feeds =
+                iterator.map(|feed| Ok::<String, Error>(feed));
 
             Response::new(Body::from_stream(feeds))
         }
 
-        async fn get_articles(rss_service: RSSService) -> Response<Body> {
+        async fn get_articles(rss_service: Arc<RSSService>) -> Response<Body> {
             let iterator: Iter<IntoIter<String>> = rss_service.generate(None, None).await;
-
             let feeds = iterator.map(|feed| Ok::<String, Error>(feed));
 
             Response::new(Body::from_stream(feeds))
         }
-
-        let service_copy: RSSService = self.rss_service.clone();
 
         let app: Router =
             Router::new()
                 .route(
                     crate::backend::http::ENDPOINT_MISESDE,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_MISESDE, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_SCHWEIZERMONAT,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_SCHWEIZERMONAT, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_EFMAGAZIN,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_EFMAGAZIN, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_HAYEKINSTITUT,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_HAYEKINSTITUT, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_FREIHEITSFUNKEN,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_FREIHEITSFUNKEN, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_DIEMARKTRADIKALEN,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_DIEMARKTRADIKALEN, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_EN,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_EN, service)
                     })
                 )
                 .route(
                     crate::backend::http::ENDPOINT_DE,
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_publisher(crate::backend::http::ENDPOINT_DE, service)
                     })
                 )
                 .route(
                     "/articles",
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_articles(service)
                     })
                 )
                 .route(
                     "/",
                     routing::get({
-                        let service = service_copy.clone();
+                        let service = self.rss_service.clone();
                         move || get_articles(service)
                     })
                 );
