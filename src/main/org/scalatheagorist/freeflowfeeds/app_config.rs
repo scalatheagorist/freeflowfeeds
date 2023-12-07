@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, fmt};
 use std::path::Path;
 use config::{Config, File};
 use serde::{Deserialize, Serialize};
@@ -73,5 +73,27 @@ impl AppConfig {
         }
 
         app_config
+    }
+}
+
+impl fmt::Display for AppConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "AppConfig {{")?;
+        writeln!(f, "    hosts: [")?;
+        for host in &self.hosts {
+            writeln!(
+                f,
+                "        PublisherHost {{ url: \"{}\", path: \"{}\", page_to: {}, publisher: {:?} }},",
+                host.url, host.path, host.page_to, host.publisher
+            )?;
+        }
+        writeln!(f, "    ],")?;
+        writeln!(f, "    fs: {:?},", self.fs)?;
+        writeln!(f, "    httpserver: {:?},", self.httpserver)?;
+        writeln!(f, "    concurrency: {},", self.concurrency)?;
+        writeln!(f, "    update: {},", self.update)?;
+        writeln!(f, "    update_interval: {},", self.update_interval)?;
+        writeln!(f, "    initial_pull: {},", self.initial_pull)?;
+        write!(f, "}}")
     }
 }

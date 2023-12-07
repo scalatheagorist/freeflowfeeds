@@ -1,6 +1,7 @@
 fs:
   path: "/<yourpath>/data"
   suffix: ".json"
+  prefix: "/data_"
 
 hosts:
   - url: "https://ef-magazin.de/"

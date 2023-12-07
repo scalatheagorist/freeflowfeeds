@@ -22,17 +22,14 @@ pub struct RSSService {
 }
 
 impl RSSService {
-    pub fn new(app_config: AppConfig) -> Self {
-        let conf: Arc<AppConfig> = Arc::new(app_config);
-
-        let initial_pull: bool = conf.initial_pull;
+    pub fn new(app_config: Arc<AppConfig>) -> Self {
+        let conf: Arc<AppConfig> = Arc::clone(&app_config);
         let mut publisher: Vec<(Publisher, String)> = conf.hosts.as_publisher();
 
-        if initial_pull { publisher.reverse() };
+        if conf.initial_pull { publisher.reverse() };
 
-        let suffix: &String = &conf.fs.suffix;
         let scape_service: HtmlScrapeService =
-            HtmlScrapeService::new(publisher, conf.concurrency, suffix.to_string());
+            HtmlScrapeService::new(publisher, conf.concurrency);
         let rss_builder: RSSBuilder = RSSBuilder::new();
 
         RSSService {
@@ -43,17 +40,16 @@ impl RSSService {
     }
 
     pub async fn generate(&self, publisher: Option<Publisher>, lang: Option<Lang>) -> Iter<IntoIter<String>> {
-        let stream =
-            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
+        let feeds = FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
-        self.rss_builder.build(stream, publisher, lang).await
+        self.rss_builder.build(feeds, publisher, lang).await
     }
 
     pub async fn pull_with_interval(&self) {
         let time: &String = &self.app_config.clone().update;
         let interval: i64 = self.app_config.clone().update_interval;
         let fs_path: &String = &self.app_config.clone().fs.path;
-        let fs: &FileStoreConfig = &self.app_config.clone().fs;
+        let fs_config: &FileStoreConfig = &self.app_config.clone().fs;
 
         match NaiveTime::parse_from_str(time, "%H:%M") {
             Ok(target_time) => {
@@ -72,7 +68,7 @@ impl RSSService {
                     sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
 
                     // scrape
-                    self.scape_service.run(fs).await
+                    self.scape_service.run(fs_config).await
                 }
             }
             Err(err) => {
