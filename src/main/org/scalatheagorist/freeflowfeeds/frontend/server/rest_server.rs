@@ -40,7 +40,7 @@ impl RestServer {
         async fn get_publisher(e: &str, rss_service: Arc<RSSService>) -> Response<Body> {
             let iterator: Iter<IntoIter<String>> =
                 rss_service
-                    .generate(crate::backend::server::to_publisher(e), crate::backend::server::to_lang(e))
+                    .generate(crate::frontend::server::to_publisher(e), crate::frontend::server::to_lang(e))
                     .await;
             let feeds =
                 iterator.map(|feed| Ok::<String, Error>(feed));
@@ -58,59 +58,59 @@ impl RestServer {
         let app: Router =
             Router::new()
                 .route(
-                    crate::backend::server::ENDPOINT_MISESDE,
+                    crate::frontend::server::ENDPOINT_MISESDE,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_MISESDE, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_MISESDE, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_SCHWEIZERMONAT,
+                    crate::frontend::server::ENDPOINT_SCHWEIZERMONAT,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_SCHWEIZERMONAT, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_SCHWEIZERMONAT, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_EFMAGAZIN,
+                    crate::frontend::server::ENDPOINT_EFMAGAZIN,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_EFMAGAZIN, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_EFMAGAZIN, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_HAYEKINSTITUT,
+                    crate::frontend::server::ENDPOINT_HAYEKINSTITUT,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_HAYEKINSTITUT, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_HAYEKINSTITUT, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_FREIHEITSFUNKEN,
+                    crate::frontend::server::ENDPOINT_FREIHEITSFUNKEN,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_FREIHEITSFUNKEN, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_FREIHEITSFUNKEN, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_DIEMARKTRADIKALEN,
+                    crate::frontend::server::ENDPOINT_DIEMARKTRADIKALEN,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_DIEMARKTRADIKALEN, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_DIEMARKTRADIKALEN, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_EN,
+                    crate::frontend::server::ENDPOINT_EN,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_EN, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_EN, service)
                     })
                 )
                 .route(
-                    crate::backend::server::ENDPOINT_DE,
+                    crate::frontend::server::ENDPOINT_DE,
                     routing::get({
                         let service = self.rss_service.clone();
-                        move || get_publisher(crate::backend::server::ENDPOINT_DE, service)
+                        move || get_publisher(crate::frontend::server::ENDPOINT_DE, service)
                     })
                 )
                 .route(
