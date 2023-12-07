@@ -1,11 +1,12 @@
 use std::{env, fmt};
 use std::path::Path;
+
 use config::{Config, File};
 use serde::{Deserialize, Serialize};
 
 use crate::backend::clients::FileStoreConfig;
-use crate::backend::server::RestServerConfig;
 use crate::backend::publisher::{Publisher, PublisherHost};
+use crate::frontend::server::RestServerConfig;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AppConfig {
@@ -91,8 +92,8 @@ impl fmt::Display for AppConfig {
         writeln!(f, "    fs: {:?},", self.fs)?;
         writeln!(f, "    httpserver: {:?},", self.rest_server)?;
         writeln!(f, "    concurrency: {},", self.concurrency)?;
-        writeln!(f, "    update: {},", self.update)?;
-        writeln!(f, "    update_interval: {},", self.update_interval)?;
+        writeln!(f, "    update: {} UTC,", self.update)?;
+        writeln!(f, "    update_interval: {} in hours,", self.update_interval)?;
         writeln!(f, "    initial_pull: {},", self.initial_pull)?;
         write!(f, "}}")
     }

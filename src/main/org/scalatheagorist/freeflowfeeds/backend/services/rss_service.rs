@@ -12,7 +12,7 @@ use crate::backend::clients::{FileStoreClient, FileStoreConfig};
 use crate::backend::models::RSSFeed;
 use crate::backend::publisher::{AsPublisher, Lang, Publisher};
 use crate::backend::services::HtmlScrapeService;
-use crate::view::RSSBuilder;
+use crate::frontend::view::RSSBuilder;
 
 #[derive(Clone)]
 pub struct RSSService {

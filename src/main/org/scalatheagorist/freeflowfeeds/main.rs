@@ -9,7 +9,7 @@ use log4rs::encode::pattern::PatternEncoder;
 use tokio::task::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
-use freeflowfeeds::backend::server::RestServer;
+use freeflowfeeds::frontend::server::RestServer;
 use freeflowfeeds::backend::services::RSSService;
 
 #[tokio::main]

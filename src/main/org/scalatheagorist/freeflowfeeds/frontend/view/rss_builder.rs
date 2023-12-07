@@ -5,7 +5,7 @@ use futures_util::stream::Iter;
 
 use crate::backend::models::RSSFeed;
 use crate::backend::publisher::{Lang, Publisher};
-use crate::view::tags;
+use crate::frontend::view::tags;
 
 #[derive(Clone)]
 pub struct RSSBuilder;
