@@ -4,14 +4,14 @@ use config::{Config, File};
 use serde::{Deserialize, Serialize};
 
 use crate::backend::clients::FileStoreConfig;
-use crate::backend::http::HttpServerConfig;
+use crate::backend::server::RestServerConfig;
 use crate::backend::publisher::{Publisher, PublisherHost};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AppConfig {
     pub hosts: Vec<PublisherHost>,
     pub fs: FileStoreConfig,
-    pub httpserver: HttpServerConfig,
+    pub rest_server: RestServerConfig,
     pub concurrency: i32,
     pub update: String,
     pub update_interval: i64,
@@ -53,8 +53,8 @@ impl AppConfig {
 
         app_config.fs.path =
             get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
-        app_config.httpserver.address =
-            get_env_var_or_default("FFF_SERVER_HOST", app_config.httpserver.address.clone());
+        app_config.rest_server.address =
+            get_env_var_or_default("FFF_SERVER_HOST", app_config.rest_server.address.clone());
         app_config.concurrency =
             get_env_var_or_default("FFF_CONCURRENCY", app_config.concurrency.clone());
         app_config.update =
@@ -89,7 +89,7 @@ impl fmt::Display for AppConfig {
         }
         writeln!(f, "    ],")?;
         writeln!(f, "    fs: {:?},", self.fs)?;
-        writeln!(f, "    httpserver: {:?},", self.httpserver)?;
+        writeln!(f, "    httpserver: {:?},", self.rest_server)?;
         writeln!(f, "    concurrency: {},", self.concurrency)?;
         writeln!(f, "    update: {},", self.update)?;
         writeln!(f, "    update_interval: {},", self.update_interval)?;

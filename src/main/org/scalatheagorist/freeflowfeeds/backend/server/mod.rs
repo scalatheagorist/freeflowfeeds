@@ -1,9 +1,9 @@
-pub use http_server::HttpServer;
-pub use http_server::HttpServerConfig;
+pub use rest_server::RestServer;
+pub use rest_server::RestServerConfig;
 
 use crate::backend::publisher::{Lang, Publisher};
 
-mod http_server;
+mod rest_server;
 
 pub(crate) const ENDPOINT_MISESDE: &str           = "/articles/misesde";
 pub(crate) const ENDPOINT_FREIHEITSFUNKEN: &str   = "/articles/freiheitsfunken";
