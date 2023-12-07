@@ -35,11 +35,10 @@ hosts:
 
 concurrency: 4
 
-httpserver:
+rest_server:
   address: "0.0.0.0"
   port: 8989
 
 update: "17:00" # utc
 update_interval: 24 # in hours
 initial_pull: false
-

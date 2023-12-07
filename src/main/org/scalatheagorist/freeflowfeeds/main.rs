@@ -9,7 +9,7 @@ use log4rs::encode::pattern::PatternEncoder;
 use tokio::task::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
-use freeflowfeeds::backend::http::HttpServer;
+use freeflowfeeds::backend::server::RestServer;
 use freeflowfeeds::backend::services::RSSService;
 
 #[tokio::main]
@@ -34,8 +34,8 @@ async fn main() {
 
     let rss_service = RSSService::new(app_config.clone());
     let arc_rss_service = Arc::new(rss_service);
-    let http_server = HttpServer::new(&app_config.clone().httpserver, arc_rss_service.clone());
+    let rest_server = RestServer::new(&app_config.clone().rest_server, arc_rss_service.clone());
 
     let _ = spawn(async move { arc_rss_service.clone().pull_with_interval().await });
-    let _ = http_server.serve().await;
+    let _ = rest_server.serve().await;
 }
