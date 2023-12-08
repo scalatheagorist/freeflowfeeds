@@ -1,9 +1,8 @@
 use std::sync::Arc;
 use std::time::Duration;
-use std::vec::IntoIter;
 
 use chrono::NaiveTime;
-use futures_util::stream::Iter;
+use futures_util::StreamExt;
 use log::{error, info};
 use tokio::time::{Instant, sleep_until};
 
@@ -39,10 +38,36 @@ impl RSSService {
         }
     }
 
-    pub async fn generate(&self, publisher: Option<Publisher>, lang: Option<Lang>) -> Iter<IntoIter<String>> {
-        let feeds = FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
+    pub async fn generate(&self, page: usize, publisher: Option<Publisher>, lang: Option<Lang>) -> Vec<String> {
+        let page_size: usize = 50usize;
+        let feeds =
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs)
+                .await
+                .skip(page * page_size)
+                .take(page_size);
 
         self.rss_builder.build(feeds, publisher, lang).await
+    }
+
+    pub async fn search(&self, term: &str, publisher: Option<Publisher>, lang: Option<Lang>) -> Vec<String> {
+        let feeds =
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
+
+        let filtered = feeds.filter_map(|feed: RSSFeed| {
+            let term: String = term.to_owned();
+            async move {
+                if feed.author.to_lowercase().contains(&(term.to_lowercase())) ||
+                    feed.article.title.to_lowercase().contains(&(term.to_lowercase())) ||
+                    feed.article.link.to_lowercase().contains(&(term.to_lowercase())) ||
+                    feed.publisher.to_string().to_lowercase().contains(&(term.to_lowercase())) {
+                    Some(feed)
+                } else {
+                    None
+                }
+            }
+        });
+
+        self.rss_builder.build(filtered, publisher, lang).await
     }
 
     pub async fn pull_with_interval(&self) {
