@@ -1,5 +1,8 @@
-pub(crate) fn get_header_view() -> String {
-    format!(r##"
+pub struct IndexHtml;
+
+impl IndexHtml {
+    pub const HTML: &'static str =
+        r##"
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,177 +36,7 @@ pub(crate) fn get_header_view() -> String {
     <meta name="twitter:description" content="Liberty Literature">
     <meta name="twitter:image" content="https://image.nostr.build/99b3afb4def317934f3fbc2b8a854b3ded800c80ca2fba445303fe6d6d9ace57.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    {}
-    <title>liberty literature</title>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light fixed-top">
-    <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
-        <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
-             alt="Die Marktradikalen" class="logo" title="Zu den Marktradikalen">
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" id="navbar-nav-toggle">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item text-center mr-auto">
-               <form class="form-inline">
-                <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-input">
-            </form>
-            </li>
-            <li class="nav-item text-center mr-auto">
-                <a class="btn btn-secondary nav-btn" href="/articles">Home</a>
-            </li>
-            <li class="nav-item text-center dropdown mr-auto">
-                <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="all magazines">
-                    Magazine
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/articles">all magazines</a>
-                    <a class="dropdown-item" href="/articles/misesde">MisesDE (German)</a>
-                    <a class="dropdown-item" href="/articles/hayekinstitut">Hayek Institut (German)</a>
-                    <a class="dropdown-item" href="/articles/schweizermonat">Schweizer Monat (German)</a>
-                    <a class="dropdown-item" href="/articles/efmagazin">EigentümlichFrei (German)</a>
-                    <a class="dropdown-item" href="/articles/freiheitsfunken">Freiheitsfunken (German)</a>
-                    <a class="dropdown-item" href="/articles/diemarktradikalen">Die Marktradikalen (German)</a>
-                    <a class="dropdown-item" href="/articles/dersandwirt">Der Sandwirt (German)</a>
-                </div>
-            </li>
-            <li class="nav-item text-center dropdown mr-auto">
-                <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Language
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/articles">language</a>
-                    <a class="dropdown-item" href="/articles/english">English</a>
-                    <a class="dropdown-item" href="/articles/german">German</a>
-                </div>
-            </li>
-            <li class="nav-item text-center mr-auto">
-                <button type="button" class="btn btn-secondary nav-btn" data-toggle="modal" data-target="#impressumModal">
-                    Legal
-                </button>
-                <div class="modal fade" id="impressumModal" tabindex="-1" role="dialog" aria-labelledby="impressumModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="impressumModalLabel">Legal</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body text-left">
-                                <p>This site is operated exclusively on a voluntary and private basis. There are no business relationships with the linked websites.</p>
-                                <p>Contact: lightningrises@proton.me</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-        <span class="navbar-text" id="info">English article publishers coming soon...</span>
-    </div>
-</nav>
-<a id="opensource-band" href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
-    100% Open Source
-</a>
-<a href="#" id="scrollToTopButton"><i class="fas fa-arrow-up"></i></a>
-        "##, css())
-}
-
-pub(crate) fn get_footer_view() -> String {
-    format!(
-        r#"
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        </body>
-        </html>
-        <script>
-            {}
-        </script>
-        "#, js()
-    )
-}
-
-fn js() -> String {
-    r##"
-function initializeNavbar() {
-    const searchForm = document.querySelector('.navbar .form-inline');
-    const searchInput = document.querySelector('.navbar #search-input');
-    let cards = document.querySelectorAll('.card');
-    let anyVisible = false;
-
-    if (searchForm && searchInput) {
-        searchForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-        });
-
-        searchInput.addEventListener('input', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            let searchTerm = this.value.toLowerCase();
-
-            if (searchTerm === '') {
-                cards.forEach(function (card) {
-                    card.style.display = 'block';
-                });
-                anyVisible = true;
-            } else {
-                anyVisible = false;
-                cards.forEach(function (card) {
-                    let cardText = card.textContent.toLowerCase();
-                    if (cardText.includes(searchTerm)) {
-                        card.style.display = 'block';
-                        anyVisible = true;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-
-            let customGrid = document.querySelector('.custom-grid');
-            customGrid.innerHTML = '';
-
-            cards.forEach(function (card) {
-                if (anyVisible || card.style.display !== 'none') {
-                    customGrid.appendChild(card);
-                }
-            });
-        });
-    }
-}
-
-function searchFunction(searchTerm) {
-    alert('Suche nach: ' + searchTerm);
-}
-
-window.addEventListener('load', initializeNavbar);
-
-$(document).ready(function () {
-    $(window).scroll(function () {
-        if ($(this).scrollTop() > 100) {
-            $('#scrollToTopButton').fadeIn();
-        } else {
-            $('#scrollToTopButton').fadeOut();
-        }
-    });
-
-    $('#scrollToTopButton').click(function () {
-        $('html, body').animate({ scrollTop: 0 }, 800);
-        return false;
-    });
-});
-    "##.to_owned()
-}
-
-fn css() -> String {
-    r#"
-<style>
+    <style>
 #info {
     margin-left: 30px;
     margin-top: 20px;
@@ -425,5 +258,219 @@ body {
 
 }
 </style>
-        "#.to_owned()
+    <title>liberty literature</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
+        <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
+             alt="Die Marktradikalen" class="logo" title="Zu den Marktradikalen">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" id="navbar-nav-toggle">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item text-center mr-auto">
+               <form class="form-inline" id="search-form">
+                  <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-input">
+                  <button class="btn btn-secondary" type="submit">Search</button>
+               </form>
+               <div class="modal fade" id="searchErrorModal" tabindex="-1" role="dialog" aria-labelledby="searchErrorModalLabel" aria-hidden="true">
+                 <div class="modal-dialog" role="document">
+                   <div class="modal-content">
+                     <div class="modal-header">
+                       <h5 class="modal-title" id="searchErrorModalLabel">Error</h5>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                       </button>
+                     </div>
+                     <div class="modal-body">
+                       The search term must contain at least 3 letters!
+                       Der Suchbegriff muss mindestens 3 Buchstaben enthalten!
+                     </div>
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+            </li>
+            <li>
+            </li>
+            <li class="nav-item text-center mr-auto">
+                <a class="btn btn-secondary nav-btn" href="/articles/1">Home</a>
+            </li>
+            <li class="nav-item text-center dropdown mr-auto">
+                <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="all magazines">
+                    Magazine
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/articles/1">all magazines</a>
+                    <a class="dropdown-item" href="/misesde/1">MisesDE (German)</a>
+                    <a class="dropdown-item" href="/hayekinstitut/1">Hayek Institut (German)</a>
+                    <a class="dropdown-item" href="/schweizermonat/1">Schweizer Monat (German)</a>
+                    <a class="dropdown-item" href="/efmagazin/1">EigentümlichFrei (German)</a>
+                    <a class="dropdown-item" href="/freiheitsfunken/1">Freiheitsfunken (German)</a>
+                    <a class="dropdown-item" href="/diemarktradikalen/1">Die Marktradikalen (German)</a>
+                    <a class="dropdown-item" href="/dersandwirt/1">Der Sandwirt (German)</a>
+                    <a class="dropdown-item" href="/english/1">English articles</a>
+                    <a class="dropdown-item" href="/german/1">Deutsche Artikel</a>
+                </div>
+            </li>
+            <li class="nav-item text-center dropdown mr-auto">
+                <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Language
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/articles/1">language</a>
+                    <a class="dropdown-item" href="/articles/english/1">English</a>
+                    <a class="dropdown-item" href="/articles/german/1">German</a>
+                </div>
+            </li>
+            <li class="nav-item text-center mr-auto">
+                <button type="button" class="btn btn-secondary nav-btn" data-toggle="modal" data-target="#impressumModal">
+                    Legal
+                </button>
+                <div class="modal fade" id="impressumModal" tabindex="-1" role="dialog" aria-labelledby="impressumModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="impressumModalLabel">Legal</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-left">
+                                <p>This site is operated exclusively on a voluntary and private basis. There are no business relationships with the linked websites.</p>
+                                <p>Contact: lightningrises@proton.me</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<a id="opensource-band" href="https://github.com/scalatheagorist/freeflowfeeds" target="_blank" class="open-source-badge">
+    100% Open Source
+</a>
+<a href="#" id="scrollToTopButton"><i class="fas fa-arrow-up"></i></a>
+
+<div class="container grid-container">
+    <div class="custom-grid" id="custom-grid">
+        <!-- minijinja, load items dynamically -->
+        {% for feed in feed_tags %}
+        {{ feed }}
+        {% endfor %}
+        <!-- minijinja, load items dynamically -->
+    </div>
+</div>
+<div id="loading-bar" style="display: none;">
+    Loading...
+    <progress id="loading-progress" value="0" max="100"></progress>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+
+const grid = document.getElementById('custom-grid');
+const loadingBar = document.getElementById('loading-bar');
+const loadingProgress = document.getElementById('loading-progress');
+
+let pageNumber = 1;
+let isLoading = false;
+
+async function loadPage(page) {
+    if (isLoading) return;
+
+    isLoading = true;
+    loadingBar.style.display = 'block';
+
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+    const searchTerm = document.getElementById('search-input').value.trim();
+
+    if (searchTerm.length < 3) {
+      try {
+        const response = await fetch(`${newPath}/${page}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok.');
+        }
+
+        const newData = await response.text();
+
+        grid.innerHTML += newData;
+      } catch (error) {
+          console.error('Error fetching data:', error);
+      } finally {
+          loadingBar.style.display = 'none';
+          isLoading = false;
+      }
+    }
+}
+
+window.addEventListener('scroll', () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+    if (scrollTop + clientHeight >= scrollHeight - 100) {
+       if (!isLoading) {
+           pageNumber++;
+           loadPage(pageNumber);
+       }
+    }
+});
+
+
+// search
+document.getElementById('search-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const searchTerm = document.getElementById('search-input').value.trim();
+    if (searchTerm.length >= 3) {
+        try {
+            const response = await fetch(`/search/${searchTerm}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+
+            const newData = await response.text();
+
+            grid.innerHTML = "";
+            grid.innerHTML += newData;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    } else {
+        $('#searchErrorModal').modal('show');
+    }
+});
+
+// go to top
+$(document).ready(function () {
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 100) {
+            $('#scrollToTopButton').fadeIn();
+        } else {
+            $('#scrollToTopButton').fadeOut();
+        }
+    });
+
+    $('#scrollToTopButton').click(function () {
+        $('html, body').animate({ scrollTop: 0 }, 800);
+        return false;
+    });
+});
+
+
+  </script>
+  </body>
+  </html>
+  "##;
 }

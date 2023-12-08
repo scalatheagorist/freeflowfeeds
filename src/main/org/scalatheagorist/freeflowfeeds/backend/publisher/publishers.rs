@@ -1,3 +1,4 @@
+use std::fmt;
 use std::vec::IntoIter;
 
 use serde::{Deserialize, Serialize};
@@ -55,6 +56,20 @@ impl Publisher {
         feeds.reverse();
 
         tokio_stream::iter(feeds)
+    }
+}
+
+impl fmt::Display for Publisher {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Publisher::EFMAGAZIN          => write!(f, "EFMAGAZIN"),
+            Publisher::FREIHEITSFUNKEN    => write!(f, "FREIHEITSFUNKEN"),
+            Publisher::MISESDE            => write!(f, "MISESDE"),
+            Publisher::SCHWEIZER_MONAT    => write!(f, "SCHWEIZER_MONAT"),
+            Publisher::HAYEK_INSTITUT     => write!(f, "HAYEK_INSTITUT"),
+            Publisher::DIE_MARKTRADIKALEN => write!(f, "DIE_MARKTRADIKALEN"),
+            Publisher::SANDWIRT           => write!(f, "SANDWIRT")
+        }
     }
 }
 
