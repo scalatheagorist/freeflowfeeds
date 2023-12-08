@@ -1,11 +1,7 @@
-use std::vec::IntoIter;
-
 use futures_util::{Stream, StreamExt};
-use futures_util::stream::Iter;
 
 use crate::backend::models::RSSFeed;
 use crate::backend::publisher::{Lang, Publisher};
-use crate::frontend::view::tags;
 
 #[derive(Clone)]
 pub struct RSSBuilder;
@@ -20,13 +16,10 @@ impl RSSBuilder {
         messages: impl Stream<Item = RSSFeed>,
         publisher: Option<Publisher>,
         lang: Option<Lang>
-    ) -> Iter<IntoIter<String>> {
+    ) -> Vec<String> {
         let mut html_view: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
         let this: RSSBuilder = self.clone();
-
-        view.push(String::from(r#"<div class="container grid-container">"#));
-        view.push(String::from(r#"<div class="custom-grid">"#));
 
         fn _generate_feeds(this: RSSBuilder, message: RSSFeed, view: &mut Vec<String>) {
             view.push(this.generate_feeds(message));
@@ -50,13 +43,9 @@ impl RSSBuilder {
             }
         }
 
-        for _ in 0..1 { view.push(String::from("</div>")); }
-
-        html_view.push(tags::get_header_view());
         html_view.extend(view);
-        html_view.push(tags::get_footer_view());
 
-        futures::stream::iter(html_view)
+        html_view
     }
 
     fn generate_feeds(&self, rss_feed: RSSFeed) -> String {
