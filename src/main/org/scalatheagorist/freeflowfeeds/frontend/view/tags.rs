@@ -376,10 +376,6 @@ async function loadPage(page) {
 
     const currentPath = window.location.pathname;
     const newPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-
-    console.log(`path ${currentPath}`);
-    console.log(`page number ${pageNumber}`);
-
     const searchTerm = document.getElementById('search-input').value.trim();
 
     if (searchTerm.length < 3) {
