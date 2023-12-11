@@ -6,15 +6,15 @@ fs:
 hosts:
   - url: "https://ef-magazin.de/"
     path: "?page="
-    page_to: 3
+    page_to: 2
     publisher: "EFMAGAZIN"
   - url: "https://freiheitsfunken.info/"
     path: "?page="
-    page_to: 3
+    page_to: 2
     publisher: "FREIHEITSFUNKEN"
   - url: "https://www.misesde.org/"
     path: "?_page="
-    page_to: 3
+    page_to: 2
     publisher: "MISESDE"
   - url: "https://schweizermonat.ch/"
     path: "archivperlen/, dossiers/, kolumnen/, schwerpunkte/"
@@ -22,7 +22,7 @@ hosts:
     publisher: "SCHWEIZER_MONAT"
   - url: "https://hayek-institut.at/blog/"
     path: "page/"
-    page_to: 3
+    page_to: 2
     publisher: "HAYEK_INSTITUT"
   - url: "https://www.die-marktradikalen.de/blog/"
     path: "artikel/, uebersetzung/, hoerbuch/, buchvorstellung/"
@@ -39,6 +39,6 @@ rest_server:
   address: "0.0.0.0"
   port: 8989
 
-update: "13:24" # utc
+update: "17:00" # utc
 update_interval: 24 # in hours
 initial_pull: false

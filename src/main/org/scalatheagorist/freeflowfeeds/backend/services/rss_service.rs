@@ -2,7 +2,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use chrono::NaiveTime;
-use futures_util::StreamExt;
+use futures_util::{Stream, StreamExt};
 use log::{error, info};
 use tokio::time::{Instant, sleep_until};
 
@@ -48,25 +48,7 @@ impl RSSService {
         let feeds =
             FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
-        let mut view: Vec<RSSFeed> = vec![];
-
-        let mut messages = Box::pin(feeds);
-
-        while let Some(message) = messages.as_mut().next().await {
-            if let Some(publ) = publisher.clone() {
-                if message.publisher == publ {
-                    view.push(message);
-                }
-            }
-            else if let Some(l) = lang.clone() {
-                if message.lang == l {
-                    view.push(message);
-                }
-            }
-            else {
-                view.push(message);
-            }
-        }
+        let view: Vec<RSSFeed> = self.filter_by(feeds, publisher, lang).await;
 
         let filtered =
             futures_util::stream::iter(view)
@@ -80,25 +62,7 @@ impl RSSService {
         let feeds =
             FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
-        let mut view: Vec<RSSFeed> = vec![];
-
-        let mut messages = Box::pin(feeds);
-
-        while let Some(message) = messages.as_mut().next().await {
-            if let Some(publ) = publisher.clone() {
-                if message.publisher == publ {
-                    view.push(message);
-                }
-            }
-            else if let Some(l) = lang.clone() {
-                if message.lang == l {
-                    view.push(message);
-                }
-            }
-            else {
-                view.push(message);
-            }
-        }
+        let view: Vec<RSSFeed> = self.filter_by(feeds, publisher, lang).await;
 
         let filtered = futures_util::stream::iter(view).filter_map(|feed: RSSFeed| {
             let term: String = term.to_owned();
@@ -115,6 +79,36 @@ impl RSSService {
         });
 
         self.rss_builder.build(filtered).await
+    }
+
+    async fn filter_by<T>(
+        &self,
+        feeds: T,
+        publisher: Option<Publisher>,
+        lang: Option<Lang>
+    ) -> Vec<RSSFeed>
+    where T: Stream<Item=RSSFeed> + Sized {
+        let mut view: Vec<RSSFeed> = vec![];
+
+        let mut messages = Box::pin(feeds);
+
+        while let Some(message) = messages.as_mut().next().await {
+            if let Some(publ) = publisher.clone() {
+                if message.publisher == publ {
+                    view.push(message);
+                }
+            }
+            else if let Some(l) = lang.clone() {
+                if message.lang == l {
+                    view.push(message);
+                }
+            }
+            else {
+                view.push(message);
+            }
+        }
+
+        view
     }
 
     pub async fn pull_with_interval(&self) {

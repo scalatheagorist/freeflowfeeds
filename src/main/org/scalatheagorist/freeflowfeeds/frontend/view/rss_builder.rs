@@ -1,7 +1,6 @@
 use futures_util::{Stream, StreamExt};
 
 use crate::backend::models::RSSFeed;
-use crate::backend::publisher::{Lang, Publisher};
 
 #[derive(Clone)]
 pub struct RSSBuilder;
