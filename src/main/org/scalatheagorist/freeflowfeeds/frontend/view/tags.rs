@@ -289,13 +289,15 @@ body {
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="/articles/1">all magazines</a>
-                    <a class="dropdown-item" href="/articles/misesde/1">MisesDE (German)</a>
-                    <a class="dropdown-item" href="/articles/hayekinstitut/1">Hayek Institut (German)</a>
-                    <a class="dropdown-item" href="/articles/schweizermonat/1">Schweizer Monat (German)</a>
-                    <a class="dropdown-item" href="/articles/efmagazin/1">EigentümlichFrei (German)</a>
-                    <a class="dropdown-item" href="/articles/freiheitsfunken/1">Freiheitsfunken (German)</a>
-                    <a class="dropdown-item" href="/articles/diemarktradikalen/1">Die Marktradikalen (German)</a>
-                    <a class="dropdown-item" href="/articles/dersandwirt/1">Der Sandwirt (German)</a>
+                    <a class="dropdown-item" href="/misesde/1">MisesDE (German)</a>
+                    <a class="dropdown-item" href="/hayekinstitut/1">Hayek Institut (German)</a>
+                    <a class="dropdown-item" href="/schweizermonat/1">Schweizer Monat (German)</a>
+                    <a class="dropdown-item" href="/efmagazin/1">EigentümlichFrei (German)</a>
+                    <a class="dropdown-item" href="/freiheitsfunken/1">Freiheitsfunken (German)</a>
+                    <a class="dropdown-item" href="/diemarktradikalen/1">Die Marktradikalen (German)</a>
+                    <a class="dropdown-item" href="/dersandwirt/1">Der Sandwirt (German)</a>
+                    <a class="dropdown-item" href="/english/1">English articles</a>
+                    <a class="dropdown-item" href="/german/1">Deutsche Artikel</a>
                 </div>
             </li>
             <li class="nav-item text-center dropdown mr-auto">
@@ -363,7 +365,7 @@ const grid = document.getElementById('custom-grid');
 const loadingBar = document.getElementById('loading-bar');
 const loadingProgress = document.getElementById('loading-progress');
 
-let pageNumber = 2;
+let pageNumber = 1;
 let isLoading = false;
 
 async function loadPage(page) {
@@ -372,10 +374,14 @@ async function loadPage(page) {
     isLoading = true;
     loadingBar.style.display = 'block';
 
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+
     const searchTerm = document.getElementById('search-input').value.trim();
+
     if (searchTerm.length < 3) {
       try {
-        const response = await fetch(`/articles/${page}`);
+        const response = await fetch(`${newPath}/${page}`);
         if (!response.ok) {
             throw new Error('Network response was not ok.');
         }
@@ -409,7 +415,7 @@ document.getElementById('search-form').addEventListener('submit', async function
     const searchTerm = document.getElementById('search-input').value.trim();
     if (searchTerm.length >= 3) {
         try {
-            const response = await fetch(`/articles/search/${searchTerm}`);
+            const response = await fetch(`/search/${searchTerm}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }

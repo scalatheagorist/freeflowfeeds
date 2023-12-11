@@ -44,6 +44,7 @@ impl RSSBuilder {
         }
 
         html_view.extend(view);
+        println!("{:?}", html_view);
 
         html_view
     }

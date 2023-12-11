@@ -1,15 +1,14 @@
 use crate::backend::publisher::{Lang, Publisher};
 
-pub(crate) const ENDPOINT_MISESDE: &str           = "/articles/misesde";
-pub(crate) const ENDPOINT_FREIHEITSFUNKEN: &str   = "/articles/freiheitsfunken";
-pub(crate) const ENDPOINT_SCHWEIZERMONAT: &str    = "/articles/schweizermonat";
-pub(crate) const ENDPOINT_EFMAGAZIN: &str         = "/articles/efmagazin";
-pub(crate) const ENDPOINT_HAYEKINSTITUT: &str     = "/articles/hayekinstitut";
-pub(crate) const ENDPOINT_DIEMARKTRADIKALEN: &str = "/articles/diemarktradikalen";
-pub(crate) const ENDPOINT_SANDWIRT: &str          = "/articles/dersandwirt";
-
-pub(crate) const ENDPOINT_EN: &str = "/articles/english";
-pub(crate) const ENDPOINT_DE: &str = "/articles/german";
+pub(crate) const ENDPOINT_MISESDE: &str           = "/misesde";
+pub(crate) const ENDPOINT_FREIHEITSFUNKEN: &str   = "/freiheitsfunken";
+pub(crate) const ENDPOINT_SCHWEIZERMONAT: &str    = "/schweizermonat";
+pub(crate) const ENDPOINT_EFMAGAZIN: &str         = "/efmagazin";
+pub(crate) const ENDPOINT_HAYEKINSTITUT: &str     = "/hayekinstitut";
+pub(crate) const ENDPOINT_DIEMARKTRADIKALEN: &str = "/diemarktradikalen";
+pub(crate) const ENDPOINT_SANDWIRT: &str          = "/dersandwirt";
+pub(crate) const ENDPOINT_EN: &str                = "/english";
+pub(crate) const ENDPOINT_DE: &str                = "/german";
 
 pub(crate) fn to_publisher(s: &str) -> Option<Publisher> {
     match s {

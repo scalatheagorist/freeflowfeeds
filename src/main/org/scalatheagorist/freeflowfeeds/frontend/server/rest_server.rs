@@ -163,27 +163,7 @@ impl RestServer {
                     })
                 )
                 .route(
-                    "/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, None, Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move || {
-                            get_page(Path("1".to_owned()), None, Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/articles/search/*term",
+                    "/search/*term",
                     routing::get({
                         let rss_service: Arc<RSSService> = self.rss_service.clone();
                         move |term| {
