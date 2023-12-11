@@ -13,11 +13,8 @@ impl RSSBuilder {
 
     pub async fn build(
         &self,
-        messages: impl Stream<Item = RSSFeed>,
-        publisher: Option<Publisher>,
-        lang: Option<Lang>
+        messages: impl Stream<Item = RSSFeed>
     ) -> Vec<String> {
-        let mut html_view: Vec<String> = Vec::new();
         let mut view: Vec<String> = vec![];
         let this: RSSBuilder = self.clone();
 
@@ -28,24 +25,10 @@ impl RSSBuilder {
         let mut messages = Box::pin(messages);
 
         while let Some(message) = messages.as_mut().next().await {
-            if let Some(publ) = publisher.clone() {
-                if message.publisher == publ {
-                    _generate_feeds(this.clone(), message, &mut view);
-                }
-            }
-            else if let Some(l) = lang.clone() {
-                if message.lang == l {
-                    _generate_feeds(this.clone(), message, &mut view);
-                }
-            }
-            else {
-                _generate_feeds(this.clone(), message, &mut view);
-            }
+            _generate_feeds(this.clone(), message, &mut view)
         }
 
-        html_view.extend(view);
-
-        html_view
+        view
     }
 
     fn generate_feeds(&self, rss_feed: RSSFeed) -> String {

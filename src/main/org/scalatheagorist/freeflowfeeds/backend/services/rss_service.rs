@@ -38,22 +38,69 @@ impl RSSService {
         }
     }
 
-    pub async fn generate(&self, page: usize, publisher: Option<Publisher>, lang: Option<Lang>) -> Vec<String> {
-        let page_size: usize = 50usize;
+    pub async fn generate(
+        &self,
+        page: usize,
+        page_size: usize,
+        publisher: Option<Publisher>,
+        lang: Option<Lang>
+    ) -> Vec<String> {
         let feeds =
-            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs)
-                .await
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
+
+        let mut view: Vec<RSSFeed> = vec![];
+
+        let mut messages = Box::pin(feeds);
+
+        while let Some(message) = messages.as_mut().next().await {
+            if let Some(publ) = publisher.clone() {
+                if message.publisher == publ {
+                    view.push(message);
+                }
+            }
+            else if let Some(l) = lang.clone() {
+                if message.lang == l {
+                    view.push(message);
+                }
+            }
+            else {
+                view.push(message);
+            }
+        }
+
+        let filtered =
+            futures_util::stream::iter(view)
                 .skip(page * page_size)
                 .take(page_size);
 
-        self.rss_builder.build(feeds, publisher, lang).await
+        self.rss_builder.build(filtered).await
     }
 
     pub async fn search(&self, term: &str, publisher: Option<Publisher>, lang: Option<Lang>) -> Vec<String> {
         let feeds =
             FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
-        let filtered = feeds.filter_map(|feed: RSSFeed| {
+        let mut view: Vec<RSSFeed> = vec![];
+
+        let mut messages = Box::pin(feeds);
+
+        while let Some(message) = messages.as_mut().next().await {
+            if let Some(publ) = publisher.clone() {
+                if message.publisher == publ {
+                    view.push(message);
+                }
+            }
+            else if let Some(l) = lang.clone() {
+                if message.lang == l {
+                    view.push(message);
+                }
+            }
+            else {
+                view.push(message);
+            }
+        }
+
+        let filtered = futures_util::stream::iter(view).filter_map(|feed: RSSFeed| {
             let term: String = term.to_owned();
             async move {
                 if feed.author.to_lowercase().contains(&(term.to_lowercase())) ||
@@ -67,7 +114,7 @@ impl RSSService {
             }
         });
 
-        self.rss_builder.build(filtered, publisher, lang).await
+        self.rss_builder.build(filtered).await
     }
 
     pub async fn pull_with_interval(&self) {

@@ -32,6 +32,8 @@ pub struct RestServer {
 }
 
 impl RestServer {
+    const PAGE_SIZE: usize = 50usize;
+
     pub fn new(config: &RestServerConfig, rss_service: Arc<RSSService>, web_env: Arc<WebEnv>) -> Self {
         let address: String = config.to_url();
 
@@ -45,12 +47,12 @@ impl RestServer {
             rss_service: Arc<RSSService>,
             web_env: Arc<WebEnv>
         ) -> Html<String> {
-            let _page = page.parse::<usize>().unwrap_or(1);
+            let _page = page.parse::<usize>().map(|p| p - 1).unwrap_or(0);
             let publisher: Option<Publisher> = e.flat_map(to_publisher);
             let lang: Option<Lang> = e.flat_map(to_lang);
-            let feeds: Vec<String> = rss_service.generate(_page, publisher, lang).await;
+            let feeds: Vec<String> = rss_service.generate(_page, RestServer::PAGE_SIZE, publisher, lang).await;
 
-            if _page == 1 {
+            if _page == 0 {
                 let index: Template = web_env.value.get_template("index").unwrap();
                 Html(index.render(context!(feed_tags => feeds)).unwrap())
             } else {
