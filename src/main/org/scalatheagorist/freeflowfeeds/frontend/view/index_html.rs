@@ -315,8 +315,6 @@ body {
                     <a class="dropdown-item" href="/freiheitsfunken/1">Freiheitsfunken (German)</a>
                     <a class="dropdown-item" href="/diemarktradikalen/1">Die Marktradikalen (German)</a>
                     <a class="dropdown-item" href="/dersandwirt/1">Der Sandwirt (German)</a>
-                    <a class="dropdown-item" href="/english/1">English articles</a>
-                    <a class="dropdown-item" href="/german/1">Deutsche Artikel</a>
                 </div>
             </li>
             <li class="nav-item text-center dropdown mr-auto">
@@ -326,8 +324,8 @@ body {
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="/articles/1">language</a>
-                    <a class="dropdown-item" href="/articles/english/1">English</a>
-                    <a class="dropdown-item" href="/articles/german/1">German</a>
+                    <a class="dropdown-item" href="/english/1">English articles</a>
+                    <a class="dropdown-item" href="/german/1">Deutsche Artikel</a>
                 </div>
             </li>
             <li class="nav-item text-center mr-auto">
