@@ -37,7 +37,7 @@ hyper-tls = { version = "0.6.0" }
 log = "0.4.20"
 log4rs = "1.2.0"
 map_for = "0.3.0"
-#mini-redis = "0.4.1" # use depdendency only for tokio::fs (tokio-fs repo does not work for me)
+minijinja = "1.0.10"
 num-traits = "0.2.17"
 once_cell = "1.18.0"
 select = "0.6.0"

@@ -1,9 +1,8 @@
 use std::sync::Arc;
 use std::time::Duration;
-use std::vec::IntoIter;
 
 use chrono::NaiveTime;
-use futures_util::stream::Iter;
+use futures_util::{Stream, StreamExt};
 use log::{error, info};
 use tokio::time::{Instant, sleep_until};
 
@@ -39,10 +38,77 @@ impl RSSService {
         }
     }
 
-    pub async fn generate(&self, publisher: Option<Publisher>, lang: Option<Lang>) -> Iter<IntoIter<String>> {
-        let feeds = FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
+    pub async fn generate(
+        &self,
+        page: usize,
+        page_size: usize,
+        publisher: Option<Publisher>,
+        lang: Option<Lang>
+    ) -> Vec<String> {
+        let feeds =
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
 
-        self.rss_builder.build(feeds, publisher, lang).await
+        let view: Vec<RSSFeed> = self.filter_by(feeds, publisher, lang).await;
+
+        let filtered =
+            futures_util::stream::iter(view)
+                .skip(page * page_size)
+                .take(page_size);
+
+        self.rss_builder.build(filtered).await
+    }
+
+    pub async fn search(&self, term: &str, publisher: Option<Publisher>, lang: Option<Lang>) -> Vec<String> {
+        let feeds =
+            FileStoreClient::load_from_dir::<RSSFeed>(&self.app_config.fs).await;
+
+        let view: Vec<RSSFeed> = self.filter_by(feeds, publisher, lang).await;
+
+        let filtered = futures_util::stream::iter(view).filter_map(|feed: RSSFeed| {
+            let term: String = term.to_owned();
+            async move {
+                if feed.author.to_lowercase().contains(&(term.to_lowercase())) ||
+                    feed.article.title.to_lowercase().contains(&(term.to_lowercase())) ||
+                    feed.article.link.to_lowercase().contains(&(term.to_lowercase())) ||
+                    feed.publisher.to_string().to_lowercase().contains(&(term.to_lowercase())) {
+                    Some(feed)
+                } else {
+                    None
+                }
+            }
+        });
+
+        self.rss_builder.build(filtered).await
+    }
+
+    async fn filter_by<T>(
+        &self,
+        feeds: T,
+        publisher: Option<Publisher>,
+        lang: Option<Lang>
+    ) -> Vec<RSSFeed>
+    where T: Stream<Item=RSSFeed> + Sized {
+        let mut view: Vec<RSSFeed> = vec![];
+
+        let mut messages = Box::pin(feeds);
+
+        while let Some(message) = messages.as_mut().next().await {
+            if let Some(publ) = publisher.clone() {
+                if message.publisher == publ {
+                    view.push(message);
+                }
+            }
+            else if let Some(l) = lang.clone() {
+                if message.lang == l {
+                    view.push(message);
+                }
+            }
+            else {
+                view.push(message);
+            }
+        }
+
+        view
     }
 
     pub async fn pull_with_interval(&self) {
