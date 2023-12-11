@@ -280,7 +280,7 @@ body {
             <li>
             </li>
             <li class="nav-item text-center mr-auto">
-                <a class="btn btn-secondary nav-btn" href="/articles">Home</a>
+                <a class="btn btn-secondary nav-btn" href="/articles/1">Home</a>
             </li>
             <li class="nav-item text-center dropdown mr-auto">
                 <button class="btn btn-secondary dropdown-toggle nav-btn" type="button" id="dropdownMenuButton"
@@ -377,6 +377,9 @@ async function loadPage(page) {
     const currentPath = window.location.pathname;
     const newPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
 
+    console.log(`path ${currentPath}`);
+    console.log(`page number ${pageNumber}`);
+
     const searchTerm = document.getElementById('search-input').value.trim();
 
     if (searchTerm.length < 3) {
@@ -401,9 +404,11 @@ async function loadPage(page) {
 window.addEventListener('scroll', () => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
-    if (scrollTop + clientHeight >= scrollHeight - 5) {
-        pageNumber++;
-        loadPage(pageNumber);
+    if (scrollTop + clientHeight >= scrollHeight - 100) {
+       if (!isLoading) {
+           pageNumber++;
+           loadPage(pageNumber);
+       }
     }
 });
 

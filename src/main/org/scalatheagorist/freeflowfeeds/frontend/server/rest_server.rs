@@ -133,6 +133,16 @@ impl RestServer {
                     })
                 )
                 .route(
+                    &*format!("{}/*page", ENDPOINT_SANDWIRT),
+                    routing::get({
+                        let rss_service: Arc<RSSService> = self.rss_service.clone();
+                        let web_env: Arc<WebEnv> = self.web_env.clone();
+                        move |page: Path<String>| {
+                            get_page(page, Some(ENDPOINT_SANDWIRT), Arc::clone(&rss_service), Arc::clone(&web_env))
+                        }
+                    })
+                )
+                .route(
                     &*format!("{}/*page", ENDPOINT_EN),
                     routing::get({
                         let rss_service: Arc<RSSService> = self.rss_service.clone();
