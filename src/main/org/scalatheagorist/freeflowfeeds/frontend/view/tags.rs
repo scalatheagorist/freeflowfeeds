@@ -274,8 +274,27 @@ body {
             <li class="nav-item text-center mr-auto">
                <form class="form-inline" id="search-form">
                   <input class="form-control" type="search" placeholder="Search..." aria-label="Search" id="search-input">
-                  <button class="btn btn-secondary nav-btn" type="submit">Search</button>
+                  <button class="btn btn-secondary" type="submit">Search</button>
                </form>
+               <div class="modal fade" id="searchErrorModal" tabindex="-1" role="dialog" aria-labelledby="searchErrorModalLabel" aria-hidden="true">
+                 <div class="modal-dialog" role="document">
+                   <div class="modal-content">
+                     <div class="modal-header">
+                       <h5 class="modal-title" id="searchErrorModalLabel">Error</h5>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                       </button>
+                     </div>
+                     <div class="modal-body">
+                       The search term must contain at least 3 letters!
+                       Der Suchbegriff muss mindestens 3 Buchstaben enthalten!
+                     </div>
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     </div>
+                   </div>
+                 </div>
+               </div>
             </li>
             <li>
             </li>
@@ -306,9 +325,9 @@ body {
                     Language
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/articles">language</a>
-                    <a class="dropdown-item" href="/articles/english">English</a>
-                    <a class="dropdown-item" href="/articles/german">German</a>
+                    <a class="dropdown-item" href="/articles/1">language</a>
+                    <a class="dropdown-item" href="/articles/english/1">English</a>
+                    <a class="dropdown-item" href="/articles/german/1">German</a>
                 </div>
             </li>
             <li class="nav-item text-center mr-auto">
@@ -429,7 +448,7 @@ document.getElementById('search-form').addEventListener('submit', async function
             console.error('Error fetching data:', error);
         }
     } else {
-        alert('the search term must contain at least 3 letters!');
+        $('#searchErrorModal').modal('show');
     }
 });
 
