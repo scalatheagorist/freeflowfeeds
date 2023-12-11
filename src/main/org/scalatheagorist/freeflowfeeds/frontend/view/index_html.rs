@@ -369,10 +369,16 @@ body {
         <!-- minijinja, load items dynamically -->
     </div>
 </div>
-<div id="loading-bar" style="display: none;">
-    Loading...
-    <progress id="loading-progress" value="0" max="100"></progress>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center mt-5" id="loading-bar" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
