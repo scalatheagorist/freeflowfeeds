@@ -13,13 +13,14 @@ use tokio::task::JoinHandle;
 use tokio::task::spawn;
 use tokio_stream::Iter;
 
-use crate::backend::clients::{FileStoreClient, FileStoreConfig, HttpClient};
+use crate::backend::clients::{DatabaseClient, HttpClient};
 use crate::backend::models::{HtmlResponse, RSSFeed};
 use crate::backend::publisher::Publisher;
 
 #[derive(Clone)]
 pub struct HtmlScrapeService {
     http_client: Arc<HttpClient>,
+    database_client: Arc<DatabaseClient>,
     hosts: Vec<(Publisher, String)>,
     concurrency: i32,
     headers: Vec<(String, String)>
@@ -27,6 +28,7 @@ pub struct HtmlScrapeService {
 
 impl HtmlScrapeService {
     pub fn new(
+        database_client: Arc<DatabaseClient>,
         hosts: Vec<(Publisher, String)>,
         concurrency: i32
     ) -> Self {
@@ -37,10 +39,10 @@ impl HtmlScrapeService {
               Some((String::from("Accept"), String::from("text/html; charset=utf-8")))
           ].into_iter().flatten().collect::<Vec<_>>();
 
-        HtmlScrapeService { http_client, hosts, concurrency, headers }
+        HtmlScrapeService { http_client, database_client, hosts, concurrency, headers }
     }
 
-    pub async fn run(&self, fs_config: &FileStoreConfig) {
+    pub async fn run(&self) {
         for chunk in self.hosts.chunks(self.concurrency as usize) {
             let html_responses =
                 chunk
@@ -56,11 +58,11 @@ impl HtmlScrapeService {
                     .filter_map(|resp| resp.ok().unwrap_or(None));
 
             for rss in html_resp_chunks {
-                let config: FileStoreConfig = fs_config.clone();
+                let db_client: Arc<DatabaseClient> = Arc::clone(&self.database_client);
 
                 spawn(async move {
                     let values: Iter<IntoIter<RSSFeed>> = Publisher::get_rss(rss);
-                    FileStoreClient::save_in_dir(&config, values).await
+                    db_client.insert(values).await
                 });
             }
         }

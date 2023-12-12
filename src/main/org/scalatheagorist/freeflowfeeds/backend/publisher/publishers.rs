@@ -57,6 +57,19 @@ impl Publisher {
 
         tokio_stream::iter(feeds)
     }
+
+    pub fn from(s: &str) -> Option<Self> {
+        match s {
+            "EFMAGAZIN"          => Some(Publisher::EFMAGAZIN),
+            "FREIHEITSFUNKEN"    => Some(Publisher::FREIHEITSFUNKEN),
+            "MISESDE"            => Some(Publisher::MISESDE),
+            "SCHWEIZER_MONAT"    => Some(Publisher::SCHWEIZER_MONAT),
+            "HAYEK_INSTITUT"     => Some(Publisher::HAYEK_INSTITUT),
+            "DIE_MARKTRADIKALEN" => Some(Publisher::DIE_MARKTRADIKALEN),
+            "SANDWIRT"           => Some(Publisher::SANDWIRT),
+            _                    => None,
+        }
+    }
 }
 
 impl fmt::Display for Publisher {
@@ -79,6 +92,25 @@ pub enum Lang {
     DE,
     #[allow(non_camel_case_types)]
     EN
+}
+
+impl Lang {
+    pub fn from(s: &str) -> Option<Self> {
+        match s {
+            "DE" => Some(Lang::DE),
+            "EN" => Some(Lang::EN),
+            _    => None,
+        }
+    }
+}
+
+impl fmt::Display for Lang {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Lang::DE => write!(f, "DE"),
+            Lang::EN => write!(f, "EN")
+        }
+    }
 }
 
 pub trait PublisherModel {

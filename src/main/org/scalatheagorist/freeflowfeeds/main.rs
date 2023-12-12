@@ -1,6 +1,7 @@
 extern crate num_traits;
 
 use std::sync::Arc;
+
 use log::{info, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::Config as Log4rsConfig;
@@ -9,8 +10,8 @@ use log4rs::encode::pattern::PatternEncoder;
 use tokio::task::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
-use freeflowfeeds::frontend::server::{RestServer, WebEnv};
 use freeflowfeeds::backend::services::RSSService;
+use freeflowfeeds::frontend::server::{RestServer, WebEnv};
 
 #[tokio::main]
 async fn main() {
