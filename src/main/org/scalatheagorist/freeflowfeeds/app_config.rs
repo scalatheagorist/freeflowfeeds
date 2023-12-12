@@ -4,14 +4,14 @@ use std::path::Path;
 use config::{Config, File};
 use serde::{Deserialize, Serialize};
 
-use crate::backend::clients::FileStoreConfig;
+use crate::backend::clients::DatabaseConfig;
 use crate::backend::publisher::{Publisher, PublisherHost};
 use crate::frontend::server::RestServerConfig;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AppConfig {
     pub hosts: Vec<PublisherHost>,
-    pub fs: FileStoreConfig,
+    pub db: DatabaseConfig,
     pub rest_server: RestServerConfig,
     pub concurrency: i32,
     pub update: String,
@@ -52,8 +52,8 @@ impl AppConfig {
             panic!("interval is above 24 hours, it must be within the range of 1 to 24 hours!")
         }
 
-        app_config.fs.path =
-            get_env_var_or_default("FFF_FS_PATH", app_config.fs.path.clone());
+        app_config.db.url =
+            get_env_var_or_default("FFF_DB_URL", app_config.db.url.clone());
         app_config.rest_server.address =
             get_env_var_or_default("FFF_SERVER_HOST", app_config.rest_server.address.clone());
         app_config.concurrency =
@@ -89,7 +89,7 @@ impl fmt::Display for AppConfig {
             )?;
         }
         writeln!(f, "    ],")?;
-        writeln!(f, "    fs: {:?},", self.fs)?;
+        writeln!(f, "    db: {:?},", self.db)?;
         writeln!(f, "    httpserver: {:?},", self.rest_server)?;
         writeln!(f, "    concurrency: {},", self.concurrency)?;
         writeln!(f, "    update: {} UTC,", self.update)?;

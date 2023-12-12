@@ -7,9 +7,9 @@ services:
     ports:
       - "0.0.0.0:8989:8989"
     volumes:
-      - /root/freeflowfeeds/data:/app/data
+      - /root/freeflowfeeds/rss_feeds.db:/app/rss_feeds.db
     environment:
-      - FFF_FS_PATH=/app/data
+      - FFF_DB_URL=/app/rss_feeds.db
       - FFF_SERVER_HOST=0.0.0.0
       - FFF_CONCURRENCY=3
       - FFF_UPDATE_TIME=18:00

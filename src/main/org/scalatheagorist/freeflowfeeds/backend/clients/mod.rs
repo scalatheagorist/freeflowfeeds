@@ -1,6 +1,6 @@
 pub use http_client::HttpClient;
-pub use fs_client::FileStoreClient;
-pub use fs_client::FileStoreConfig;
+pub use db_client::DatabaseClient;
+pub use db_client::DatabaseConfig;
 
 mod http_client;
-mod fs_client;
+mod db_client;

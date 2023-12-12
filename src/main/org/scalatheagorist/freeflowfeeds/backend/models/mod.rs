@@ -1,5 +1,4 @@
 pub use article::Article;
-pub use errors::CustomError;
 pub use errors::CustomHyperError;
 pub use errors::CustomSerdeErrors;
 pub use html_response::HtmlResponse;
