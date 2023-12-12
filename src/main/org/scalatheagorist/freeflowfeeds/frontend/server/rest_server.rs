@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{Router, routing};
-use axum::extract::Path;
+use axum::extract::{Path, Query};
 use axum::response::Html;
 use log::{error, info};
 use map_for::FlatMap;
@@ -29,6 +29,11 @@ pub struct RestServer {
     address: String,
     rss_service: Arc<RSSService>,
     web_env: Arc<WebEnv>
+}
+
+#[derive(Debug, Deserialize)]
+struct SearchQueryParams {
+    term: String
 }
 
 impl RestServer {
@@ -62,13 +67,13 @@ impl RestServer {
         }
 
         async fn search(
-            Path(term): Path<String>,
+            Query(query): Query<SearchQueryParams>,
             e: Option<&str>,
             rss_service: Arc<RSSService>
         ) -> Html<String> {
             let publisher: Option<Publisher> = e.flat_map(to_publisher);
             let lang: Option<Lang> = e.flat_map(to_lang);
-            let feeds: Vec<String> = rss_service.search(&term, publisher, lang).await;
+            let feeds: Vec<String> = rss_service.search(&(query.term), publisher, lang).await;
 
             Html(feeds.join(""))
         }
@@ -176,11 +181,11 @@ impl RestServer {
                     })
                 )
                 .route(
-                    "/search/*term",
+                    "/search",
                     routing::get({
                         let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        move |term| {
-                            search(term, None, Arc::clone(&rss_service))
+                        move |query| {
+                            search(query, None, Arc::clone(&rss_service))
                         }
                     })
                 );

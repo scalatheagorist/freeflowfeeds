@@ -439,7 +439,7 @@ document.getElementById('search-form').addEventListener('submit', async function
     const searchTerm = document.getElementById('search-input').value.trim();
     if (searchTerm.length >= 3) {
         try {
-            const response = await fetch(`/search/${searchTerm}`);
+            const response = await fetch(`/search?term=${searchTerm}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }
