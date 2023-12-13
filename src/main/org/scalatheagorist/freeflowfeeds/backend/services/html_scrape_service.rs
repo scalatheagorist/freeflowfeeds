@@ -35,9 +35,9 @@ impl HtmlScrapeService {
         let http_client: Arc<HttpClient> = Arc::new(HttpClient::new());
         let headers: Vec<(String, String)> =
           vec![
-              Some((String::from("Content-Type"), String::from("text/html; charset=utf-8"))),
-              Some((String::from("Accept"), String::from("text/html; charset=utf-8")))
-          ].into_iter().flatten().collect::<Vec<_>>();
+              (String::from("Content-Type"), String::from("text/html; charset=utf-8")),
+              (String::from("Accept"), String::from("text/html; charset=utf-8"))
+          ];
 
         HtmlScrapeService { http_client, database_client, hosts, concurrency, headers }
     }

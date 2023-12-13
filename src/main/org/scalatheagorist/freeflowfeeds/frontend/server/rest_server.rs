@@ -52,11 +52,10 @@ impl RestServer {
             rss_service: Arc<RSSService>,
             web_env: Arc<WebEnv>
         ) -> Html<String> {
-            let _page = page.parse::<usize>().map(|p| p - 1).unwrap_or(0);
+            let _page: usize = page.parse::<usize>().map(|p| p - 1).unwrap_or(0);
             let publisher: Option<Publisher> = e.flat_map(to_publisher);
             let lang: Option<Lang> = e.flat_map(to_lang);
-            let feeds: Vec<String> =
-                rss_service.generate(_page, RestServer::PAGE_SIZE, publisher, lang).await;
+            let feeds: Vec<String> = rss_service.get(_page, RestServer::PAGE_SIZE, publisher, lang, None).await;
 
             if _page == 0 {
                 let index: Template = web_env.value.get_template("index").unwrap();
@@ -73,7 +72,7 @@ impl RestServer {
         ) -> Html<String> {
             let publisher: Option<Publisher> = e.flat_map(to_publisher);
             let lang: Option<Lang> = e.flat_map(to_lang);
-            let feeds: Vec<String> = rss_service.search(&(query.term), publisher, lang).await;
+            let feeds: Vec<String> = rss_service.get(0, 1000000, publisher, lang, Some(&(query.term))).await;
 
             Html(feeds.join(""))
         }

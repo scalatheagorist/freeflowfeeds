@@ -2,7 +2,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use chrono::NaiveTime;
-use futures_util::StreamExt;
 use log::{error, info};
 use tokio::time::{Instant, sleep_until};
 
@@ -42,22 +41,15 @@ impl RSSService {
         }
     }
 
-    pub async fn generate(
+    pub async fn get(
         &self,
         page: usize,
         page_size: usize,
         publisher: Option<Publisher>,
-        lang: Option<Lang>
+        lang: Option<Lang>,
+        term: Option<&str>,
     ) -> Vec<String> {
-        let feeds = self.database_client.select(None, publisher, lang).await;
-        let filtered = feeds.skip(page * page_size).take(page_size);
-
-        self.rss_builder.build(filtered).await
-    }
-
-    pub async fn search(&self, term: &str, publisher: Option<Publisher>, lang: Option<Lang>) -> Vec<String> {
-        let feeds = self.database_client.select(Some(term), publisher, lang).await;
-
+        let feeds = self.database_client.select(page, page_size, publisher, lang, term).await;
         self.rss_builder.build(feeds).await
     }
 
