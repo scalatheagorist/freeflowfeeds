@@ -3,7 +3,7 @@ use std::vec::IntoIter;
 
 use chrono::{DateTime, Local};
 use futures_util::{Stream, StreamExt};
-use log::debug;
+use log::{debug, info, warn};
 use rusqlite::{Connection, Statement};
 use rusqlite::Error::SqliteFailure;
 use rusqlite::ffi::Error;
@@ -61,9 +61,11 @@ impl DatabaseClient {
 
     pub async fn select(
         &self,
-        search_term: Option<&str>,
+        page: usize,
+        page_size: usize,
         publisher: Option<Publisher>,
-        lang: Option<Lang>
+        lang: Option<Lang>,
+        search_term: Option<&str>
     ) -> impl Stream<Item = RSSFeed> {
         let conn: Connection = Connection::open(&self.config.url).expect("could not connect to database");
 
@@ -85,7 +87,17 @@ impl DatabaseClient {
                 }
             };
 
-        let query: String = format!(r#"SELECT * FROM rss_feeds {} ORDER BY created DESC"#, clause);
+        // must be ASC, stream will be push a reversed list
+        let query: String = format!(r#"
+            SELECT * FROM rss_feeds
+            {}
+            ORDER BY created DESC
+            LIMIT {}
+            OFFSET {}
+          "#, clause, page_size, page * page_size
+        );
+
+        info!("{query}");
 
         let mut stmt: Statement = conn.prepare(&query).expect("sql query error");
 
@@ -101,28 +113,29 @@ impl DatabaseClient {
                     match (Publisher::from(&publisher), Lang::from(&lang)) {
                         (Some(publisher), Some(lang)) =>
                             Ok(RSSFeed { author, article: Article { title, link }, publisher, lang }),
-                        _ =>
+                        _ => {
+                            warn!("conversation error at row: {:?}", row);
                             Err(SqliteFailure(
                                 Error::new(9999), // UNKNOWN
-                                Some("failed to convert publisher or lang".to_owned()),
+                                Some("conversation error".to_owned()),
                             ))
+                        }
                     }
                 }
-                _ =>
+                _ => {
+                    warn!("missing fields at row: {:?}", row);
                     Err(SqliteFailure(
                         Error::new(12), // NOT FOUND
                         Some("missing fields".to_owned()),
                     ))
+                }
             }
         }).expect("could not load feed from sql");
 
-        let stream =
-            futures_util::stream::iter(
-                rows
-                    .filter_map(|feed| feed.ok())
-                    .collect::<Vec<_>>()
-            );
-
-        stream
+        futures_util::stream::iter(
+            rows
+                .filter_map(|feed| feed.ok())
+                .collect::<Vec<_>>()
+        )
     }
 }
