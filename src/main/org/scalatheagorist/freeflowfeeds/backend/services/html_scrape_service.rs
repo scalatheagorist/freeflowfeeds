@@ -50,7 +50,6 @@ impl HtmlScrapeService {
                     .into_iter()
                     .flat_map(|uri| self.get(vec![uri], self.clone().headers));
 
-
             let html_resp_chunks =
                 futures::future::join_all(html_responses)
                     .await

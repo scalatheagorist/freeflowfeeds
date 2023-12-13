@@ -3,7 +3,7 @@ use std::vec::IntoIter;
 
 use chrono::{DateTime, Local};
 use futures_util::{Stream, StreamExt};
-use log::{debug, info, warn};
+use log::{debug, warn};
 use rusqlite::{Connection, Statement};
 use rusqlite::Error::SqliteFailure;
 use rusqlite::ffi::Error;
@@ -96,8 +96,6 @@ impl DatabaseClient {
             OFFSET {}
           "#, clause, page_size, page * page_size
         );
-
-        info!("{query}");
 
         let mut stmt: Statement = conn.prepare(&query).expect("sql query error");
 
