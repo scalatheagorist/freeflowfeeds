@@ -39,6 +39,27 @@ struct SearchQueryParams {
 impl RestServer {
     const PAGE_SIZE: usize = 50usize;
 
+    fn get_publisher(s: &str) -> Option<Publisher> {
+        match s {
+            "/misesde"           => Some(Publisher::MISESDE),
+            "/freiheitsfunken"   => Some(Publisher::FREIHEITSFUNKEN),
+            "/schweizermonat"    => Some(Publisher::SCHWEIZER_MONAT),
+            "/efmagazin"         => Some(Publisher::EFMAGAZIN),
+            "/hayekinstitut"     => Some(Publisher::HAYEK_INSTITUT),
+            "/diemarktradikalen" => Some(Publisher::DIE_MARKTRADIKALEN),
+            "/dersandwirt"       => Some(Publisher::SANDWIRT),
+            _ => None
+        }
+    }
+
+    fn get_lang(s: &str) -> Option<Lang> {
+        match s {
+            "/english" => Some(Lang::EN),
+            "/german"  => Some(Lang::DE),
+            _ => None
+        }
+    }
+
     pub fn new(config: &RestServerConfig, rss_service: Arc<RSSService>, web_env: Arc<WebEnv>) -> Self {
         let address: String = config.to_url();
 
@@ -53,8 +74,8 @@ impl RestServer {
             web_env: Arc<WebEnv>
         ) -> Html<String> {
             let _page: usize = page.parse::<usize>().map(|p| p - 1).unwrap_or(0);
-            let publisher: Option<Publisher> = e.flat_map(to_publisher);
-            let lang: Option<Lang> = e.flat_map(to_lang);
+            let publisher: Option<Publisher> = e.flat_map(RestServer::get_publisher);
+            let lang: Option<Lang> = e.flat_map(RestServer::get_lang);
             let feeds: Vec<String> = rss_service.get(_page, RestServer::PAGE_SIZE, publisher, lang, None).await;
 
             if _page == 0 {
@@ -70,8 +91,8 @@ impl RestServer {
             e: Option<&str>,
             rss_service: Arc<RSSService>
         ) -> Html<String> {
-            let publisher: Option<Publisher> = e.flat_map(to_publisher);
-            let lang: Option<Lang> = e.flat_map(to_lang);
+            let publisher: Option<Publisher> = e.flat_map(RestServer::get_publisher);
+            let lang: Option<Lang> = e.flat_map(RestServer::get_lang);
             let feeds: Vec<String> = rss_service.get(0, 1000000, publisher, lang, Some(&(query.term))).await;
 
             Html(feeds.join(""))

@@ -90,7 +90,7 @@ impl HtmlScrapeService {
             String::from_utf8(body_as_bytes.to_vec()).ok()
         }
 
-        fn get_concurrently(
+        fn concurrently(
             host: Result<Uri, InvalidUri>,
             publisher: Publisher,
             headers: Vec<(String, String)>,
@@ -113,7 +113,7 @@ impl HtmlScrapeService {
         }
 
         uris.clone().into_iter().map(|(publisher, uri)| {
-            get_concurrently(Uri::from_str(&*uri), publisher, headers.clone(), self.http_client.clone())
+            concurrently(Uri::from_str(&*uri), publisher, headers.clone(), self.http_client.clone())
         }).collect::<Vec<_>>()
     }
 }
