@@ -4,13 +4,13 @@ use select::node::Node;
 use select::predicate::{Class, Name};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::publishers::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::HAYEK_INSTITUT;
-use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct HayekInstitut {
     #[allow(dead_code)]
-    uri_prefix: Option<&'static str>
+    uri_prefix: Option<&'static str>,
 }
 
 impl HayekInstitut {
@@ -25,7 +25,7 @@ impl PublisherModel for HayekInstitut {
             Err(err) => {
                 error!("html transformation error at hayek-institut {}", err);
                 vec![]
-            },
+            }
             Ok(document) => {
                 let mut rss_feeds: Vec<RSSFeed> = vec![];
 
@@ -43,7 +43,12 @@ impl PublisherModel for HayekInstitut {
                     get_href(&node).iter().for_each(|link| {
                         let title: String = get_title(&node);
                         let article: Article = Article::new(title, link.to_owned());
-                        let rss: RSSFeed = RSSFeed::new(String::from("Hayek Institut Wien"), article, HAYEK_INSTITUT, DE);
+                        let rss: RSSFeed = RSSFeed::new(
+                            String::from("Hayek Institut Wien"),
+                            article,
+                            HAYEK_INSTITUT,
+                            DE,
+                        );
                         rss_feeds.push(rss)
                     })
                 }

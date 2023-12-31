@@ -12,17 +12,17 @@ pub struct RSSFeed {
     pub author: String,
     pub article: Article,
     pub publisher: Publisher,
-    pub lang: Lang
+    pub lang: Lang,
 }
 
 impl RSSFeed {
-    pub fn new(
-        author: String,
-        article: Article,
-        publisher: Publisher,
-        lang: Lang
-    ) -> Self {
-        RSSFeed { author, article, publisher, lang }
+    pub fn new(author: String, article: Article, publisher: Publisher, lang: Lang) -> Self {
+        RSSFeed {
+            author,
+            article,
+            publisher,
+            lang,
+        }
     }
 
     pub fn writes(&self) -> serde_json::Result<String> {
@@ -32,9 +32,7 @@ impl RSSFeed {
 
 impl From<RSSFeed> for Bytes {
     fn from(value: RSSFeed) -> Self {
-        Bytes::from(
-            serde_json::to_string(&value).expect("could not parse to json string")
-        )
+        Bytes::from(serde_json::to_string(&value).expect("could not parse to json string"))
     }
 }
 

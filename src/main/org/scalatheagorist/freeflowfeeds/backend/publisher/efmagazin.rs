@@ -4,12 +4,12 @@ use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::publishers::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::EFMAGAZIN;
-use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct EfMagazin {
-    uri_prefix: Option<&'static str>
+    uri_prefix: Option<&'static str>,
 }
 
 impl EfMagazin {
@@ -24,51 +24,47 @@ impl PublisherModel for EfMagazin {
             Err(err) => {
                 error!("html transformation error at efmagazin {}", err);
                 vec![]
-            },
-            Ok(document) => {
-                document.find(Name("article")).into_iter().map(|article| {
-                    let author =
-                        article
-                            .clone()
-                            .find(Attr("class", "author").descendant(Name("a")))
-                            .next()
-                            .map(|node| node.text())
-                            .unwrap_or(String::from("EigentümlichFrei"))
-                            .trim()
-                            .to_owned();
+            }
+            Ok(document) => document
+                .find(Name("article"))
+                .into_iter()
+                .map(|article| {
+                    let author = article
+                        .clone()
+                        .find(Attr("class", "author").descendant(Name("a")))
+                        .next()
+                        .map(|node| node.text())
+                        .unwrap_or(String::from("EigentümlichFrei"))
+                        .trim()
+                        .to_owned();
 
-                    let title_element =
-                        article
-                            .find(Name("h2").descendant(Name("a")))
-                            .next();
+                    let title_element = article.find(Name("h2").descendant(Name("a"))).next();
 
-                    let title =
-                        title_element
-                            .map(|node| node.text())
-                            .unwrap_or(String::from(""))
-                            .trim()
-                            .to_owned();
+                    let title = title_element
+                        .map(|node| node.text())
+                        .unwrap_or(String::from(""))
+                        .trim()
+                        .to_owned();
 
-                    let href =
-                        title_element
-                            .flat_map(|node| node.attr("href"))
-                            .unwrap_or("")
-                            .trim()
-                            .to_owned();
+                    let href = title_element
+                        .flat_map(|node| node.attr("href"))
+                        .unwrap_or("")
+                        .trim()
+                        .to_owned();
 
                     let href_with_uri_prefix: String = match self.uri_prefix.to_owned() {
-                        Some(prefix) if !href.clone().contains("https://") =>
-                            prefix.to_owned() + &*href,
-                        _ =>
-                            href.to_owned()
+                        Some(prefix) if !href.clone().contains("https://") => {
+                            prefix.to_owned() + &*href
+                        }
+                        _ => href.to_owned(),
                     };
 
                     let article: Article = Article::new(title, href_with_uri_prefix);
                     let rss: RSSFeed = RSSFeed::new(author, article, EFMAGAZIN, DE);
 
                     rss
-                }).collect::<Vec<_>>()
-            }
+                })
+                .collect::<Vec<_>>(),
         }
     }
 }

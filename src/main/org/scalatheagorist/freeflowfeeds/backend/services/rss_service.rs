@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use chrono::NaiveTime;
 use log::{error, info};
-use tokio::time::{Instant, sleep_until};
+use tokio::time::{sleep_until, Instant};
 
 use crate::app_config::AppConfig;
 use crate::backend::clients::DatabaseClient;
@@ -16,7 +16,7 @@ pub struct RSSService {
     app_config: Arc<AppConfig>,
     scape_service: HtmlScrapeService,
     rss_builder: RSSBuilder,
-    database_client: Arc<DatabaseClient>
+    database_client: Arc<DatabaseClient>,
 }
 
 impl RSSService {
@@ -24,20 +24,21 @@ impl RSSService {
         let conf: Arc<AppConfig> = Arc::clone(&app_config);
         let mut publisher: Vec<(Publisher, String)> = conf.hosts.as_publisher();
 
-        if conf.initial_pull { publisher.reverse() };
+        if conf.initial_pull {
+            publisher.reverse()
+        };
 
         let database_client: Arc<DatabaseClient> =
             Arc::new(DatabaseClient::new(conf.clone().db.clone()));
         let scape_service: HtmlScrapeService =
             HtmlScrapeService::new(Arc::clone(&database_client), publisher, conf.concurrency);
-        let rss_builder: RSSBuilder =
-            RSSBuilder::new();
+        let rss_builder: RSSBuilder = RSSBuilder::new();
 
         RSSService {
             app_config: conf.clone(),
             scape_service,
             rss_builder,
-            database_client
+            database_client,
         }
     }
 
@@ -49,7 +50,10 @@ impl RSSService {
         lang: Option<Lang>,
         term: Option<&str>,
     ) -> Vec<String> {
-        let feeds = self.database_client.select(page, page_size, publisher, lang, term).await;
+        let feeds = self
+            .database_client
+            .select(page, page_size, publisher, lang, term)
+            .await;
         self.rss_builder.build(feeds).await
     }
 
@@ -64,9 +68,12 @@ impl RSSService {
                     let mut delay: chrono::Duration = target_time - current_time;
 
                     // adjust delay after run
-                    if delay < chrono::Duration::zero() { delay = delay + chrono::Duration::hours(interval); }
+                    if delay < chrono::Duration::zero() {
+                        delay = delay + chrono::Duration::hours(interval);
+                    }
 
-                    sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
+                    sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64))
+                        .await;
 
                     info!("pull new articles");
 

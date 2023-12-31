@@ -3,13 +3,13 @@ use select::document::Document;
 use select::predicate::{Attr, Name};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::publishers::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::SANDWIRT;
-use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct Sandwirt {
     #[allow(dead_code)]
-    uri_prefix: Option<&'static str>
+    uri_prefix: Option<&'static str>,
 }
 
 impl Sandwirt {
@@ -24,43 +24,43 @@ impl PublisherModel for Sandwirt {
             Err(err) => {
                 error!("html transformation error at sandwirt {}", err);
                 vec![]
-            },
-            Ok(document) => {
-                document.find(Name("article")).into_iter().map(|article| {
-                    let author: String =
-                        article
-                            .clone()
-                            .find(Attr("class", "post-author-name fn"))
-                            .next()
-                            .map(|node| node.text())
-                            .unwrap_or(String::from("Der Sandwirt"))
-                            .trim()
-                            .to_owned();
+            }
+            Ok(document) => document
+                .find(Name("article"))
+                .into_iter()
+                .map(|article| {
+                    let author: String = article
+                        .clone()
+                        .find(Attr("class", "post-author-name fn"))
+                        .next()
+                        .map(|node| node.text())
+                        .unwrap_or(String::from("Der Sandwirt"))
+                        .trim()
+                        .to_owned();
 
-                    let title: String =
-                        article
-                            .clone()
-                            .find(Name("a"))
-                            .next()
-                            .map(|node| node.text())
-                            .unwrap_or(String::from(""))
-                            .trim()
-                            .to_owned();
+                    let title: String = article
+                        .clone()
+                        .find(Name("a"))
+                        .next()
+                        .map(|node| node.text())
+                        .unwrap_or(String::from(""))
+                        .trim()
+                        .to_owned();
 
-                    let href: String =
-                        article
-                            .find(Name("a")).next()
-                            .and_then(|node| node.attr("href"))
-                            .unwrap_or("")
-                            .trim()
-                            .to_owned();
+                    let href: String = article
+                        .find(Name("a"))
+                        .next()
+                        .and_then(|node| node.attr("href"))
+                        .unwrap_or("")
+                        .trim()
+                        .to_owned();
 
                     let article: Article = Article::new(title, href);
                     let rss: RSSFeed = RSSFeed::new(author, article, SANDWIRT, DE);
 
                     rss
-                }).collect::<Vec<_>>()
-            }
+                })
+                .collect::<Vec<_>>(),
         }
     }
 }

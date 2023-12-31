@@ -1,5 +1,5 @@
-use std::convert::Infallible;
 use hyper::Error;
+use std::convert::Infallible;
 
 #[derive(Debug)]
 pub struct CustomHyperError(pub String);

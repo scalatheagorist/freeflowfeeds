@@ -1,6 +1,6 @@
-pub use http_client::HttpClient;
 pub use db_client::DatabaseClient;
 pub use db_client::DatabaseConfig;
+pub use http_client::HttpClient;
 
-mod http_client;
 mod db_client;
+mod http_client;

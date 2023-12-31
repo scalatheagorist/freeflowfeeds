@@ -1,8 +1,7 @@
 pub struct IndexHtml;
 
 impl IndexHtml {
-    pub const HTML: &'static str =
-        r##"
+    pub const HTML: &'static str = r##"
 <!DOCTYPE html>
 <html>
 <head>

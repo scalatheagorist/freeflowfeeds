@@ -3,7 +3,7 @@ use minijinja::Environment;
 use crate::frontend::view::IndexHtml;
 
 pub struct WebEnv {
-    pub value: Environment<'static>
+    pub value: Environment<'static>,
 }
 
 impl WebEnv {
@@ -14,8 +14,6 @@ impl WebEnv {
             .add_template("index", &*IndexHtml::HTML)
             .expect("could not load page initially");
 
-        Self {
-            value
-        }
+        Self { value }
     }
 }
