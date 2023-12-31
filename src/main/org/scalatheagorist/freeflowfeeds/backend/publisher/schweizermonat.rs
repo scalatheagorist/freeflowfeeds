@@ -4,13 +4,13 @@ use select::node::Node;
 use select::predicate::{Class, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::publishers::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::SCHWEIZER_MONAT;
-use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct SchweizerMonat {
     #[allow(dead_code)]
-    uri_prefix: Option<&'static str>
+    uri_prefix: Option<&'static str>,
 }
 
 impl SchweizerMonat {
@@ -30,7 +30,7 @@ impl PublisherModel for SchweizerMonat {
             Err(err) => {
                 error!("html transformation error at schweizer monat {}", err);
                 vec![]
-            },
+            }
             Ok(document) => {
                 let mut articles: Vec<(String, String, String)> = vec![];
 
@@ -42,23 +42,28 @@ impl PublisherModel for SchweizerMonat {
                     articles.push((
                         title.trim().to_owned(),
                         href.to_owned(),
-                        author.unwrap_or(String::from("Schweizer Monat")).trim().to_owned()
+                        author
+                            .unwrap_or(String::from("Schweizer Monat"))
+                            .trim()
+                            .to_owned(),
                     ))
                 }
 
-                let mut valid_articles: Vec<(String, String, String)> =
-                    articles
-                        .into_iter()
-                        .filter(|(title, _, _)| !title.is_empty())
-                        .collect::<Vec<_>>();
+                let mut valid_articles: Vec<(String, String, String)> = articles
+                    .into_iter()
+                    .filter(|(title, _, _)| !title.is_empty())
+                    .collect::<Vec<_>>();
 
                 valid_articles.dedup_by(|(_, href1, _), (_, href2, _)| href1 == href2);
 
-                valid_articles.into_iter().map(|(title, link, author)| {
-                    let article: Article = Article::new(title, link);
-                    let rss: RSSFeed = RSSFeed::new(author, article, SCHWEIZER_MONAT, DE);
-                    rss
-                }).collect::<Vec<_>>()
+                valid_articles
+                    .into_iter()
+                    .map(|(title, link, author)| {
+                        let article: Article = Article::new(title, link);
+                        let rss: RSSFeed = RSSFeed::new(author, article, SCHWEIZER_MONAT, DE);
+                        rss
+                    })
+                    .collect::<Vec<_>>()
             }
         }
     }

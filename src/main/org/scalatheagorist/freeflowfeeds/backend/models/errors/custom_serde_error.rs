@@ -10,10 +10,10 @@ pub enum CustomSerdeErrors {
 impl fmt::Display for CustomSerdeErrors {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            CustomSerdeErrors::FileOpenError =>
-                write!(f, "Failed to open file"),
-            CustomSerdeErrors::JsonDeserializeError(ref err) =>
+            CustomSerdeErrors::FileOpenError => write!(f, "Failed to open file"),
+            CustomSerdeErrors::JsonDeserializeError(ref err) => {
                 write!(f, "Failed to deserialize JSON: {}", err)
+            }
         }
     }
 }

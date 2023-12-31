@@ -5,12 +5,12 @@ use std::vec::IntoIter;
 
 use bytes::BytesMut;
 use http_body_util::BodyExt;
-use hyper::{Response, StatusCode, Uri};
 use hyper::body::Incoming;
 use hyper::http::uri::InvalidUri;
+use hyper::{Response, StatusCode, Uri};
 use log::{error, warn};
-use tokio::task::JoinHandle;
 use tokio::task::spawn;
+use tokio::task::JoinHandle;
 use tokio_stream::Iter;
 
 use crate::backend::clients::{DatabaseClient, HttpClient};
@@ -23,38 +23,47 @@ pub struct HtmlScrapeService {
     database_client: Arc<DatabaseClient>,
     hosts: Vec<(Publisher, String)>,
     concurrency: i32,
-    headers: Vec<(String, String)>
+    headers: Vec<(String, String)>,
 }
 
 impl HtmlScrapeService {
     pub fn new(
         database_client: Arc<DatabaseClient>,
         hosts: Vec<(Publisher, String)>,
-        concurrency: i32
+        concurrency: i32,
     ) -> Self {
         let http_client: Arc<HttpClient> = Arc::new(HttpClient::new());
-        let headers: Vec<(String, String)> =
-          vec![
-              (String::from("Content-Type"), String::from("text/html; charset=utf-8")),
-              (String::from("Accept"), String::from("text/html; charset=utf-8"))
-          ];
+        let headers: Vec<(String, String)> = vec![
+            (
+                String::from("Content-Type"),
+                String::from("text/html; charset=utf-8"),
+            ),
+            (
+                String::from("Accept"),
+                String::from("text/html; charset=utf-8"),
+            ),
+        ];
 
-        HtmlScrapeService { http_client, database_client, hosts, concurrency, headers }
+        HtmlScrapeService {
+            http_client,
+            database_client,
+            hosts,
+            concurrency,
+            headers,
+        }
     }
 
     pub async fn run(&self) {
         for chunk in self.hosts.chunks(self.concurrency as usize) {
-            let html_responses =
-                chunk
-                    .to_vec()
-                    .into_iter()
-                    .flat_map(|uri| self.get(vec![uri], self.clone().headers));
+            let html_responses = chunk
+                .to_vec()
+                .into_iter()
+                .flat_map(|uri| self.get(vec![uri], self.clone().headers));
 
-            let html_resp_chunks =
-                futures::future::join_all(html_responses)
-                    .await
-                    .into_iter()
-                    .filter_map(|resp| resp.ok().unwrap_or(None));
+            let html_resp_chunks = futures::future::join_all(html_responses)
+                .await
+                .into_iter()
+                .filter_map(|resp| resp.ok().unwrap_or(None));
 
             for rss in html_resp_chunks {
                 let db_client: Arc<DatabaseClient> = Arc::clone(&self.database_client);
@@ -90,20 +99,25 @@ impl HtmlScrapeService {
             String::from_utf8(body_as_bytes.to_vec()).ok()
         }
 
-        fn get_concurrently(
+        fn concurrently(
             host: Result<Uri, InvalidUri>,
             publisher: Publisher,
             headers: Vec<(String, String)>,
-            client: Arc<HttpClient>
+            client: Arc<HttpClient>,
         ) -> JoinHandle<Option<HtmlResponse>> {
             spawn(async move {
-                let host0: Uri = host.map_err(|_| warn!("host is missing")).expect("host is missing");
+                let host0: Uri = host
+                    .map_err(|_| warn!("host is missing"))
+                    .expect("host is missing");
                 match client.get(host0.clone(), headers).await {
-                    Ok(mut resp) =>{
-                        extract_body(&mut resp, host0).await.map(|response|
-                            HtmlResponse { publisher, response }
-                        )
-                    },
+                    Ok(mut resp) => {
+                        extract_body(&mut resp, host0)
+                            .await
+                            .map(|response| HtmlResponse {
+                                publisher,
+                                response,
+                            })
+                    }
                     Err(err) => {
                         warn!("error from client with cause: {:?}", err.source());
                         None
@@ -112,8 +126,16 @@ impl HtmlScrapeService {
             })
         }
 
-        uris.clone().into_iter().map(|(publisher, uri)| {
-            get_concurrently(Uri::from_str(&*uri), publisher, headers.clone(), self.http_client.clone())
-        }).collect::<Vec<_>>()
+        uris.clone()
+            .into_iter()
+            .map(|(publisher, uri)| {
+                concurrently(
+                    Uri::from_str(&*uri),
+                    publisher,
+                    headers.clone(),
+                    self.http_client.clone(),
+                )
+            })
+            .collect::<Vec<_>>()
     }
 }

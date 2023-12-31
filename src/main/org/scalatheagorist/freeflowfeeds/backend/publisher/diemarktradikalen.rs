@@ -3,13 +3,13 @@ use select::document::Document;
 use select::predicate::Name;
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
+use crate::backend::publisher::publishers::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::DIE_MARKTRADIKALEN;
-use crate::backend::publisher::publishers::PublisherModel;
 
 pub struct DieMarktradikalen {
     #[allow(dead_code)]
-    uri_prefix: Option<&'static str>
+    uri_prefix: Option<&'static str>,
 }
 
 impl DieMarktradikalen {
@@ -24,7 +24,7 @@ impl PublisherModel for DieMarktradikalen {
             Err(err) => {
                 error!("html transformation error at die marktradikalen {}", err);
                 vec![]
-            },
+            }
             Ok(document) => {
                 let mut articles = vec![];
 
@@ -39,23 +39,38 @@ impl PublisherModel for DieMarktradikalen {
                                 match self.uri_prefix.to_owned() {
                                     Some(uri) => {
                                         let url: String = format!("{}{}", uri, link);
-                                        articles.push((title_node.text().trim().to_owned(), url.to_owned()))
-                                    },
-                                    None => articles.push((title_node.text().trim().to_owned(), link.to_owned()))
+                                        articles.push((
+                                            title_node.text().trim().to_owned(),
+                                            url.to_owned(),
+                                        ))
+                                    }
+                                    None => articles.push((
+                                        title_node.text().trim().to_owned(),
+                                        link.to_owned(),
+                                    )),
                                 }
                             } else {
-                                articles.push((title_node.text().trim().to_owned(), link.to_owned()));
+                                articles
+                                    .push((title_node.text().trim().to_owned(), link.to_owned()));
                             }
-                        },
-                        _ => warn!("could not load content from html!")
+                        }
+                        _ => warn!("could not load content from html!"),
                     }
                 }
 
-                articles.into_iter().map(|(title, link)| {
-                    let article: Article = Article::new(title, link);
-                    let rss: RSSFeed = RSSFeed::new(String::from("Die Marktradikalen"), article, DIE_MARKTRADIKALEN, DE);
-                    rss
-                }).collect::<Vec<_>>()
+                articles
+                    .into_iter()
+                    .map(|(title, link)| {
+                        let article: Article = Article::new(title, link);
+                        let rss: RSSFeed = RSSFeed::new(
+                            String::from("Die Marktradikalen"),
+                            article,
+                            DIE_MARKTRADIKALEN,
+                            DE,
+                        );
+                        rss
+                    })
+                    .collect::<Vec<_>>()
             }
         }
     }

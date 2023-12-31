@@ -4,7 +4,7 @@ pub use errors::CustomSerdeErrors;
 pub use html_response::HtmlResponse;
 pub use rss_feed::RSSFeed;
 
-mod rss_feed;
 mod article;
 mod errors;
 mod html_response;
+mod rss_feed;

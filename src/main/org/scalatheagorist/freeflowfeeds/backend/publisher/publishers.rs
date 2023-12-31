@@ -28,26 +28,23 @@ pub enum Publisher {
     #[allow(non_camel_case_types)]
     DIE_MARKTRADIKALEN,
     #[allow(non_camel_case_types)]
-    SANDWIRT
+    SANDWIRT,
 }
 
 impl Publisher {
     pub fn get_rss(html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
         let publisher: Box<dyn PublisherModel> = match html_response.publisher {
-            Publisher::EFMAGAZIN =>
-                Box::new(EfMagazin::new(Some("https://ef-magazin.de"))),
-            Publisher::FREIHEITSFUNKEN =>
-                Box::new(Freiheitsfunken::new(Some("https://freiheitsfunken.info"))),
-            Publisher::MISESDE =>
-                Box::new(MisesDE::new(None)),
-            Publisher::SCHWEIZER_MONAT =>
-                Box::new(SchweizerMonat::new(None)),
-            Publisher::HAYEK_INSTITUT =>
-                Box::new(HayekInstitut::new(None)),
-            Publisher::DIE_MARKTRADIKALEN =>
-                Box::new(DieMarktradikalen::new(Some("https://www.die-marktradikalen.de"))),
-            Publisher::SANDWIRT =>
-                Box::new(Sandwirt::new(Some("https://www.dersandwirt.de")))
+            Publisher::EFMAGAZIN => Box::new(EfMagazin::new(Some("https://ef-magazin.de"))),
+            Publisher::FREIHEITSFUNKEN => {
+                Box::new(Freiheitsfunken::new(Some("https://freiheitsfunken.info")))
+            }
+            Publisher::MISESDE => Box::new(MisesDE::new(None)),
+            Publisher::SCHWEIZER_MONAT => Box::new(SchweizerMonat::new(None)),
+            Publisher::HAYEK_INSTITUT => Box::new(HayekInstitut::new(None)),
+            Publisher::DIE_MARKTRADIKALEN => Box::new(DieMarktradikalen::new(Some(
+                "https://www.die-marktradikalen.de",
+            ))),
+            Publisher::SANDWIRT => Box::new(Sandwirt::new(Some("https://www.dersandwirt.de"))),
         };
 
         let mut feeds: Vec<RSSFeed> = publisher.get_rss(html_response);
@@ -60,14 +57,14 @@ impl Publisher {
 
     pub fn from(s: &str) -> Option<Self> {
         match s {
-            "EFMAGAZIN"          => Some(Publisher::EFMAGAZIN),
-            "FREIHEITSFUNKEN"    => Some(Publisher::FREIHEITSFUNKEN),
-            "MISESDE"            => Some(Publisher::MISESDE),
-            "SCHWEIZER_MONAT"    => Some(Publisher::SCHWEIZER_MONAT),
-            "HAYEK_INSTITUT"     => Some(Publisher::HAYEK_INSTITUT),
+            "EFMAGAZIN" => Some(Publisher::EFMAGAZIN),
+            "FREIHEITSFUNKEN" => Some(Publisher::FREIHEITSFUNKEN),
+            "MISESDE" => Some(Publisher::MISESDE),
+            "SCHWEIZER_MONAT" => Some(Publisher::SCHWEIZER_MONAT),
+            "HAYEK_INSTITUT" => Some(Publisher::HAYEK_INSTITUT),
             "DIE_MARKTRADIKALEN" => Some(Publisher::DIE_MARKTRADIKALEN),
-            "SANDWIRT"           => Some(Publisher::SANDWIRT),
-            _                    => None,
+            "SANDWIRT" => Some(Publisher::SANDWIRT),
+            _ => None,
         }
     }
 }
@@ -75,13 +72,13 @@ impl Publisher {
 impl fmt::Display for Publisher {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Publisher::EFMAGAZIN          => write!(f, "EFMAGAZIN"),
-            Publisher::FREIHEITSFUNKEN    => write!(f, "FREIHEITSFUNKEN"),
-            Publisher::MISESDE            => write!(f, "MISESDE"),
-            Publisher::SCHWEIZER_MONAT    => write!(f, "SCHWEIZER_MONAT"),
-            Publisher::HAYEK_INSTITUT     => write!(f, "HAYEK_INSTITUT"),
+            Publisher::EFMAGAZIN => write!(f, "EFMAGAZIN"),
+            Publisher::FREIHEITSFUNKEN => write!(f, "FREIHEITSFUNKEN"),
+            Publisher::MISESDE => write!(f, "MISESDE"),
+            Publisher::SCHWEIZER_MONAT => write!(f, "SCHWEIZER_MONAT"),
+            Publisher::HAYEK_INSTITUT => write!(f, "HAYEK_INSTITUT"),
             Publisher::DIE_MARKTRADIKALEN => write!(f, "DIE_MARKTRADIKALEN"),
-            Publisher::SANDWIRT           => write!(f, "SANDWIRT")
+            Publisher::SANDWIRT => write!(f, "SANDWIRT"),
         }
     }
 }
@@ -91,7 +88,7 @@ pub enum Lang {
     #[allow(non_camel_case_types)]
     DE,
     #[allow(non_camel_case_types)]
-    EN
+    EN,
 }
 
 impl Lang {
@@ -99,7 +96,7 @@ impl Lang {
         match s {
             "DE" => Some(Lang::DE),
             "EN" => Some(Lang::EN),
-            _    => None,
+            _ => None,
         }
     }
 }
@@ -108,7 +105,7 @@ impl fmt::Display for Lang {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Lang::DE => write!(f, "DE"),
-            Lang::EN => write!(f, "EN")
+            Lang::EN => write!(f, "EN"),
         }
     }
 }
@@ -128,12 +125,10 @@ pub struct PublisherHost {
 impl PublisherHost {
     pub fn to_publisher_urls(&self) -> Vec<(Publisher, String)> {
         match self.publisher.clone() {
-            Publisher::SCHWEIZER_MONAT |
-            Publisher::DIE_MARKTRADIKALEN |
-            Publisher::SANDWIRT =>
-                self.by_path(),
-            _ =>
-                self.by_page()
+            Publisher::SCHWEIZER_MONAT | Publisher::DIE_MARKTRADIKALEN | Publisher::SANDWIRT => {
+                self.by_path()
+            }
+            _ => self.by_page(),
         }
     }
 
@@ -150,13 +145,14 @@ impl PublisherHost {
 
     fn by_path(&self) -> Vec<(Publisher, String)> {
         let v: Vec<&str> = self.path.split(", ").collect();
-        v.into_iter().map(|p| {
-            let uri: String = format!("{}{}", self.url, p);
-            (self.publisher.clone(), uri)
-        }).collect()
+        v.into_iter()
+            .map(|p| {
+                let uri: String = format!("{}{}", self.url, p);
+                (self.publisher.clone(), uri)
+            })
+            .collect()
     }
 }
-
 
 pub trait AsPublisher {
     fn as_publisher(&self) -> Vec<(Publisher, String)>;
@@ -171,12 +167,12 @@ impl AsPublisher for Vec<PublisherHost> {
                 .unwrap_or(u32::MAX)
         }
 
-        let mut publisher_urls: Vec<(Publisher, String)> =
-            self.into_iter().flat_map(|p| p.to_publisher_urls()).collect::<Vec<_>>();
+        let mut publisher_urls: Vec<(Publisher, String)> = self
+            .into_iter()
+            .flat_map(|p| p.to_publisher_urls())
+            .collect::<Vec<_>>();
 
-        publisher_urls.sort_by(|a, b|
-            split_by(&a.1).cmp(&split_by(&b.1))
-        );
+        publisher_urls.sort_by(|a, b| split_by(&a.1).cmp(&split_by(&b.1)));
 
         publisher_urls
     }

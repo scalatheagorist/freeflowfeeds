@@ -1,5 +1,5 @@
-use std::{env, fmt};
 use std::path::Path;
+use std::{env, fmt};
 
 use config::{Config, File};
 use serde::{Deserialize, Serialize};
@@ -16,28 +16,29 @@ pub struct AppConfig {
     pub concurrency: i32,
     pub update: String,
     pub update_interval: i64,
-    pub initial_pull: bool
+    pub initial_pull: bool,
 }
 
 impl AppConfig {
     pub fn get_app_config() -> AppConfig {
         let config_path: &Path = Path::new("./src/resources/config.yml");
-        let config: Config =
-            Config::builder()
-                .add_source(File::from(config_path))
-                .build()
-                .expect("could not load config");
+        let config: Config = Config::builder()
+            .add_source(File::from(config_path))
+            .build()
+            .expect("could not load config");
 
-        let mut app_config: AppConfig =
-            config.try_deserialize::<AppConfig>().expect("could not deserialize");
+        let mut app_config: AppConfig = config
+            .try_deserialize::<AppConfig>()
+            .expect("could not deserialize");
 
-        fn get_env_var_or_default<T: std::str::FromStr + Clone>(env_var_name: &str, default_value: T) -> T {
+        fn get_env_var_or_default<T: std::str::FromStr + Clone>(
+            env_var_name: &str,
+            default_value: T,
+        ) -> T {
             match env::var(env_var_name) {
-                Ok(value) => {
-                    match value.parse() {
-                        Ok(parsed) => parsed,
-                        Err(_) => default_value,
-                    }
+                Ok(value) => match value.parse() {
+                    Ok(parsed) => parsed,
+                    Err(_) => default_value,
                 },
                 Err(_) => default_value,
             }
@@ -52,21 +53,27 @@ impl AppConfig {
             panic!("interval is above 24 hours, it must be within the range of 1 to 24 hours!")
         }
 
-        app_config.db.url =
-            get_env_var_or_default("FFF_DB_URL", app_config.db.url.clone());
+        app_config.db.url = get_env_var_or_default("FFF_DB_URL", app_config.db.url.clone());
         app_config.rest_server.address =
             get_env_var_or_default("FFF_SERVER_HOST", app_config.rest_server.address.clone());
         app_config.concurrency =
             get_env_var_or_default("FFF_CONCURRENCY", app_config.concurrency.clone());
-        app_config.update =
-            get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
+        app_config.update = get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
 
         for host in app_config.hosts.iter_mut() {
             let new_page_to = match host.clone().publisher {
-                Publisher::EFMAGAZIN       => get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", host.clone().page_to),
-                Publisher::FREIHEITSFUNKEN => get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", host.clone().page_to),
-                Publisher::MISESDE         => get_env_var_or_default("FFF_MISESDE_PAGE_TO", host.clone().page_to),
-                Publisher::HAYEK_INSTITUT  => get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", host.clone().page_to),
+                Publisher::EFMAGAZIN => {
+                    get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", host.clone().page_to)
+                }
+                Publisher::FREIHEITSFUNKEN => {
+                    get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", host.clone().page_to)
+                }
+                Publisher::MISESDE => {
+                    get_env_var_or_default("FFF_MISESDE_PAGE_TO", host.clone().page_to)
+                }
+                Publisher::HAYEK_INSTITUT => {
+                    get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", host.clone().page_to)
+                }
                 _ => 2,
             };
 

@@ -1,5 +1,5 @@
-pub use rss_builder::RSSBuilder;
 pub use index_html::IndexHtml;
+pub use rss_builder::RSSBuilder;
 
-mod rss_builder;
 mod index_html;
+mod rss_builder;

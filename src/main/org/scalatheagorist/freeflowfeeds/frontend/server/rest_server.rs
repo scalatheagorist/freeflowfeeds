@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use axum::{Router, routing};
 use axum::extract::{Path, Query};
 use axum::response::Html;
+use axum::{routing, Router};
 use log::{error, info};
 use map_for::FlatMap;
 use minijinja::{context, Template};
@@ -28,21 +28,50 @@ impl RestServerConfig {
 pub struct RestServer {
     address: String,
     rss_service: Arc<RSSService>,
-    web_env: Arc<WebEnv>
+    web_env: Arc<WebEnv>,
 }
 
 #[derive(Debug, Deserialize)]
 struct SearchQueryParams {
-    term: String
+    term: String,
 }
 
 impl RestServer {
     const PAGE_SIZE: usize = 50usize;
 
-    pub fn new(config: &RestServerConfig, rss_service: Arc<RSSService>, web_env: Arc<WebEnv>) -> Self {
+    fn get_publisher(s: &str) -> Option<Publisher> {
+        match s {
+            "/misesde" => Some(Publisher::MISESDE),
+            "/freiheitsfunken" => Some(Publisher::FREIHEITSFUNKEN),
+            "/schweizermonat" => Some(Publisher::SCHWEIZER_MONAT),
+            "/efmagazin" => Some(Publisher::EFMAGAZIN),
+            "/hayekinstitut" => Some(Publisher::HAYEK_INSTITUT),
+            "/diemarktradikalen" => Some(Publisher::DIE_MARKTRADIKALEN),
+            "/dersandwirt" => Some(Publisher::SANDWIRT),
+            _ => None,
+        }
+    }
+
+    fn get_lang(s: &str) -> Option<Lang> {
+        match s {
+            "/english" => Some(Lang::EN),
+            "/german" => Some(Lang::DE),
+            _ => None,
+        }
+    }
+
+    pub fn new(
+        config: &RestServerConfig,
+        rss_service: Arc<RSSService>,
+        web_env: Arc<WebEnv>,
+    ) -> Self {
         let address: String = config.to_url();
 
-        RestServer { address, rss_service, web_env }
+        RestServer {
+            address,
+            rss_service,
+            web_env,
+        }
     }
 
     pub async fn serve(&self) {
@@ -50,12 +79,14 @@ impl RestServer {
             Path(page): Path<String>,
             e: Option<&str>,
             rss_service: Arc<RSSService>,
-            web_env: Arc<WebEnv>
+            web_env: Arc<WebEnv>,
         ) -> Html<String> {
             let _page: usize = page.parse::<usize>().map(|p| p - 1).unwrap_or(0);
-            let publisher: Option<Publisher> = e.flat_map(to_publisher);
-            let lang: Option<Lang> = e.flat_map(to_lang);
-            let feeds: Vec<String> = rss_service.get(_page, RestServer::PAGE_SIZE, publisher, lang, None).await;
+            let publisher: Option<Publisher> = e.flat_map(RestServer::get_publisher);
+            let lang: Option<Lang> = e.flat_map(RestServer::get_lang);
+            let feeds: Vec<String> = rss_service
+                .get(_page, RestServer::PAGE_SIZE, publisher, lang, None)
+                .await;
 
             if _page == 0 {
                 let index: Template = web_env.value.get_template("index").unwrap();
@@ -68,126 +99,170 @@ impl RestServer {
         async fn search(
             Query(query): Query<SearchQueryParams>,
             e: Option<&str>,
-            rss_service: Arc<RSSService>
+            rss_service: Arc<RSSService>,
         ) -> Html<String> {
-            let publisher: Option<Publisher> = e.flat_map(to_publisher);
-            let lang: Option<Lang> = e.flat_map(to_lang);
-            let feeds: Vec<String> = rss_service.get(0, 1000000, publisher, lang, Some(&(query.term))).await;
+            let publisher: Option<Publisher> = e.flat_map(RestServer::get_publisher);
+            let lang: Option<Lang> = e.flat_map(RestServer::get_lang);
+            let feeds: Vec<String> = rss_service
+                .get(0, 1000000, publisher, lang, Some(&(query.term)))
+                .await;
 
             Html(feeds.join(""))
         }
 
-        let app: Router =
-            Router::new()
-                .route(
-                    "/misesde/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/misesde"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/schweizermonat/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/schweizermonat" ), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/efmagazin/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/efmagazin"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/hayekinstitut/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/hayekinstitut" ), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/freiheitsfunken/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/freiheitsfunken"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/diemarktradikalen/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/diemarktradikalen"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/dersandwirt/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/dersandwirt"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/english/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/english"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/german/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, Some("/german"), Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/articles/*page",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        let web_env: Arc<WebEnv> = self.web_env.clone();
-                        move |page: Path<String>| {
-                            get_page(page, None, Arc::clone(&rss_service), Arc::clone(&web_env))
-                        }
-                    })
-                )
-                .route(
-                    "/search",
-                    routing::get({
-                        let rss_service: Arc<RSSService> = self.rss_service.clone();
-                        move |query| {
-                            search(query, None, Arc::clone(&rss_service))
-                        }
-                    })
-                );
+        let app: Router = Router::new()
+            .route(
+                "/misesde/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/misesde"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/schweizermonat/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/schweizermonat"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/efmagazin/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/efmagazin"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/hayekinstitut/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/hayekinstitut"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/freiheitsfunken/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/freiheitsfunken"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/diemarktradikalen/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/diemarktradikalen"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/dersandwirt/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/dersandwirt"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/english/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/english"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/german/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(
+                            page,
+                            Some("/german"),
+                            Arc::clone(&rss_service),
+                            Arc::clone(&web_env),
+                        )
+                    }
+                }),
+            )
+            .route(
+                "/articles/*page",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    let web_env: Arc<WebEnv> = self.web_env.clone();
+                    move |page: Path<String>| {
+                        get_page(page, None, Arc::clone(&rss_service), Arc::clone(&web_env))
+                    }
+                }),
+            )
+            .route(
+                "/search",
+                routing::get({
+                    let rss_service: Arc<RSSService> = self.rss_service.clone();
+                    move |query| search(query, None, Arc::clone(&rss_service))
+                }),
+            );
 
         let addr: String = self.address.clone();
         let listener: TcpListener = TcpListener::bind(&addr).await.unwrap();
