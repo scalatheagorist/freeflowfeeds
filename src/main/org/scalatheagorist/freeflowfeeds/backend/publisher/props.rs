@@ -1,4 +1,6 @@
 use std::fmt;
+use std::fmt::Debug;
+use std::hash::Hash;
 use std::vec::IntoIter;
 
 use serde::{Deserialize, Serialize};
@@ -107,6 +109,20 @@ impl fmt::Display for Lang {
             Lang::DE => write!(f, "DE"),
             Lang::EN => write!(f, "EN"),
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
+pub enum Props {
+    Lang(Lang),
+    Publisher(Publisher),
+}
+
+impl Props {
+    pub fn from(s: &str) -> Option<Props> {
+        let publisher: Option<Props> = Publisher::from(s).map(|p| Props::Publisher(p));
+        let lang: Option<Props> = Lang::from(s).map(|l| Props::Lang(l));
+        publisher.or(lang)
     }
 }
 

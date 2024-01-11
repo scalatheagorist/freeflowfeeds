@@ -4,7 +4,7 @@ use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
-use crate::backend::publisher::publishers::PublisherModel;
+use crate::backend::publisher::props::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::FREIHEITSFUNKEN;
 
@@ -30,7 +30,6 @@ impl PublisherModel for Freiheitsfunken {
                 .into_iter()
                 .map(|article| {
                     let author0: Option<String> = article
-                        .clone()
                         .find(Attr("class", "author").descendant(Name("a")))
                         .next()
                         .map(|node| node.text());

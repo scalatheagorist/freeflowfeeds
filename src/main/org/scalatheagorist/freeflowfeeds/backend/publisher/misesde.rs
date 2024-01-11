@@ -3,7 +3,7 @@ use select::document::Document;
 use select::predicate::{Attr, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
-use crate::backend::publisher::publishers::PublisherModel;
+use crate::backend::publisher::props::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::MISESDE;
 

@@ -1,11 +1,17 @@
 use core::hash::Hash;
 use std::fmt;
 
+use chrono::Local;
 use hyper::body::Bytes;
+use log::warn;
+use rusqlite::Error::SqliteFailure;
+use rusqlite::ffi::Error;
+use rusqlite::Row;
 use serde::{Deserialize, Serialize};
 
 use crate::backend::models::Article;
-use crate::backend::publisher::{Lang, Publisher};
+use crate::backend::publisher::{Lang, Props, Publisher};
+use crate::utils::hash_value::hash_value;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash)]
 pub struct RSSFeed {
@@ -27,6 +33,101 @@ impl RSSFeed {
 
     pub fn writes(&self) -> serde_json::Result<String> {
         serde_json::to_string(&self)
+    }
+
+    pub fn create_insert(
+        &self,
+    ) -> (
+        String,
+        (u64, String, String, String, String, String, String),
+    ) {
+        (
+            "INSERT INTO rss_feeds (id, author, title, link, publisher, lang, created) VALUES (?, ?, ?, ?, ?, ?, ?)".to_owned(),
+            (
+                hash_value::<Self>(self.clone()),
+                self.author.to_string(),
+                self.article.title.to_string(),
+                self.article.link.to_string(),
+                self.publisher.to_string(),
+                self.lang.to_string(),
+                Local::now().format("%Y-%m-%d %H:%M:%S").to_string(),
+            )
+        )
+    }
+
+    pub fn create_select(
+        props: Option<Props>,
+        search_term: Option<&str>,
+        page: usize,
+        page_size: usize,
+    ) -> String {
+        let clause: Option<String> = match props {
+            Some(Props::Publisher(p)) => Some(format!("publisher = '{p}'")),
+            Some(Props::Lang(l)) => Some(format!("lang = '{l}'")),
+            _ => None,
+        };
+        let search_clause: Option<String> = search_term
+            .map(|t| format!("author LIKE '%{t}%' OR title LIKE '%{t}%' OR link LIKE '%{t}%'"));
+
+        let clause: String = match clause {
+            Some(props) => {
+                let search: String = search_clause
+                    .map(|t| format!("AND {t}"))
+                    .unwrap_or_else(|| "".to_owned());
+                format!("WHERE {props} {search}")
+            }
+            None => search_clause
+                .map(|t| format!("WHERE {t}"))
+                .unwrap_or_else(|| "".to_owned()),
+        };
+
+        let size: usize = page * page_size;
+        let query: String = format!(
+            r#"
+            SELECT * FROM rss_feeds
+            {clause}
+            ORDER BY created DESC
+            LIMIT {page_size}
+            OFFSET {size}
+          "#
+        );
+
+        query
+    }
+
+    pub fn from(row: &Row) -> Result<Self, rusqlite::Error> {
+        let author: Option<String> = row.get::<usize, String>(1).ok();
+        let title: Option<String> = row.get::<usize, String>(2).ok();
+        let link: Option<String> = row.get::<usize, String>(3).ok();
+        let publisher: Option<String> = row.get::<usize, String>(4).ok();
+        let lang: Option<String> = row.get::<usize, String>(5).ok();
+
+        match (author, title, link, publisher, lang) {
+            (Some(author), Some(title), Some(link), Some(publisher), Some(lang)) => {
+                match (Publisher::from(&publisher), Lang::from(&lang)) {
+                    (Some(publisher), Some(lang)) => Ok(Self {
+                        author,
+                        article: Article { title, link },
+                        publisher,
+                        lang,
+                    }),
+                    _ => {
+                        warn!("conversation error at row: {:?}", row);
+                        Err(SqliteFailure(
+                            Error::new(9999), // UNKNOWN
+                            Some("conversation error".to_owned()),
+                        ))
+                    }
+                }
+            }
+            _ => {
+                warn!("missing fields at row: {:?}", row);
+                Err(SqliteFailure(
+                    Error::new(12), // NOT FOUND
+                    Some("missing fields".to_owned()),
+                ))
+            }
+        }
     }
 }
 

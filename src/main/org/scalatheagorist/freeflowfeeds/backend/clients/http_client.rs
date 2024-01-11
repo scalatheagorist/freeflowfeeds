@@ -22,29 +22,26 @@ impl HttpClient {
 
     pub async fn get(
         &self,
-        uri: Uri,
-        headers: Vec<(String, String)>,
+        uri: &Uri,
+        headers: &Vec<(String, String)>,
     ) -> Result<Response<Incoming>, Error> {
         let https_connector: HttpsConnector<HttpConnector> = HttpsConnector::new();
         let client: Client<HttpsConnector<HttpConnector>, Empty<Bytes>> =
             Client::builder(TokioExecutor::new()).build(https_connector);
         let mut request: Request<Empty<Bytes>> = Request::builder()
-            .uri(uri.clone())
+            .uri(&*uri)
             .method("GET")
             .body(Empty::<Bytes>::new())
             .map_err(|err| {
                 let error_message: String =
-                    format!("request on uri {} with building error {}", uri.clone(), err);
+                    format!("request on uri {} with building error {}", &uri, err);
                 error!("{error_message}");
                 CustomHyperError(error_message)
             })
             .unwrap();
 
-        for (key, value) in headers.clone() {
-            match (
-                HeaderName::try_from(key.clone()),
-                HeaderValue::try_from(value.clone()),
-            ) {
+        for (key, value) in &*headers {
+            match (HeaderName::try_from(key), HeaderValue::try_from(value)) {
                 (Ok(key), Ok(value)) => {
                     request.headers_mut().insert(key, value);
                 }

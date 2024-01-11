@@ -3,7 +3,7 @@ use select::document::Document;
 use select::predicate::Name;
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
-use crate::backend::publisher::publishers::PublisherModel;
+use crate::backend::publisher::props::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::DIE_MARKTRADIKALEN;
 
@@ -38,7 +38,7 @@ impl PublisherModel for DieMarktradikalen {
                             if link.starts_with("/blog") {
                                 match self.uri_prefix.to_owned() {
                                     Some(uri) => {
-                                        let url: String = format!("{}{}", uri, link);
+                                        let url: String = format!("{uri}{link}");
                                         articles.push((
                                             title_node.text().trim().to_owned(),
                                             url.to_owned(),

@@ -5,12 +5,12 @@ use std::vec::IntoIter;
 
 use bytes::BytesMut;
 use http_body_util::BodyExt;
+use hyper::{Response, StatusCode, Uri};
 use hyper::body::Incoming;
 use hyper::http::uri::InvalidUri;
-use hyper::{Response, StatusCode, Uri};
 use log::{error, warn};
-use tokio::task::spawn;
 use tokio::task::JoinHandle;
+use tokio::task::spawn;
 use tokio_stream::Iter;
 
 use crate::backend::clients::{DatabaseClient, HttpClient};
@@ -109,7 +109,7 @@ impl HtmlScrapeService {
                 let host0: Uri = host
                     .map_err(|_| warn!("host is missing"))
                     .expect("host is missing");
-                match client.get(host0.clone(), headers).await {
+                match client.get(&host0, &headers).await {
                     Ok(mut resp) => {
                         extract_body(&mut resp, host0)
                             .await
