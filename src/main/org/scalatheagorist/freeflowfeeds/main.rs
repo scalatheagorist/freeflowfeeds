@@ -35,14 +35,14 @@ async fn main() {
     info!("{}", app_config);
 
     let web_env = Arc::new(WebEnv::new());
-    let rss_service = RSSService::new(app_config.clone());
+    let rss_service = RSSService::new(Arc::clone(&app_config));
     let arc_rss_service = Arc::new(rss_service);
     let rest_server = RestServer::new(
-        &app_config.clone().rest_server,
-        arc_rss_service.clone(),
+        &app_config.rest_server,
+        Arc::clone(&arc_rss_service),
         web_env,
     );
 
-    let _ = spawn(async move { arc_rss_service.clone().pull_with_interval().await });
+    let _ = spawn(async move { arc_rss_service.pull_with_interval().await });
     let _ = rest_server.serve().await;
 }
