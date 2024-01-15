@@ -13,7 +13,7 @@ pub fn diemarktradikalen_html_select_test() {
             (Some(title_node), Some(link_node)) => {
                 let link = link_node.attr("href").unwrap_or_default();
                 if link.starts_with("/blog") {
-                    let url: String = format!("https://die-marktradikalen.de{}", link);
+                    let url: String = format!("https://die-marktradikalen.de{link}");
                     articles.push((title_node.text().trim().to_owned(), url.to_owned()));
                 } else {
                     articles.push((title_node.text().trim().to_owned(), link.to_owned()));

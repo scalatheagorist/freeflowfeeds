@@ -1,10 +1,11 @@
 use log::error;
 use map_for::FlatMap;
 use select::document::Document;
+use select::node::Node;
 use select::predicate::{Attr, Name, Predicate};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
-use crate::backend::publisher::publishers::PublisherModel;
+use crate::backend::publisher::props::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::EFMAGAZIN;
 
@@ -38,7 +39,8 @@ impl PublisherModel for EfMagazin {
                         .trim()
                         .to_owned();
 
-                    let title_element = article.find(Name("h2").descendant(Name("a"))).next();
+                    let title_element: Option<Node> =
+                        article.find(Name("h2").descendant(Name("a"))).next();
 
                     let title = title_element
                         .map(|node| node.text())
@@ -53,9 +55,7 @@ impl PublisherModel for EfMagazin {
                         .to_owned();
 
                     let href_with_uri_prefix: String = match self.uri_prefix.to_owned() {
-                        Some(prefix) if !href.clone().contains("https://") => {
-                            prefix.to_owned() + &*href
-                        }
+                        Some(prefix) if !&href.contains("https://") => prefix.to_owned() + &*href,
                         _ => href.to_owned(),
                     };
 

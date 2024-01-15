@@ -45,34 +45,31 @@ impl AppConfig {
         }
 
         app_config.initial_pull =
-            get_env_var_or_default("FFF_INITIAL_PULL", app_config.initial_pull.clone());
+            get_env_var_or_default("FFF_INITIAL_PULL", app_config.initial_pull);
         app_config.update_interval =
-            get_env_var_or_default("FFF_UPDATE_INTERVAL", app_config.update_interval.clone());
+            get_env_var_or_default("FFF_UPDATE_INTERVAL", app_config.update_interval);
 
         if app_config.update_interval > 24 {
             panic!("interval is above 24 hours, it must be within the range of 1 to 24 hours!")
         }
 
-        app_config.db.url = get_env_var_or_default("FFF_DB_URL", app_config.db.url.clone());
+        app_config.db.url = get_env_var_or_default("FFF_DB_URL", app_config.db.url);
         app_config.rest_server.address =
-            get_env_var_or_default("FFF_SERVER_HOST", app_config.rest_server.address.clone());
-        app_config.concurrency =
-            get_env_var_or_default("FFF_CONCURRENCY", app_config.concurrency.clone());
-        app_config.update = get_env_var_or_default("FFF_UPDATE_TIME", app_config.update.clone());
+            get_env_var_or_default("FFF_SERVER_HOST", app_config.rest_server.address);
+        app_config.concurrency = get_env_var_or_default("FFF_CONCURRENCY", app_config.concurrency);
+        app_config.update = get_env_var_or_default("FFF_UPDATE_TIME", app_config.update);
 
         for host in app_config.hosts.iter_mut() {
-            let new_page_to = match host.clone().publisher {
+            let new_page_to = match host.publisher {
                 Publisher::EFMAGAZIN => {
-                    get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", host.clone().page_to)
+                    get_env_var_or_default("FFF_EFMAGAZIN_PAGE_TO", host.page_to)
                 }
                 Publisher::FREIHEITSFUNKEN => {
-                    get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", host.clone().page_to)
+                    get_env_var_or_default("FFF_FREIHEITSFUNKEN_PAGE_TO", host.page_to)
                 }
-                Publisher::MISESDE => {
-                    get_env_var_or_default("FFF_MISESDE_PAGE_TO", host.clone().page_to)
-                }
+                Publisher::MISESDE => get_env_var_or_default("FFF_MISESDE_PAGE_TO", host.page_to),
                 Publisher::HAYEK_INSTITUT => {
-                    get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", host.clone().page_to)
+                    get_env_var_or_default("FFF_HAYEKINSTITUT_PAGE_TO", host.page_to)
                 }
                 _ => 2,
             };

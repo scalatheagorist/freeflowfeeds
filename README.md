@@ -7,7 +7,25 @@ At the moment, publishers (web pages with articles) are scraped according to the
 which means that each page has its own HTML structure and, accordingly, for the page from where
 you want to scrap the articles, the implementation must be done individually.
 
-## Used dependencies
+## magazines @ www.liblit.org:
+- MisesDE
+- Freiheitsfunken
+- EigentümlichFrei
+- Schweizer Monat
+- Hayek Institut AT
+- Die Marktradikalen
+- Der Sandwirt
+
+## Dev stuff
+
+### rustfmt
+
+```
+find src/main/org/scalatheagorist/freeflowfeeds/ -name '*.rs' -print0 | xargs -0 rustfmt --edition 2021
+```
+
+
+### Used dependencies
 
 ```
 [dependencies]
@@ -37,12 +55,3 @@ tokio = { version = "1.34.0", features = ["full"] }
 tokio-stream = { version = "0.1.14", features = ["full"]}
 typenum = "1.17.0"
 ```
-
-## Current magazines www.liblit.org:
-- MisesDE
-- Freiheitsfunken
-- EigentümlichFrei
-- Schweizer Monat
-- Hayek Institut AT
-- Die Marktradikalen
-- Der Sandwirt

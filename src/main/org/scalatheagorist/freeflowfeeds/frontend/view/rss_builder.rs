@@ -10,7 +10,7 @@ impl RSSBuilder {
         RSSBuilder {}
     }
 
-    pub async fn build(&self, messages: impl Stream<Item=RSSFeed>) -> Vec<String> {
+    pub async fn build(&self, messages: impl Stream<Item = RSSFeed>) -> Vec<String> {
         let mut view: Vec<String> = vec![];
         let this: RSSBuilder = self.clone();
 
@@ -48,10 +48,7 @@ impl RSSBuilder {
                 r#"<p><span class="highlight-title">{}</span></p>"#,
                 rss_feed.clone().article.title
             ),
-            format!(
-                r#"<p><a href="{}" target="_blank">{}</a></p>"#,
-                link_global, link_global
-            )
+            format!(r#"<p><a href="{link_global}" target="_blank">{link_global}</a></p>"#)
         );
 
         html

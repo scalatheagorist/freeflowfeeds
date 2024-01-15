@@ -3,7 +3,7 @@ use select::document::Document;
 use select::predicate::{Attr, Name};
 
 use crate::backend::models::{Article, HtmlResponse, RSSFeed};
-use crate::backend::publisher::publishers::PublisherModel;
+use crate::backend::publisher::props::PublisherModel;
 use crate::backend::publisher::Lang::DE;
 use crate::backend::publisher::Publisher::SANDWIRT;
 
@@ -30,7 +30,6 @@ impl PublisherModel for Sandwirt {
                 .into_iter()
                 .map(|article| {
                     let author: String = article
-                        .clone()
                         .find(Attr("class", "post-author-name fn"))
                         .next()
                         .map(|node| node.text())
@@ -39,7 +38,6 @@ impl PublisherModel for Sandwirt {
                         .to_owned();
 
                     let title: String = article
-                        .clone()
                         .find(Name("a"))
                         .next()
                         .map(|node| node.text())

@@ -3,11 +3,11 @@ use std::time::Duration;
 
 use chrono::NaiveTime;
 use log::{error, info};
-use tokio::time::{sleep_until, Instant};
+use tokio::time::{Instant, sleep_until};
 
 use crate::app_config::AppConfig;
 use crate::backend::clients::DatabaseClient;
-use crate::backend::publisher::{AsPublisher, Lang, Publisher};
+use crate::backend::publisher::{AsPublisher, Props, Publisher};
 use crate::backend::services::HtmlScrapeService;
 use crate::frontend::view::RSSBuilder;
 
@@ -21,21 +21,23 @@ pub struct RSSService {
 
 impl RSSService {
     pub fn new(app_config: Arc<AppConfig>) -> Self {
-        let conf: Arc<AppConfig> = Arc::clone(&app_config);
-        let mut publisher: Vec<(Publisher, String)> = conf.hosts.as_publisher();
+        let mut publisher: Vec<(Publisher, String)> = app_config.hosts.as_publisher();
 
-        if conf.initial_pull {
+        if app_config.initial_pull {
             publisher.reverse()
         };
 
         let database_client: Arc<DatabaseClient> =
-            Arc::new(DatabaseClient::new(conf.clone().db.clone()));
-        let scape_service: HtmlScrapeService =
-            HtmlScrapeService::new(Arc::clone(&database_client), publisher, conf.concurrency);
+            Arc::new(DatabaseClient::new(app_config.db.clone()));
+        let scape_service: HtmlScrapeService = HtmlScrapeService::new(
+            Arc::clone(&database_client),
+            publisher,
+            app_config.concurrency,
+        );
         let rss_builder: RSSBuilder = RSSBuilder::new();
 
         RSSService {
-            app_config: conf.clone(),
+            app_config,
             scape_service,
             rss_builder,
             database_client,
@@ -46,13 +48,12 @@ impl RSSService {
         &self,
         page: usize,
         page_size: usize,
-        publisher: Option<Publisher>,
-        lang: Option<Lang>,
+        props: Option<Props>,
         term: Option<&str>,
     ) -> Vec<String> {
         let feeds = self
             .database_client
-            .select(page, page_size, publisher, lang, term)
+            .select(page, page_size, props, term)
             .await;
         self.rss_builder.build(feeds).await
     }

@@ -9,7 +9,6 @@ pub fn freiheitsfunken_html_select_test() {
     for article in document.find(Name("article")) {
         let author0: Option<String> =
             article
-                .clone()
                 .find(Attr("class", "author").descendant(Name("a")))
                 .next()
                 .map(|node| node.text());
