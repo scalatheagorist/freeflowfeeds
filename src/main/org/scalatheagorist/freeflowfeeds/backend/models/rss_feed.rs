@@ -11,7 +11,7 @@ use rusqlite::Error::SqliteFailure;
 use rusqlite::Row;
 use serde::{Deserialize, Serialize};
 
-use crate::backend::models::Article;
+use crate::backend::models::{Article, Query, QueryWithValues};
 use crate::backend::publisher::{Lang, Props, Publisher};
 use crate::utils::hash_value::hash_value;
 
@@ -40,11 +40,8 @@ impl RSSFeed {
     // workaround to create an random hash
     pub fn create_insert(
         &self,
-    ) -> (
-        String,
-        (u64, String, String, String, String, String, String),
-    ) {
-        let hash: u64 = hash_value::<Self>(&self).unwrap_or_else(|| {
+    ) -> QueryWithValues {
+        let hash: u64 = hash_value::<Self>(self).unwrap_or_else(|| {
             warn!(
                 "could not create hash by entity {} {} {} \nwill create a random one",
                 &self.author, &self.article.title, &self.article.link
@@ -73,7 +70,7 @@ impl RSSFeed {
         search_term: Option<&str>,
         page: usize,
         page_size: usize,
-    ) -> String {
+    ) -> Query {
         let clause: Option<String> = match props {
             Some(Props::Publisher(p)) => Some(format!("publisher = '{p}'")),
             Some(Props::Lang(l)) => Some(format!("lang = '{l}'")),

@@ -120,8 +120,8 @@ pub enum Props {
 
 impl Props {
     pub fn from(s: &str) -> Option<Props> {
-        let publisher: Option<Props> = Publisher::from(s).map(|p| Props::Publisher(p));
-        let lang: Option<Props> = Lang::from(s).map(|l| Props::Lang(l));
+        let publisher: Option<Props> = Publisher::from(s).map(Props::Publisher);
+        let lang: Option<Props> = Lang::from(s).map(Props::Lang);
         publisher.or(lang)
     }
 }
@@ -184,7 +184,7 @@ impl AsPublisher for Vec<PublisherHost> {
         }
 
         let mut publisher_urls: Vec<(Publisher, String)> = self
-            .into_iter()
+            .iter()
             .flat_map(|p| p.to_publisher_urls())
             .collect::<Vec<_>>();
 

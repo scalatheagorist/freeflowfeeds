@@ -34,7 +34,7 @@ impl RSSService {
             publisher,
             app_config.concurrency,
         );
-        let rss_builder: RSSBuilder = RSSBuilder::new();
+        let rss_builder: RSSBuilder = RSSBuilder;
 
         RSSService {
             app_config,
@@ -86,8 +86,7 @@ impl RSSService {
                 }
             }
             Err(err) => {
-                error!("{}", err);
-                return;
+                error!("{}", err)
             }
         }
     }

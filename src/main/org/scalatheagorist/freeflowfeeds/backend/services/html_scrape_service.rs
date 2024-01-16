@@ -32,7 +32,7 @@ impl HtmlScrapeService {
         hosts: Vec<(Publisher, String)>,
         concurrency: i32,
     ) -> Self {
-        let http_client: Arc<HttpClient> = Arc::new(HttpClient::new());
+        let http_client: Arc<HttpClient> = Arc::new(HttpClient::default());
         let headers: Vec<(String, String)> = vec![
             (
                 String::from("Content-Type"),
@@ -56,8 +56,8 @@ impl HtmlScrapeService {
     pub async fn run(&self) {
         for chunk in self.hosts.chunks(self.concurrency as usize) {
             let html_responses = chunk
-                .to_vec()
-                .into_iter()
+                .iter()
+                .cloned()
                 .flat_map(|uri| self.get(vec![uri], self.clone().headers));
 
             let html_resp_chunks = futures::future::join_all(html_responses)
@@ -92,7 +92,7 @@ impl HtmlScrapeService {
             while let Some(next) = response.frame().await {
                 if let Ok(frame) = next {
                     if let Some(chunk) = frame.data_ref() {
-                        body_as_bytes.extend_from_slice(&chunk);
+                        body_as_bytes.extend_from_slice(chunk);
                     }
                 }
             }
@@ -131,7 +131,7 @@ impl HtmlScrapeService {
             .into_iter()
             .map(|(publisher, uri)| {
                 concurrently(
-                    Uri::from_str(&*uri),
+                    Uri::from_str(&uri),
                     publisher,
                     headers.clone(),
                     self.http_client.clone(),

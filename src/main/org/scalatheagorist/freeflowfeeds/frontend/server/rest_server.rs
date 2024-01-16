@@ -70,7 +70,7 @@ impl RestServer {
                 if let Ok(index) = web_env.value.get_template("index") {
                     index
                         .render(context!(feed_tags => feeds))
-                        .map(|r| Html(r))
+                        .map(Html)
                         .unwrap_or_else(|_| {
                             error!("could not load rendered html");
                             Html("".to_owned())

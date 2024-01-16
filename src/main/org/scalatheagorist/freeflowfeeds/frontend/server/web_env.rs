@@ -11,7 +11,7 @@ impl WebEnv {
         let mut value: Environment = Environment::new();
 
         value
-            .add_template("index", &*IndexHtml::HTML)
+            .add_template("index", IndexHtml::HTML)
             .map(|_| Self { value })
     }
 }

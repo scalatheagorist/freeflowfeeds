@@ -23,11 +23,10 @@ impl PublisherModel for Sandwirt {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at sandwirt {}", err);
-                return vec![];
+                vec![]
             }
             Ok(document) => document
                 .find(Name("article"))
-                .into_iter()
                 .map(|article| {
                     let author: String = article
                         .find(Attr("class", "post-author-name fn"))

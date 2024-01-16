@@ -23,11 +23,10 @@ impl PublisherModel for Freiheitsfunken {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at freiheitsfunken {}", err);
-                return vec![];
+                vec![]
             }
             Ok(document) => document
                 .find(Name("article"))
-                .into_iter()
                 .map(|article| {
                     let author0: Option<String> = article
                         .find(Attr("class", "author").descendant(Name("a")))

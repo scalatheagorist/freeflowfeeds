@@ -29,7 +29,7 @@ impl HttpClient {
         let client: Client<HttpsConnector<HttpConnector>, Empty<Bytes>> =
             Client::builder(TokioExecutor::new()).build(https_connector);
         let mut request: Request<Empty<Bytes>> = Request::builder()
-            .uri(&*uri)
+            .uri(uri)
             .method("GET")
             .body(Empty::<Bytes>::new())
             .map_err(|err| {
@@ -40,7 +40,7 @@ impl HttpClient {
             })
             .expect("request could not create");
 
-        for (key, value) in &*headers {
+        for (key, value) in headers {
             match (HeaderName::try_from(key), HeaderValue::try_from(value)) {
                 (Ok(key), Ok(value)) => {
                     request.headers_mut().insert(key, value);
@@ -52,5 +52,11 @@ impl HttpClient {
         info!("send GET request to {}", uri);
 
         client.request(request).await
+    }
+}
+
+impl Default for HttpClient {
+    fn default() -> Self {
+        Self::new()
     }
 }

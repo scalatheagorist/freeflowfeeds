@@ -21,10 +21,9 @@ async fn main() {
         )))
         .build();
 
-    if let Some(log4s_config) = Log4rsConfig::builder()
+    if let Ok(log4s_config) = Log4rsConfig::builder()
         .appender(Log4rsAppender::builder().build("stdout", Box::new(console_stdout)))
         .build(Root::builder().appender("stdout").build(LevelFilter::Info))
-        .ok()
     {
         log4rs::init_config(log4s_config).expect("log4rs config file not found");
     } else {
@@ -50,6 +49,7 @@ async fn main() {
         web_env,
     );
 
-    let _ = spawn(async move { arc_rss_service.pull_with_interval().await });
-    let _ = rest_server.serve().await;
+    spawn(async move { arc_rss_service.pull_with_interval().await });
+
+    rest_server.serve().await;
 }
