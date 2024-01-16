@@ -2,7 +2,7 @@ extern crate num_traits;
 
 use std::sync::Arc;
 
-use log::{info, LevelFilter};
+use log::{error, info, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::config::{Appender as Log4rsAppender, Root};
 use log4rs::encode::pattern::PatternEncoder;
@@ -34,7 +34,14 @@ async fn main() {
     let app_config = Arc::new(AppConfig::get_app_config());
     info!("{}", app_config);
 
-    let web_env = Arc::new(WebEnv::new());
+    let web_env = {
+        if let Ok(env) = WebEnv::new() {
+            Arc::new(env)
+        } else {
+            error!("could not load page initially");
+            std::process::exit(1);
+        }
+    };
     let rss_service = RSSService::new(Arc::clone(&app_config));
     let arc_rss_service = Arc::new(rss_service);
     let rest_server = RestServer::new(

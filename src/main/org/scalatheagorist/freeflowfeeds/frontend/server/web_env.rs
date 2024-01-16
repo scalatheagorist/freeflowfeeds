@@ -1,4 +1,4 @@
-use minijinja::Environment;
+use minijinja::{Environment, Error};
 
 use crate::frontend::view::IndexHtml;
 
@@ -7,13 +7,11 @@ pub struct WebEnv {
 }
 
 impl WebEnv {
-    pub fn new() -> Self {
+    pub fn new() -> Result<WebEnv, Error> {
         let mut value: Environment = Environment::new();
 
         value
             .add_template("index", &*IndexHtml::HTML)
-            .expect("could not load page initially");
-
-        Self { value }
+            .map(|_| Self { value })
     }
 }

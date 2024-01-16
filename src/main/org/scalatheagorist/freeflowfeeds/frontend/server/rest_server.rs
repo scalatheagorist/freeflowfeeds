@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use axum::{Router, routing};
 use axum::extract::{Path, Query};
 use axum::response::Html;
+use axum::{routing, Router};
 use log::{error, info};
 use map_for::FlatMap;
-use minijinja::{context, Template};
+use minijinja::context;
 use serde::{Deserialize, Serialize};
 use tokio::net::TcpListener;
 
@@ -67,8 +67,18 @@ impl RestServer {
                 .await;
 
             if _page == 0 {
-                let index: Template = web_env.value.get_template("index").unwrap();
-                Html(index.render(context!(feed_tags => feeds)).unwrap())
+                if let Ok(index) = web_env.value.get_template("index") {
+                    index
+                        .render(context!(feed_tags => feeds))
+                        .map(|r| Html(r))
+                        .unwrap_or_else(|_| {
+                            error!("could not load rendered html");
+                            Html("".to_owned())
+                        })
+                } else {
+                    error!("could not load index template");
+                    Html("".to_owned())
+                }
             } else {
                 Html(feeds.join(""))
             }
@@ -194,12 +204,16 @@ impl RestServer {
             );
 
         let addr: String = self.address.clone();
-        let listener: TcpListener = TcpListener::bind(&addr).await.unwrap();
 
-        info!("Http server is listening on http://{}", addr);
+        if let Ok(listener) = TcpListener::bind(&addr).await {
+            info!("Http server is listening on http://{}", addr);
 
-        if let Err(err) = axum::serve(listener, routing).await {
-            error!("server error: {}", err);
+            if let Err(err) = axum::serve(listener, routing).await {
+                error!("server error: {}", err);
+            }
+        } else {
+            error!("server could not create");
+            std::process::exit(1);
         }
     }
 }

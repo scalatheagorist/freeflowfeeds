@@ -38,7 +38,7 @@ impl HttpClient {
                 error!("{error_message}");
                 CustomHyperError(error_message)
             })
-            .unwrap();
+            .expect("request could not create");
 
         for (key, value) in &*headers {
             match (HeaderName::try_from(key), HeaderValue::try_from(value)) {

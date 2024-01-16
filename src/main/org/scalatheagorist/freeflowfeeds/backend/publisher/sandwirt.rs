@@ -23,7 +23,7 @@ impl PublisherModel for Sandwirt {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at sandwirt {}", err);
-                vec![]
+                return vec![];
             }
             Ok(document) => document
                 .find(Name("article"))

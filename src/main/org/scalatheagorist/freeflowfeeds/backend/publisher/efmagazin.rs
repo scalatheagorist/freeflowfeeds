@@ -24,7 +24,7 @@ impl PublisherModel for EfMagazin {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at efmagazin {}", err);
-                vec![]
+                return vec![];
             }
             Ok(document) => document
                 .find(Name("article"))

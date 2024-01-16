@@ -2,7 +2,7 @@ use std::hash::Hash;
 use std::vec::IntoIter;
 
 use futures_util::{Stream, StreamExt};
-use log::debug;
+use log::error;
 use rusqlite::{Connection, Statement};
 use serde::{Deserialize, Serialize};
 use tokio_stream::Iter;
@@ -36,9 +36,10 @@ impl DatabaseClient {
                 let (sql, values) = rss_feed.create_insert();
 
                 let _ = match conn.execute(&*sql, values) {
-                    Ok(_) => (),
+                    Ok(_) => return,
                     Err(err) => {
-                        debug!("could not write into table, cause: {err}")
+                        error!("could not write into table, cause: {err}");
+                        return;
                     }
                 };
             })
