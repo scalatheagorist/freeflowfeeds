@@ -25,7 +25,7 @@ impl PublisherModel for HayekInstitut {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at hayek-institut {}", err);
-                return vec![];
+                vec![]
             }
             Ok(document) => {
                 let mut rss_feeds: Vec<RSSFeed> = vec![];

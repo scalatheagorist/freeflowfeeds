@@ -24,11 +24,10 @@ impl PublisherModel for EfMagazin {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at efmagazin {}", err);
-                return vec![];
+                vec![]
             }
             Ok(document) => document
                 .find(Name("article"))
-                .into_iter()
                 .map(|article| {
                     let author = article
                         .clone()

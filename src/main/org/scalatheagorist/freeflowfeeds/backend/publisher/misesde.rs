@@ -23,11 +23,10 @@ impl PublisherModel for MisesDE {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at misesde {}", err);
-                return vec![];
+                vec![]
             }
             Ok(document) => document
                 .find(Name("div"))
-                .into_iter()
                 .filter_map(|article| match article.attr("class") {
                     Some(class) if class.contains("pt-cv-content-item") => {
                         let author: String = article

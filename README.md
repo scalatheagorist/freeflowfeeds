@@ -21,9 +21,16 @@ you want to scrap the articles, the implementation must be done individually.
 ### rustfmt
 
 ```
-find src/main/org/scalatheagorist/freeflowfeeds/ -name '*.rs' -print0 | xargs -0 rustfmt --edition 2021
+find src/main/org/scalatheagorist/freeflowfeeds/ -name '*.rs' -print0 | xargs -0 rustfmt
 ```
 
+see .rustfmt.toml
+
+### clippy linter
+
+```
+cargo clippy
+```
 
 ### Used dependencies
 

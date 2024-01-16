@@ -27,6 +27,7 @@ impl RSSBuilder {
         view
     }
 
+    #[allow(clippy::format_in_format_args)]
     fn generate_feeds(&self, rss_feed: RSSFeed) -> String {
         let binding: RSSFeed = rss_feed.clone();
         let link_global: &str = &(binding.article.link);
@@ -52,5 +53,11 @@ impl RSSBuilder {
         );
 
         html
+    }
+}
+
+impl Default for RSSBuilder {
+    fn default() -> Self {
+        Self::new()
     }
 }

@@ -15,15 +15,15 @@ impl std::error::Error for CustomHyperError {}
 impl From<CustomHyperError> for Error {
     #[allow(unreachable_code)]
     #[allow(unconditional_recursion)]
-    fn from(err: CustomHyperError) -> Self {
-        Error::from(err)
+    fn from(_err: CustomHyperError) -> Self {
+        Error::from(_err)
     }
 }
 
 impl From<CustomHyperError> for Infallible {
     #[allow(unreachable_code)]
     #[allow(unconditional_recursion)]
-    fn from(err: CustomHyperError) -> Self {
-        Infallible::from(err)
+    fn from(_err: CustomHyperError) -> Self {
+        Infallible::from(_err)
     }
 }
