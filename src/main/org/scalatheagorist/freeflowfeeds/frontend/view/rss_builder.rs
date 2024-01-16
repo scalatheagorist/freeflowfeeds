@@ -29,7 +29,7 @@ impl RSSBuilder {
 
     fn generate_feeds(&self, rss_feed: RSSFeed) -> String {
         let binding: RSSFeed = rss_feed.clone();
-        let link_global: &String = &(binding.article.link);
+        let link_global: &str = &(binding.article.link);
         let html: String = format!(
             r#"
             <div class="article-card">

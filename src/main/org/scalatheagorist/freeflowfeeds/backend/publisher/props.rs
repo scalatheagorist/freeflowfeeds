@@ -176,7 +176,7 @@ pub trait AsPublisher {
 
 impl AsPublisher for Vec<PublisherHost> {
     fn as_publisher(&self) -> Vec<(Publisher, String)> {
-        fn split_by(o: &String) -> u32 {
+        fn split_by(o: &str) -> u32 {
             o.rsplit(|c| c == '=' || c == '/')
                 .next()
                 .and_then(|num| num.parse::<u32>().ok())

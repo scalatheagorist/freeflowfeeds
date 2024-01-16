@@ -5,12 +5,12 @@ use std::vec::IntoIter;
 
 use bytes::BytesMut;
 use http_body_util::BodyExt;
-use hyper::{Response, StatusCode, Uri};
 use hyper::body::Incoming;
 use hyper::http::uri::InvalidUri;
+use hyper::{Response, StatusCode, Uri};
 use log::{error, warn};
-use tokio::task::JoinHandle;
 use tokio::task::spawn;
+use tokio::task::JoinHandle;
 use tokio_stream::Iter;
 
 use crate::backend::clients::{DatabaseClient, HttpClient};
@@ -90,9 +90,10 @@ impl HtmlScrapeService {
             let mut body_as_bytes: BytesMut = BytesMut::new();
 
             while let Some(next) = response.frame().await {
-                let frame = next.unwrap();
-                if let Some(chunk) = frame.data_ref() {
-                    body_as_bytes.extend_from_slice(&chunk);
+                if let Ok(frame) = next {
+                    if let Some(chunk) = frame.data_ref() {
+                        body_as_bytes.extend_from_slice(&chunk);
+                    }
                 }
             }
 

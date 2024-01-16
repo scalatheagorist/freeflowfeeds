@@ -29,7 +29,7 @@ impl PublisherModel for SchweizerMonat {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at schweizer monat {}", err);
-                vec![]
+                return vec![];
             }
             Ok(document) => {
                 let mut articles: Vec<(String, String, String)> = vec![];

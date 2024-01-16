@@ -1,4 +1,5 @@
 use log::error;
+use map_for::FlatMap;
 use select::document::Document;
 use select::node::Node;
 use select::predicate::{Class, Name};
@@ -24,19 +25,22 @@ impl PublisherModel for HayekInstitut {
         match Document::from_read(html_response.response.as_bytes()) {
             Err(err) => {
                 error!("html transformation error at hayek-institut {}", err);
-                vec![]
+                return vec![];
             }
             Ok(document) => {
                 let mut rss_feeds: Vec<RSSFeed> = vec![];
 
                 fn get_title(node: &Node) -> String {
-                    let title_node = node.find(Name("a")).next().unwrap();
-                    title_node.attr("title").unwrap_or("").to_owned()
+                    match node.find(Name("a")).next() {
+                        Some(title_node) => title_node.attr("title").unwrap_or("").to_owned(),
+                        None => "".to_owned(),
+                    }
                 }
 
                 fn get_href(node: &Node) -> Option<String> {
-                    let link_node = node.find(Name("a")).next().unwrap();
-                    link_node.attr("href").map(|s| s.to_owned())
+                    node.find(Name("a"))
+                        .next()
+                        .flat_map(|link_node| link_node.attr("href").map(|s| s.to_owned()))
                 }
 
                 for node in document.find(Class("fusion-post-card-image")) {

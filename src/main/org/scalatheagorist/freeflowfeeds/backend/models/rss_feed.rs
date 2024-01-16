@@ -4,8 +4,10 @@ use std::fmt;
 use chrono::Local;
 use hyper::body::Bytes;
 use log::warn;
-use rusqlite::Error::SqliteFailure;
+use rand::prelude::ThreadRng;
+use rand::Rng;
 use rusqlite::ffi::Error;
+use rusqlite::Error::SqliteFailure;
 use rusqlite::Row;
 use serde::{Deserialize, Serialize};
 
@@ -35,23 +37,34 @@ impl RSSFeed {
         serde_json::to_string(&self)
     }
 
+    // workaround to create an random hash
     pub fn create_insert(
         &self,
     ) -> (
         String,
         (u64, String, String, String, String, String, String),
     ) {
+        let hash: u64 = hash_value::<Self>(&self).unwrap_or_else(|| {
+            warn!(
+                "could not create hash by entity {} {} {} \nwill create a random one",
+                &self.author, &self.article.title, &self.article.link
+            );
+            let mut rng: ThreadRng = rand::thread_rng();
+            rng.gen()
+        });
+
         (
-            "INSERT INTO rss_feeds (id, author, title, link, publisher, lang, created) VALUES (?, ?, ?, ?, ?, ?, ?)".to_owned(),
+            "INSERT INTO rss_feeds (id, author, title, link, publisher, lang, created) VALUES (?, ?, ?, ?, ?, ?, ?)"
+                .to_owned(),
             (
-                hash_value::<Self>(self.clone()),
+                hash,
                 self.author.to_string(),
                 self.article.title.to_string(),
                 self.article.link.to_string(),
                 self.publisher.to_string(),
                 self.lang.to_string(),
                 Local::now().format("%Y-%m-%d %H:%M:%S").to_string(),
-            )
+            ),
         )
     }
 
