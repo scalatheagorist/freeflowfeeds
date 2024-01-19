@@ -140,31 +140,38 @@ pub struct PublisherHost {
 
 impl PublisherHost {
     pub fn to_publisher_urls(&self) -> Vec<(Publisher, String)> {
-        match self.publisher.clone() {
+        match &self.publisher {
             Publisher::SCHWEIZER_MONAT | Publisher::DIE_MARKTRADIKALEN | Publisher::SANDWIRT => {
                 self.by_path()
+                    .into_iter()
+                    .map(|uri| (self.publisher.clone(), uri))
+                    .collect::<Vec<_>>()
             }
-            _ => self.by_page(),
+            _ => self
+                .by_page()
+                .into_iter()
+                .map(|uri| (self.publisher.clone(), uri))
+                .collect::<Vec<_>>(),
         }
     }
 
-    fn by_page(&self) -> Vec<(Publisher, String)> {
+    fn by_page(&self) -> Vec<String> {
         (1..=self.page_to)
             .collect::<Vec<i32>>()
             .into_iter()
             .map(|page| {
                 let uri: String = format!("{}{}{}", &self.url, &self.path, page);
-                (self.publisher.clone(), uri)
+                uri
             })
             .collect::<Vec<_>>()
     }
 
-    fn by_path(&self) -> Vec<(Publisher, String)> {
+    fn by_path(&self) -> Vec<String> {
         let v: Vec<&str> = self.path.split(", ").collect();
         v.into_iter()
             .map(|p| {
                 let uri: String = format!("{}{}", self.url, p);
-                (self.publisher.clone(), uri)
+                uri
             })
             .collect()
     }

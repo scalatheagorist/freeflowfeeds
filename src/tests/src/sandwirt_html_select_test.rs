@@ -7,7 +7,6 @@ pub fn sandwirt_html_select_test() {
     for article in document.find(Name("article")) {
         let author =
             article
-                .clone()
                 .find(Attr("class", "post-author-name fn"))
                 .next()
                 .map(|node| node.text())
@@ -17,7 +16,6 @@ pub fn sandwirt_html_select_test() {
 
         let title =
             article
-                .clone()
                 .find(Name("a"))
                 .next()
                 .map(|node| node.text())

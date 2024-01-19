@@ -8,16 +8,11 @@ pub struct RSSBuilder;
 impl RSSBuilder {
     pub async fn build(&self, messages: impl Stream<Item = RSSFeed>) -> Vec<String> {
         let mut view: Vec<String> = vec![];
-        let this: RSSBuilder = self.clone();
-
-        fn _generate_feeds(this: RSSBuilder, message: RSSFeed, view: &mut Vec<String>) {
-            view.push(this.generate_feeds(&message));
-        }
 
         let mut messages = Box::pin(messages);
 
         while let Some(message) = messages.as_mut().next().await {
-            _generate_feeds(this.clone(), message, &mut view)
+            view.push(self.generate_feeds(&message));
         }
 
         view
@@ -53,6 +48,6 @@ impl RSSBuilder {
 
 impl Default for RSSBuilder {
     fn default() -> Self {
-        RSSBuilder {}
+        RSSBuilder
     }
 }

@@ -59,9 +59,7 @@ impl PublisherModel for Freiheitsfunken {
                         .to_owned();
 
                     let href_with_uri_prefix: String = match self.uri_prefix.to_owned() {
-                        Some(prefix) if !href.clone().contains("https://") => {
-                            prefix.to_owned() + &*href
-                        }
+                        Some(prefix) if !&href.contains("https://") => prefix.to_owned() + &*href,
                         _ => href.to_string(),
                     };
 

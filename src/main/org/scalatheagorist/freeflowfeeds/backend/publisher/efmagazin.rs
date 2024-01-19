@@ -30,7 +30,6 @@ impl PublisherModel for EfMagazin {
                 .find(Name("article"))
                 .map(|article| {
                     let author = article
-                        .clone()
                         .find(Attr("class", "author").descendant(Name("a")))
                         .next()
                         .map(|node| node.text())

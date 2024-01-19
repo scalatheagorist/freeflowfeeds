@@ -84,8 +84,9 @@ impl RSSFeed {
                     .unwrap_or_default();
                 format!("WHERE {props} {search}")
             }
-            None =>
-                search_clause.map(|t| format!("WHERE {t}")).unwrap_or_default(),
+            None => search_clause
+                .map(|t| format!("WHERE {t}"))
+                .unwrap_or_default(),
         };
 
         let size: usize = page * page_size;

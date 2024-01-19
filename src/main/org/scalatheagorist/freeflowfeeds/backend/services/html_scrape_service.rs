@@ -32,24 +32,23 @@ impl HtmlScrapeService {
         hosts: Vec<(Publisher, String)>,
         concurrency: i32,
     ) -> Self {
-        let http_client: Arc<HttpClient> = Arc::new(HttpClient::default());
-        let headers: Vec<(String, String)> = vec![
-            (
-                String::from("Content-Type"),
-                String::from("text/html; charset=utf-8"),
-            ),
-            (
-                String::from("Accept"),
-                String::from("text/html; charset=utf-8"),
-            ),
-        ];
+        let http_client: Arc<HttpClient> = Arc::new(HttpClient);
 
         HtmlScrapeService {
             http_client,
             database_client,
             hosts,
             concurrency,
-            headers,
+            headers: vec![
+                (
+                    String::from("Content-Type"),
+                    String::from("text/html; charset=utf-8"),
+                ),
+                (
+                    String::from("Accept"),
+                    String::from("text/html; charset=utf-8"),
+                ),
+            ],
         }
     }
 
@@ -127,8 +126,7 @@ impl HtmlScrapeService {
             })
         }
 
-        uris.clone()
-            .into_iter()
+        uris.into_iter()
             .map(|(publisher, uri)| {
                 concurrently(
                     Uri::from_str(&uri),

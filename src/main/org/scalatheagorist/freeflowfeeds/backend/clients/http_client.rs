@@ -13,7 +13,7 @@ use log::{error, info};
 use crate::backend::models::CustomHyperError;
 
 #[derive(Clone)]
-pub struct HttpClient {}
+pub struct HttpClient;
 
 impl HttpClient {
     pub async fn get(
@@ -53,6 +53,6 @@ impl HttpClient {
 
 impl Default for HttpClient {
     fn default() -> Self {
-        HttpClient {}
+        HttpClient
     }
 }

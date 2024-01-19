@@ -41,7 +41,7 @@ pub fn freiheitsfunken_html_select_test() {
                 .trim()
                 .to_owned();
 
-        let href_with_uri_prefix = if !href.clone().contains("https://") {
+        let href_with_uri_prefix = if !&href.contains("https://") {
             URI_PREFIX.to_owned() + &*href
         } else {
             href.to_owned()
