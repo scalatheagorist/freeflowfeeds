@@ -16,10 +16,6 @@ use crate::backend::models::CustomHyperError;
 pub struct HttpClient {}
 
 impl HttpClient {
-    pub fn new() -> Self {
-        HttpClient {}
-    }
-
     pub async fn get(
         &self,
         uri: &Uri,
@@ -57,6 +53,6 @@ impl HttpClient {
 
 impl Default for HttpClient {
     fn default() -> Self {
-        Self::new()
+        HttpClient {}
     }
 }

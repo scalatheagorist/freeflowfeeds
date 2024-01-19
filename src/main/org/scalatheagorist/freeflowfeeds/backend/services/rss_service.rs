@@ -34,7 +34,7 @@ impl RSSService {
             publisher,
             app_config.concurrency,
         );
-        let rss_builder: RSSBuilder = RSSBuilder;
+        let rss_builder: RSSBuilder = RSSBuilder::default();
 
         RSSService {
             app_config,
