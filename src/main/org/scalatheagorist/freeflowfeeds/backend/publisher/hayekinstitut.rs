@@ -32,7 +32,7 @@ impl PublisherModel for HayekInstitut {
 
                 fn get_title(node: &Node) -> String {
                     match node.find(Name("a")).next() {
-                        Some(title_node) => title_node.attr("title").unwrap_or("").to_owned(),
+                        Some(title_node) => title_node.attr("title").unwrap_or_default().to_owned(),
                         None => "".to_owned(),
                     }
                 }

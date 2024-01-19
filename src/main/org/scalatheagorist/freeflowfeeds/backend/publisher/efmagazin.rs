@@ -43,13 +43,13 @@ impl PublisherModel for EfMagazin {
 
                     let title = title_element
                         .map(|node| node.text())
-                        .unwrap_or(String::from(""))
+                        .unwrap_or_default()
                         .trim()
                         .to_owned();
 
                     let href = title_element
                         .flat_map(|node| node.attr("href"))
-                        .unwrap_or("")
+                        .unwrap_or_default()
                         .trim()
                         .to_owned();
 

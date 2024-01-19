@@ -21,7 +21,7 @@ pub fn sandwirt_html_select_test() {
                 .find(Name("a"))
                 .next()
                 .map(|node| node.text())
-                .unwrap_or(String::from(""))
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 
@@ -29,7 +29,7 @@ pub fn sandwirt_html_select_test() {
             article
                 .find(Name("a")).next()
                 .and_then(|node| node.attr("href"))
-                .unwrap_or("")
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 

@@ -20,7 +20,7 @@ pub fn freiheitsfunken_html_select_test() {
                 .map(|text| text.text().replace("von", "").trim().to_owned());
 
         let author: String =
-            author0.or(author1).unwrap_or(String::from("")).trim().to_owned();
+            author0.or(author1).unwrap_or_default().trim().to_owned();
 
         let title_element =
             article
@@ -30,14 +30,14 @@ pub fn freiheitsfunken_html_select_test() {
         let title =
             title_element
                 .map(|node| node.text())
-                .unwrap_or(String::from(""))
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 
         let href =
             title_element
                 .flat_map(|node| node.attr("href"))
-                .unwrap_or("")
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 

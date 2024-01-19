@@ -71,7 +71,7 @@ impl RestServer {
                     index
                         .render(context!(feed_tags => feeds))
                         .map(Html)
-                        .unwrap_or_else(|_| {
+                        .unwrap_or({
                             error!("could not load rendered html");
                             Html("".to_owned())
                         })

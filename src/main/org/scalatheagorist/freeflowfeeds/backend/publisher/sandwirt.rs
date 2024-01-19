@@ -40,7 +40,7 @@ impl PublisherModel for Sandwirt {
                         .find(Name("a"))
                         .next()
                         .map(|node| node.text())
-                        .unwrap_or(String::from(""))
+                        .unwrap_or_default()
                         .trim()
                         .to_owned();
 
@@ -48,7 +48,7 @@ impl PublisherModel for Sandwirt {
                         .find(Name("a"))
                         .next()
                         .and_then(|node| node.attr("href"))
-                        .unwrap_or("")
+                        .unwrap_or_default()
                         .trim()
                         .to_owned();
 

@@ -38,10 +38,8 @@ impl RSSFeed {
     }
 
     // workaround to create an random hash
-    pub fn create_insert(
-        &self,
-    ) -> QueryWithValues {
-        let hash: u64 = hash_value::<Self>(self).unwrap_or_else(|| {
+    pub fn create_insert(&self) -> QueryWithValues {
+        let hash: u64 = hash_value::<Self>(self).unwrap_or({
             warn!(
                 "could not create hash by entity {} {} {} \nwill create a random one",
                 &self.author, &self.article.title, &self.article.link
@@ -83,23 +81,22 @@ impl RSSFeed {
             Some(props) => {
                 let search: String = search_clause
                     .map(|t| format!("AND {t}"))
-                    .unwrap_or_else(|| "".to_owned());
+                    .unwrap_or_default();
                 format!("WHERE {props} {search}")
             }
-            None => search_clause
-                .map(|t| format!("WHERE {t}"))
-                .unwrap_or_else(|| "".to_owned()),
+            None =>
+                search_clause.map(|t| format!("WHERE {t}")).unwrap_or_default(),
         };
 
         let size: usize = page * page_size;
         let query: String = format!(
             r#"
-            SELECT * FROM rss_feeds
-            {clause}
-            ORDER BY created DESC
-            LIMIT {page_size}
-            OFFSET {size}
-          "#
+                SELECT * FROM rss_feeds
+                {clause}
+                ORDER BY created DESC
+                LIMIT {page_size}
+                OFFSET {size}
+            "#
         );
 
         query

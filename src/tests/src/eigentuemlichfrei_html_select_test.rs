@@ -13,7 +13,7 @@ pub fn eigentuemlichfrei_html_select_test() {
                 .find(Attr("class", "author").descendant(Name("a")))
                 .next()
                 .map(|node| node.text())
-                .unwrap_or(String::from(""))
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 
@@ -25,14 +25,14 @@ pub fn eigentuemlichfrei_html_select_test() {
         let title =
             title_element
                 .map(|node| node.text())
-                .unwrap_or(String::from(""))
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 
         let href =
             title_element
                 .flat_map(|node| node.attr("href"))
-                .unwrap_or("")
+                .unwrap_or_default()
                 .trim()
                 .to_owned();
 
