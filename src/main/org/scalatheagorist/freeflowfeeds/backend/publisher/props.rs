@@ -1,6 +1,7 @@
 use std::fmt;
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::sync::Arc;
 use std::vec::IntoIter;
 
 use serde::{Deserialize, Serialize};
@@ -35,7 +36,7 @@ pub enum Publisher {
 
 impl Publisher {
     pub fn get_rss(html_response: HtmlResponse) -> Iter<IntoIter<RSSFeed>> {
-        let publisher: Box<dyn PublisherModel> = match html_response.publisher {
+        let publisher: Box<dyn PublisherModel> = match &*html_response.publisher {
             Publisher::EFMAGAZIN => Box::new(EfMagazin::new(Some("https://ef-magazin.de"))),
             Publisher::FREIHEITSFUNKEN => {
                 Box::new(Freiheitsfunken::new(Some("https://freiheitsfunken.info")))
@@ -139,18 +140,20 @@ pub struct PublisherHost {
 }
 
 impl PublisherHost {
-    pub fn to_publisher_urls(&self) -> Vec<(Publisher, String)> {
-        match &self.publisher {
+    pub fn to_publisher_urls(&self) -> Vec<(Arc<Publisher>, String)> {
+        let publisher_rc: Arc<Publisher> = Arc::new(self.publisher.clone());
+
+        match &*publisher_rc {
             Publisher::SCHWEIZER_MONAT | Publisher::DIE_MARKTRADIKALEN | Publisher::SANDWIRT => {
                 self.by_path()
                     .into_iter()
-                    .map(|uri| (self.publisher.clone(), uri))
+                    .map(|uri| (Arc::clone(&publisher_rc), uri))
                     .collect::<Vec<_>>()
             }
             _ => self
                 .by_page()
                 .into_iter()
-                .map(|uri| (self.publisher.clone(), uri))
+                .map(|uri| (Arc::clone(&publisher_rc), uri))
                 .collect::<Vec<_>>(),
         }
     }
@@ -178,11 +181,11 @@ impl PublisherHost {
 }
 
 pub trait AsPublisher {
-    fn as_publisher(&self) -> Vec<(Publisher, String)>;
+    fn as_publisher(&self) -> Vec<(Arc<Publisher>, String)>;
 }
 
 impl AsPublisher for Vec<PublisherHost> {
-    fn as_publisher(&self) -> Vec<(Publisher, String)> {
+    fn as_publisher(&self) -> Vec<(Arc<Publisher>, String)> {
         fn split_by(o: &str) -> u32 {
             o.rsplit(|c| c == '=' || c == '/')
                 .next()
@@ -190,7 +193,7 @@ impl AsPublisher for Vec<PublisherHost> {
                 .unwrap_or(u32::MAX)
         }
 
-        let mut publisher_urls: Vec<(Publisher, String)> = self
+        let mut publisher_urls: Vec<(Arc<Publisher>, String)> = self
             .iter()
             .flat_map(|p| p.to_publisher_urls())
             .collect::<Vec<_>>();

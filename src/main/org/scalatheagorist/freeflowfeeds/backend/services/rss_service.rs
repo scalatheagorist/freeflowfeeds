@@ -21,7 +21,7 @@ pub struct RSSService {
 
 impl RSSService {
     pub fn new(app_config: Arc<AppConfig>) -> Self {
-        let mut publisher: Vec<(Publisher, String)> = app_config.hosts.as_publisher();
+        let mut publisher: Vec<(Arc<Publisher>, String)> = app_config.hosts.as_publisher();
 
         if app_config.initial_pull {
             publisher.reverse()

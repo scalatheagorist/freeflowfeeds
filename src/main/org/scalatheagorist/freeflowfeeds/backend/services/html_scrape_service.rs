@@ -21,7 +21,7 @@ use crate::backend::publisher::Publisher;
 pub struct HtmlScrapeService {
     http_client: Arc<HttpClient>,
     database_client: Arc<DatabaseClient>,
-    hosts: Vec<(Publisher, String)>,
+    hosts: Vec<(Arc<Publisher>, String)>,
     concurrency: i32,
     headers: Vec<(String, String)>,
 }
@@ -29,7 +29,7 @@ pub struct HtmlScrapeService {
 impl HtmlScrapeService {
     pub fn new(
         database_client: Arc<DatabaseClient>,
-        hosts: Vec<(Publisher, String)>,
+        hosts: Vec<(Arc<Publisher>, String)>,
         concurrency: i32,
     ) -> Self {
         let http_client: Arc<HttpClient> = Arc::new(HttpClient);
@@ -77,7 +77,7 @@ impl HtmlScrapeService {
 
     fn get(
         &self,
-        uris: Vec<(Publisher, String)>,
+        uris: Vec<(Arc<Publisher>, String)>,
         headers: Vec<(String, String)>,
     ) -> Vec<JoinHandle<Option<HtmlResponse>>> {
         async fn extract_body(response: &mut Response<Incoming>, uri: Uri) -> Option<String> {
@@ -101,7 +101,7 @@ impl HtmlScrapeService {
 
         fn concurrently(
             host: Result<Uri, InvalidUri>,
-            publisher: Publisher,
+            publisher: Arc<Publisher>,
             headers: Vec<(String, String)>,
             client: Arc<HttpClient>,
         ) -> JoinHandle<Option<HtmlResponse>> {
