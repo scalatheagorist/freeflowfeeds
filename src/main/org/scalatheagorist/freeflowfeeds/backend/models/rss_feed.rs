@@ -40,10 +40,6 @@ impl RSSFeed {
     // workaround to create an random hash
     pub fn create_insert(&self) -> QueryWithValues {
         let hash: u64 = hash_value::<Self>(self).unwrap_or({
-            warn!(
-                "could not create hash by entity {} {} {} \nwill create a random one",
-                &self.author, &self.article.title, &self.article.link
-            );
             let mut rng: ThreadRng = rand::thread_rng();
             rng.gen()
         });

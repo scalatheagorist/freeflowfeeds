@@ -21,6 +21,9 @@ pub struct DatabaseClient {
 }
 
 impl DatabaseClient {
+    const DB_CONNECTION_ERROR: &str = "could not connect to database";
+    const DB_CONNECTION_CLOSE_ERROR: &str = "could not close connection";
+
     pub fn new(config: DatabaseConfig) -> Self {
         DatabaseClient { config }
     }
@@ -32,13 +35,18 @@ impl DatabaseClient {
         values
             .for_each(|rss_feed| async move {
                 let conn: Connection =
-                    Connection::open(&self.config.url).expect("could not connect to database");
+                    Connection::open(&self.config.url).expect(DatabaseClient::DB_CONNECTION_ERROR);
                 let (sql, values) = rss_feed.create_insert();
 
                 match conn.execute(&sql, values) {
-                    Ok(_) => (),
+                    Ok(_) => {
+                        conn.close()
+                            .expect(DatabaseClient::DB_CONNECTION_CLOSE_ERROR);
+                    }
                     Err(err) => {
-                        error!("could not write into table, cause: {err}");
+                        error!("db execution {err}");
+                        conn.close()
+                            .expect(DatabaseClient::DB_CONNECTION_CLOSE_ERROR);
                     }
                 };
             })

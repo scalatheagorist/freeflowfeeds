@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use chrono::NaiveTime;
 use log::info;
-use tokio::time::{Instant, sleep_until};
+use tokio::time::{sleep_until, Instant};
 
 use crate::app_config::AppConfig;
 use crate::backend::clients::DatabaseClient;
@@ -61,7 +61,7 @@ impl RSSService {
     pub async fn pull_with_interval(&self) -> Result<(), chrono::ParseError> {
         let time: &str = &self.app_config.update;
         let interval: i64 = self.app_config.update_interval;
-        let target_time: NaiveTime =  NaiveTime::parse_from_str(time, "%H:%M")?;
+        let target_time: NaiveTime = NaiveTime::parse_from_str(time, "%H:%M")?;
 
         loop {
             let current_time: NaiveTime = chrono::Local::now().time();
@@ -72,8 +72,7 @@ impl RSSService {
                 delay = delay + chrono::Duration::hours(interval);
             }
 
-            sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64))
-                .await;
+            sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64)).await;
 
             info!("pull new articles");
 
