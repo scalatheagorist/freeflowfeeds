@@ -5,8 +5,8 @@ use std::sync::Arc;
 use log::{error, info, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::config::{Appender as Log4rsAppender, Root};
-use log4rs::encode::pattern::PatternEncoder;
 use log4rs::Config as Log4rsConfig;
+use log4rs::encode::pattern::PatternEncoder;
 use tokio::task::spawn;
 
 use freeflowfeeds::app_config::AppConfig;
@@ -51,5 +51,5 @@ async fn main() {
 
     spawn(async move { arc_rss_service.pull_with_interval().await });
 
-    rest_server.serve().await;
+    let _ = rest_server.serve().await;
 }

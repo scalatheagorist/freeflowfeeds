@@ -53,7 +53,7 @@ impl RestServer {
         }
     }
 
-    pub async fn serve(&self) {
+    pub async fn serve(&self) -> std::io::Result<()> {
         async fn get_page(
             Path(page): Path<String>,
             e: Option<&str>,
@@ -204,16 +204,10 @@ impl RestServer {
             );
 
         let addr: String = self.address.clone();
+        let listener: TcpListener = TcpListener::bind(&addr).await?;
 
-        if let Ok(listener) = TcpListener::bind(&addr).await {
-            info!("Http server is listening on http://{}", addr);
+        info!("Http server is listening on http://{}", addr);
 
-            if let Err(err) = axum::serve(listener, routing).await {
-                error!("server error: {}", err);
-            }
-        } else {
-            error!("server could not create");
-            std::process::exit(1);
-        }
+        axum::serve(listener, routing).await
     }
 }

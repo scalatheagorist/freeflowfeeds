@@ -2,8 +2,8 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use chrono::NaiveTime;
-use log::{error, info};
-use tokio::time::{sleep_until, Instant};
+use log::info;
+use tokio::time::{Instant, sleep_until};
 
 use crate::app_config::AppConfig;
 use crate::backend::clients::DatabaseClient;
@@ -58,36 +58,30 @@ impl RSSService {
         self.rss_builder.build(feeds).await
     }
 
-    pub async fn pull_with_interval(&self) {
+    pub async fn pull_with_interval(&self) -> Result<(), chrono::ParseError> {
         let time: &str = &self.app_config.update;
         let interval: i64 = self.app_config.update_interval;
+        let target_time: NaiveTime =  NaiveTime::parse_from_str(time, "%H:%M")?;
 
-        match NaiveTime::parse_from_str(time, "%H:%M") {
-            Ok(target_time) => {
-                loop {
-                    let current_time: NaiveTime = chrono::Local::now().time();
-                    let mut delay: chrono::Duration = target_time - current_time;
+        loop {
+            let current_time: NaiveTime = chrono::Local::now().time();
+            let mut delay: chrono::Duration = target_time - current_time;
 
-                    // adjust delay after run
-                    if delay < chrono::Duration::zero() {
-                        delay = delay + chrono::Duration::hours(interval);
-                    }
-
-                    sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64))
-                        .await;
-
-                    info!("pull new articles");
-
-                    // wait a whole second, just to be sure
-                    sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
-
-                    // scrape
-                    self.scape_service.run().await
-                }
+            // adjust delay after run
+            if delay < chrono::Duration::zero() {
+                delay = delay + chrono::Duration::hours(interval);
             }
-            Err(err) => {
-                error!("{}", err)
-            }
+
+            sleep_until(Instant::now() + Duration::from_secs(delay.num_seconds() as u64))
+                .await;
+
+            info!("pull new articles");
+
+            // wait a whole second, just to be sure
+            sleep_until(Instant::now() + Duration::from_secs(1u64)).await;
+
+            // scrape
+            self.scape_service.run().await
         }
     }
 }

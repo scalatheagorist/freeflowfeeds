@@ -8,7 +8,6 @@ pub struct RSSBuilder;
 impl RSSBuilder {
     pub async fn build(&self, messages: impl Stream<Item = RSSFeed>) -> Vec<String> {
         let mut view: Vec<String> = vec![];
-
         let mut messages = Box::pin(messages);
 
         while let Some(message) = messages.as_mut().next().await {
