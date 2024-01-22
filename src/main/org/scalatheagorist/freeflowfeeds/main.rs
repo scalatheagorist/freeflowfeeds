@@ -2,7 +2,7 @@ extern crate num_traits;
 
 use std::sync::Arc;
 
-use log::{error, info, LevelFilter};
+use log::{error, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::config::{Appender as Log4rsAppender, Root};
 use log4rs::encode::pattern::PatternEncoder;
@@ -30,10 +30,8 @@ async fn main() {
         panic!("could not set log4rs config")
     }
 
-    let app_config = Arc::new(AppConfig::get_app_config());
-    info!("{}", app_config);
-
-    let web_env = {
+    let app_config: Arc<AppConfig> = Arc::new(AppConfig::default());
+    let web_env: Arc<WebEnv> = {
         if let Ok(env) = WebEnv::new() {
             Arc::new(env)
         } else {
@@ -41,9 +39,9 @@ async fn main() {
             std::process::exit(1);
         }
     };
-    let rss_service = RSSService::new(Arc::clone(&app_config));
-    let arc_rss_service = Arc::new(rss_service);
-    let rest_server = RestServer::new(
+    let rss_service: RSSService = RSSService::new(Arc::clone(&app_config));
+    let arc_rss_service: Arc<RSSService> = Arc::new(rss_service);
+    let rest_server: RestServer = RestServer::new(
         &app_config.rest_server,
         Arc::clone(&arc_rss_service),
         web_env,
