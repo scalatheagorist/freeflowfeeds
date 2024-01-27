@@ -35,10 +35,7 @@ impl AppConfig {
 
         fn get_or_default<T: std::str::FromStr + Clone>(env_var_name: &str, default_value: T) -> T {
             match env::var(env_var_name) {
-                Ok(value) => match value.parse() {
-                    Ok(parsed) => parsed,
-                    Err(_) => default_value,
-                },
+                Ok(value) => value.parse().unwrap_or_else(|_| default_value),
                 Err(_) => default_value,
             }
         }
