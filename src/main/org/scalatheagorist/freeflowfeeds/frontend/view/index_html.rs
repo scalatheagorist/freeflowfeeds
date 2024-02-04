@@ -25,7 +25,7 @@ impl IndexHtml {
     <meta property="og:site_name">
     <meta property="og:title" content="Liberty Literature">
     <meta property="og:description" content="Freiheitliche Meta Feeds">
-    <meta property="og:image" content="https://image.nostr.build/99b3afb4def317934f3fbc2b8a854b3ded800c80ca2fba445303fe6d6d9ace57.jpg">
+    <meta property="og:image" content="https://image.nostr.build/ec7791aef781aeddad36973c277a2d8b782c180f8d89a0ba767222f1b8356a86.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="543">
     <meta property="og:url" content="https://www.liblit.org">
@@ -33,7 +33,7 @@ impl IndexHtml {
 
     <meta name="twitter:title" content="liblit">
     <meta name="twitter:description" content="Liberty Literature">
-    <meta name="twitter:image" content="https://image.nostr.build/99b3afb4def317934f3fbc2b8a854b3ded800c80ca2fba445303fe6d6d9ace57.jpg">
+    <meta name="twitter:image" content="https://image.nostr.build/ec7791aef781aeddad36973c277a2d8b782c180f8d89a0ba767222f1b8356a86.png">
     <meta name="twitter:card" content="summary_large_image">
     <style>
 #info {
@@ -261,9 +261,9 @@ body {
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-    <a class="navbar-brand" href="https://www.die-marktradikalen.de/" target="_blank">
-        <img src="https://image.nostr.build/7af55e65d295f26b0cfe84f5cfab1b528b934c7150308cd97397ec9af1e0b42b.png"
-             alt="Die Marktradikalen" class="logo" title="Zu den Marktradikalen">
+    <a class="navbar-brand" href="https://www.liblit.org/articles/1" target="_blank">
+        <img src="https://image.nostr.build/49adcbc1549657de6d753f1250c12747646198d661904a7255292c79ecd23537.png"
+             alt="LIBLIT" class="logo" title="Home">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" id="navbar-nav-toggle">
         <span class="navbar-toggler-icon"></span>
